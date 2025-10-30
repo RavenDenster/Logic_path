@@ -1,0 +1,66 @@
+[gd_scene load_steps=3 format=3 uid="uid://qy26f64v8x2j"]
+
+[ext_resource type="Script" uid="uid://c5wp21k2vtjnv" path="res://scripts/ui/MainMenu.gd" id="1_6jbdy"]
+[ext_resource type="Texture2D" uid="uid://d4gwbapixela7" path="res://assets/back.png" id="2_iwbf0"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_6jbdy")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_top = 1.0
+offset_right = 1921.0
+offset_bottom = 1084.0
+texture = ExtResource("2_iwbf0")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 0
+offset_left = 1.0
+offset_top = 342.0
+offset_right = 1922.0
+offset_bottom = 724.0
+color = Color(0.15294118, 0.22352941, 0.2901961, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 700)
+layout_mode = 0
+offset_left = 830.0
+offset_top = 174.0
+offset_right = 1065.0
+offset_bottom = 874.0
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Logic Path"
+horizontal_alignment = 1
+
+[node name="PlayCampaignButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Play Campaign"
+
+[node name="NewGameButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "New Game"
+
+[node name="OpenMapButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "OpenMap"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Quit
+"
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+oversampling_override = 1.0
+position = Vector2i(0, 36)

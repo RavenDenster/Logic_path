@@ -1,0 +1,94 @@
+[gd_scene load_steps=6 format=3 uid="uid://bl3sa4s2sswx"]
+
+[ext_resource type="Script" uid="uid://bigw3jxbvfqvj" path="res://scripts/ui/TopPanel.gd" id="1_2ueww"]
+[ext_resource type="Texture2D" uid="uid://bv77hfj8g4ynm" path="res://assets/menu.png" id="2_qbmb5"]
+[ext_resource type="Texture2D" uid="uid://8ihas8hvgwek" path="res://assets/teory.png" id="3_u2lv2"]
+[ext_resource type="Texture2D" uid="uid://yqlcdwtpogyy" path="res://assets/map.png" id="4_o5218"]
+[ext_resource type="Texture2D" uid="uid://d4kdg80lsdut6" path="res://assets/run.png" id="5_th10h"]
+
+[node name="TopPanel" type="ColorRect"]
+custom_minimum_size = Vector2(720, 60)
+offset_right = 1920.0
+offset_bottom = 60.0
+color = Color(0.18039216, 0.16862746, 0.23529412, 1)
+script = ExtResource("1_2ueww")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 406.0
+offset_bottom = 59.0
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="MenuButton" type="TextureButton" parent="HBoxContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture_normal = ExtResource("2_qbmb5")
+stretch_mode = 3
+
+[node name="TheoryButton" type="TextureButton" parent="HBoxContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture_normal = ExtResource("3_u2lv2")
+stretch_mode = 3
+
+[node name="MapButton" type="TextureButton" parent="HBoxContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture_normal = ExtResource("4_o5218")
+stretch_mode = 3
+
+[node name="RunButton" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("5_th10h")
+stretch_mode = 3
+
+[node name="LevelNameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 747.0
+offset_top = 18.0
+offset_right = 1119.0
+offset_bottom = 41.0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GateButtonsContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 1348.0
+offset_top = 9.0
+offset_right = 1918.0
+offset_bottom = 53.0
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="NOT" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "NOT"
+
+[node name="AND" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "AND"
+
+[node name="OR" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "OR"
+
+[node name="XOR" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "XOR"
+
+[node name="NOR" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "NOR"
+
+[node name="NAND" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "NAND"
+
+[node name="XNOR" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "XNOR"
+
+[node name="Implication" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "IMP"

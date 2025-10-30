@@ -1,0 +1,34 @@
+[gd_scene load_steps=7 format=3 uid="uid://ccf0bpj7otj4f"]
+
+[ext_resource type="Script" uid="uid://qmbjt4ujm4ed" path="res://scripts/levels/Level2.gd" id="1_e5vnl"]
+[ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="2_twycr"]
+[ext_resource type="PackedScene" uid="uid://5cahp04cxmr" path="res://scenes/components/InputBlock.tscn" id="3_inlfm"]
+[ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="4_e3qul"]
+[ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="5_dpm1s"]
+[ext_resource type="PackedScene" uid="uid://d12u305tit15w" path="res://scenes/ui/TestResultsPanel.tscn" id="6_mcssb"]
+
+[node name="Level2" type="Node2D"]
+script = ExtResource("1_e5vnl")
+
+[node name="Background" type="TextureRect" parent="."]
+z_index = -35
+offset_left = 3.0
+offset_top = -3.0
+offset_right = 1921.0
+offset_bottom = 1079.0
+texture = ExtResource("2_twycr")
+expand_mode = 1
+
+[node name="InputBlock" parent="." instance=ExtResource("3_inlfm")]
+position = Vector2(413, 508)
+
+[node name="OutputBlock" parent="." instance=ExtResource("4_e3qul")]
+position = Vector2(1323, 501)
+
+[node name="TopPanel" parent="." instance=ExtResource("5_dpm1s")]
+
+[node name="TestResultsPanel" parent="." instance=ExtResource("6_mcssb")]
+offset_left = 321.0
+offset_top = 929.0
+offset_right = 1602.0
+offset_bottom = 1080.0

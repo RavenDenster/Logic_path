@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3 uid="uid://crg0xq3vlvpgb"]
+
+[ext_resource type="Script" uid="uid://lgev8dm7aji1" path="res://scripts/gates/NANDGate.gd" id="1_2s2xv"]
+[ext_resource type="Texture2D" uid="uid://cuq3teit7pnum" path="res://assets/nand.png" id="2_16xlw"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_1xbim"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_no4au"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_l4dua"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bw5vo"]
+
+[node name="NandGate" type="Node2D"]
+script = ExtResource("1_2s2xv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_16xlw")
+
+[node name="Input1" type="Area2D" parent="."]
+position = Vector2(-50, -25)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input1"]
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_no4au")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input1"]
+position = Vector2(1, -2)
+texture = ExtResource("3_1xbim")
+
+[node name="Input2" type="Area2D" parent="."]
+position = Vector2(-50, 25)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input2"]
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_l4dua")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input2"]
+position = Vector2(1, -1)
+texture = ExtResource("3_1xbim")
+
+[node name="Output" type="Area2D" parent="."]
+position = Vector2(50, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Output"]
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_bw5vo")
+
+[node name="Sprite2D" type="Sprite2D" parent="Output"]
+position = Vector2(1, -1)
+texture = ExtResource("3_1xbim")

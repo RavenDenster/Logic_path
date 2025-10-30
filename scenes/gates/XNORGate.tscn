@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3 uid="uid://cjx01svb5q1s6"]
+
+[ext_resource type="Script" uid="uid://cffbsvexvs353" path="res://scripts/gates/XNORGate.gd" id="1_7x3ea"]
+[ext_resource type="Texture2D" uid="uid://bwu4304a2xw43" path="res://assets/nxor.png" id="2_niio2"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_qsb3e"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jr6da"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ugli0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_e11v7"]
+
+[node name="XnorGate" type="Node2D"]
+script = ExtResource("1_7x3ea")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_niio2")
+
+[node name="Input1" type="Area2D" parent="."]
+position = Vector2(-50, -40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input1"]
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_jr6da")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input1"]
+position = Vector2(2, -1)
+texture = ExtResource("3_qsb3e")
+
+[node name="Input2" type="Area2D" parent="."]
+position = Vector2(-50, 40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input2"]
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_ugli0")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input2"]
+position = Vector2(2, -2)
+texture = ExtResource("3_qsb3e")
+
+[node name="Output" type="Area2D" parent="."]
+position = Vector2(50, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Output"]
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_e11v7")
+
+[node name="Sprite2D" type="Sprite2D" parent="Output"]
+position = Vector2(1, -1)
+texture = ExtResource("3_qsb3e")
