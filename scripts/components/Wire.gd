@@ -112,7 +112,6 @@ func get_collision_shape_global_position(port):
 	return port.global_position
 	
 func disconnect_ports():
-	# Эта функция вызывается при удалении провода для сброса портов
 	if start_port and is_instance_valid(start_port):
 		var start_sprite = start_port.get_node_or_null("Sprite2D")
 		if start_sprite and is_instance_valid(start_sprite):

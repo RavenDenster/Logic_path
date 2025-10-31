@@ -119,22 +119,18 @@ func set_last_played_level(level_number):
 	game_data["last_played_level"] = int(level_number)
 	save_game()
 
-# В методе get_next_level_to_play обновите max_level:
 func get_next_level_to_play():
-	var max_level = 7  # Обновляем максимальное количество уровней
+	var max_level = 7 
 	var last_played = game_data["last_played_level"]
 	var completed_levels = game_data["completed_levels"]
 	
-	# Если последний сыгранный уровень не пройден, возвращаем его
 	if not is_level_completed(last_played):
 		return last_played
-	
-	# Иначе ищем следующий непройденный уровень
+
 	for level in range(last_played + 1, max_level + 1):
 		if not is_level_completed(level):
 			return level
-	
-	# Если все уровни пройдены, возвращаем последний сыгранный
+
 	return last_played
 
 static func get_save_system():

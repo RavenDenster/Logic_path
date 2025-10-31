@@ -6,7 +6,7 @@ var wires = []
 var movable_objects = []
 var all_logic_objects = []
 var temp_line: Line2D
-var input_blocks = []  # Массив для хранения всех InputBlock'ов
+var input_blocks = []
 var is_three_input_level = false
 var dragging_object = null
 var drag_offset = Vector2.ZERO
@@ -23,14 +23,12 @@ func get_level_number() -> int:
 	if current_scene:
 		var scene_path = current_scene.scene_file_path
 		if scene_path:
-			# Извлекаем номер уровня из пути к сцене
 			var regex = RegEx.new()
 			regex.compile("Level(\\d+)")
 			var result = regex.search(scene_path)
 			if result:
 				return result.get_string(1).to_int()
 	
-	# Альтернативный способ: проверяем имя сцены
 	var scene_name = current_scene.name if current_scene else ""
 	if "Level1" in scene_name: return 1
 	if "Level2" in scene_name: return 2
@@ -38,7 +36,7 @@ func get_level_number() -> int:
 	if "Level4" in scene_name: return 4
 	if "Level5" in scene_name: return 5
 	if "Level6" in scene_name: return 6
-	if "Level7" in scene_name: return 7  # Добавляем 7 уровень
+	if "Level7" in scene_name: return 7
 	
 	return 0
 	
@@ -48,48 +46,38 @@ func _ready():
 		push_error("Level data not set in child class!")
 		return
 	
-	# Инициализируем переменные
 	wires = []
 	movable_objects = []
 	all_logic_objects = []
 	input_blocks = []
 	test_results_panel = null
 	
-	# Проверяем, есть ли данные для третьего входа
 	is_three_input_level = level_data.get("input_values_c") != null and level_data.input_values_c.size() > 0
 	
-	# Настраиваем TopPanel с названием уровня и теорией
 	if has_node("TopPanel") and $TopPanel.has_method("set_level_name"):
 		$TopPanel.set_level_name(level_data.level_name)
 		$TopPanel.set_theory_text(level_data.theory_text)
 	
-	# Настраиваем OutputBlock на основе данных уровня
 	if has_node("OutputBlock"):
 		$OutputBlock.expected = level_data.expected_output.duplicate()
 	
-	# Сначала настраиваем уровень (2 или 3 входа)
 	if is_three_input_level:
 		setup_three_input_level()
 	else:
 		setup_two_input_level()
 	
-	# Инициализируем временную линию для рисования проводов
 	temp_line = Line2D.new()
 	add_child(temp_line)
 	temp_line.default_color = Color("#e39e45")
 	temp_line.width = 8
 	temp_line.points = []
 	
-	# Настраиваем кнопки на TopPanel
 	_setup_top_panel_buttons()
 	
-	# Обновляем список логических объектов
 	update_all_logic_objects()
 	
-	# Ждем один кадр для инициализации сцены
 	await get_tree().process_frame
 	
-	# Загружаем начальные данные на панель результатов
 	if test_results_panel:
 		if is_three_input_level and test_results_panel.has_method("load_initial_data"):
 			test_results_panel.load_initial_data(level_data.input_values_a, level_data.input_values_b, level_data.input_values_c, level_data.expected_output)
@@ -97,11 +85,9 @@ func _ready():
 			test_results_panel.load_initial_data(level_data.input_values_a, level_data.input_values_b, level_data.expected_output)
 	else:
 		print("WARNING: test_results_panel is null - this is normal for three-input levels")
-	
-	# Загружаем состояние уровня при запуске
+
 	load_level_state()
-	
-	# Таймер для автосохранения
+
 	auto_save_timer = Timer.new()
 	auto_save_timer.wait_time = 2.0
 	auto_save_timer.one_shot = true
@@ -112,17 +98,14 @@ func _ready():
 
 func setup_two_input_level():
 	print("Setting up two-input level")
-	
-	# Настраиваем InputBlock на основе данных уровня
+
 	if has_node("InputBlock"):
 		$InputBlock.values_A = level_data.input_values_a.duplicate()
 		$InputBlock.values_B = level_data.input_values_b.duplicate()
-		
-		# Добавляем перемещаемые объекты
+
 		movable_objects.append($InputBlock)
 		movable_objects.append($OutputBlock)
-		
-		# Устанавливаем ссылку на панель результатов
+
 		if has_node("TestResultsPanel"):
 			test_results_panel = $TestResultsPanel
 			print("Two-input level: TestResultsPanel found")
@@ -133,25 +116,20 @@ func setup_two_input_level():
 
 func setup_three_input_level():
 	print("Setting up three-input level")
-	
-	# Скрываем старый InputBlock, если он существует
+
 	if has_node("InputBlock"):
 		$InputBlock.hide()
-	
-	# Ищем вручную размещенные InputBlock'и
+
 	input_blocks = []
-	
-	# Проверяем, есть ли уже размещенные InputBlock'и
+
 	var input_block_a = get_node_or_null("InputBlockA")
 	var input_block_b = get_node_or_null("InputBlockB") 
 	var input_block_c = get_node_or_null("InputBlockC")
-	
-	# Если блоки уже существуют (например, восстановлены из сохранения), используем их
+
 	if input_block_a and input_block_b and input_block_c:
 		print("Using existing InputBlocks")
 		input_blocks = [input_block_a, input_block_b, input_block_c]
-		
-		# Устанавливаем значения только если они еще не установлены
+
 		if input_block_a.values.is_empty():
 			input_block_a.values = level_data.input_values_a.duplicate()
 			print("Set values for InputBlockA")
@@ -163,24 +141,20 @@ func setup_three_input_level():
 			print("Set values for InputBlockC")
 	else:
 		print("Creating InputBlocks programmatically")
-		# Создаем блоки программно
 		var input_block_scene = preload("res://scenes/components/SingleInputBlock.tscn")
-		
-		# InputBlock A
+
 		input_block_a = input_block_scene.instantiate()
 		input_block_a.name = "InputBlockA"
 		input_block_a.position = Vector2(200, 300)
 		input_block_a.values = level_data.input_values_a.duplicate()
 		add_child(input_block_a)
-		
-		# InputBlock B  
+ 
 		input_block_b = input_block_scene.instantiate()
 		input_block_b.name = "InputBlockB"
 		input_block_b.position = Vector2(200, 500)
 		input_block_b.values = level_data.input_values_b.duplicate()
 		add_child(input_block_b)
-		
-		# InputBlock C
+
 		input_block_c = input_block_scene.instantiate()
 		input_block_c.name = "InputBlockC"
 		input_block_c.position = Vector2(200, 700)
@@ -188,8 +162,7 @@ func setup_three_input_level():
 		add_child(input_block_c)
 		
 		input_blocks = [input_block_a, input_block_b, input_block_c]
-	
-	# Добавляем в movable_objects (если еще не добавлены)
+
 	for input_block in input_blocks:
 		if not input_block in movable_objects:
 			movable_objects.append(input_block)
@@ -198,22 +171,18 @@ func setup_three_input_level():
 	if not $OutputBlock in movable_objects:
 		movable_objects.append($OutputBlock)
 		print("Added OutputBlock to movable_objects")
-	
-	# Ищем вручную размещенную TestResultsPanel3Inputs
+
 	test_results_panel = get_node_or_null("TestResultsPanel3Inputs")
 	
 	if not test_results_panel:
 		print("Creating TestResultsPanel3Inputs programmatically")
-		# Создаем новую панель результатов для трех входов
 		var new_panel_scene = preload("res://scenes/ui/TestResultsPanel3Inputs.tscn")
 		if ResourceLoader.exists(new_panel_scene.resource_path):
 			var new_panel = new_panel_scene.instantiate()
-			
-			# Позиционируем новую панель
+
 			new_panel.position = Vector2(1200, 200)
 			add_child(new_panel)
-			
-			# Заменяем ссылку на панель результатов
+
 			test_results_panel = new_panel
 			print("Created TestResultsPanel3Inputs")
 		else:
@@ -239,10 +208,8 @@ func _on_auto_save_timeout():
 
 func get_gates_data():
 	var gates_data = []
-	
-	# Раздельная логика для уровней с двумя и тремя входами
+
 	if not is_three_input_level:
-		# Уровни 1-6: сохраняем позиции InputBlock и OutputBlock
 		if has_node("InputBlock"):
 			var input_block_data = {
 				"type": "INPUT_BLOCK",
@@ -257,7 +224,7 @@ func get_gates_data():
 			}
 			gates_data.append(output_block_data)
 	else:
-		# Уровень 7: сохраняем позиции InputBlockA, InputBlockB, InputBlockC и OutputBlock
+
 		for input_block in input_blocks:
 			if input_block and is_instance_valid(input_block):
 				var input_block_data = {
@@ -274,9 +241,7 @@ func get_gates_data():
 			}
 			gates_data.append(output_block_data)
 	
-	# Сохраняем логические гейты (AND, OR, NOT и т.д.) для всех уровней
 	for obj in movable_objects:
-		# Пропускаем InputBlock и OutputBlock, так как их уже обработали
 		if (not is_three_input_level and (obj == $InputBlock or obj == $OutputBlock)) or \
 		   (is_three_input_level and (obj in input_blocks or obj == $OutputBlock)):
 			continue
@@ -378,43 +343,38 @@ func restore_level_state(state):
 	
 	print("Restoring level state for ", "three-input" if is_three_input_level else "two-input", " level")
 	print("State data: ", state.keys())
-	
-	# Восстанавливаем гейты (включая InputBlock и OutputBlock)
+
 	if state.has("gates"):
 		print("Restoring ", state["gates"].size(), " gates")
 		for gate_data in state["gates"]:
 			create_gate_from_data(gate_data)
-	
-	# Восстанавливаем провода
+
 	if state.has("wires"):
 		print("Restoring ", state["wires"].size(), " wires")
 		for wire_data in state["wires"]:
 			create_wire_from_data(wire_data)
 	
 	update_all_logic_objects()
-	# Обновляем цвета портов после восстановления всех проводов
+
 	update_all_port_colors()
 	
 	print("Level state restored successfully")
 
 func clear_level():
-	# Удаляем провода
+
 	for wire in wires:
 		if is_instance_valid(wire):
 			wire.queue_free()
 	wires.clear()
-	
-	# Удаляем только логические гейты, сохраняя InputBlock и OutputBlock
-	# Раздельная логика для уровней с двумя и тремя входами
+
 	for i in range(movable_objects.size() - 1, -1, -1):
 		var obj = movable_objects[i]
 		
 		if not is_three_input_level:
-			# Уровни 1-6: сохраняем только InputBlock и OutputBlock
+
 			if obj == $InputBlock or obj == $OutputBlock:
 				continue
 		else:
-			# Уровень 7: сохраняем InputBlockA/B/C и OutputBlock
 			if obj in input_blocks or obj == $OutputBlock:
 				continue
 			
@@ -432,7 +392,6 @@ func create_gate_from_data(gate_data):
 	var position_array = gate_data.get("position", [0, 0])
 	var position = Vector2(position_array[0], position_array[1])
 	
-	# Обрабатываем специальные типы блоков для уровней 1-6
 	if gate_type == "INPUT_BLOCK" and has_node("InputBlock"):
 		$InputBlock.position = position
 		print("Restored InputBlock position: ", position)
@@ -442,10 +401,9 @@ func create_gate_from_data(gate_data):
 		print("Restored OutputBlock position: ", position)
 		return
 	elif gate_type == "INPUT_BLOCK_SINGLE" and is_three_input_level:
-		# Уровень 7: восстанавливаем позиции InputBlockSingle
+
 		var block_name = gate_data.get("name", "")
-		
-		# Ищем существующий InputBlockSingle по имени
+
 		var found_block = null
 		for obj in get_children():
 			if obj.name == block_name:
@@ -455,8 +413,7 @@ func create_gate_from_data(gate_data):
 		if found_block and is_instance_valid(found_block):
 			found_block.position = position
 			print("Restored InputBlockSingle position: ", block_name, " at ", position)
-			
-			# Убедимся, что блок добавлен в input_blocks
+
 			if not found_block in input_blocks:
 				input_blocks.append(found_block)
 			if not found_block in movable_objects:
@@ -464,8 +421,7 @@ func create_gate_from_data(gate_data):
 		else:
 			print("WARNING: InputBlockSingle not found: ", block_name)
 		return
-	
-	# Создаем логические гейты
+
 	var gate_scene = null
 	
 	match gate_type:
@@ -500,12 +456,10 @@ func create_wire_from_data(wire_data):
 	var end_port_name = wire_data.get("end_port_name", "")
 	
 	print("Attempting to restore wire: ", start_parent_name, ".", start_port_name, " -> ", end_parent_name, ".", end_port_name)
-	
-	# Сначала пытаемся найти порты по именам
+
 	var start_port = find_port_by_name(start_parent_name, start_port_name)
 	var end_port = find_port_by_name(end_parent_name, end_port_name)
 	
-	# Если не нашли по именам, пытаемся по позициям
 	if not start_port or not end_port:
 		var start_pos_array = wire_data.get("start_position", [0, 0])
 		var end_pos_array = wire_data.get("end_position", [0, 0])
@@ -532,22 +486,20 @@ func create_wire_from_data(wire_data):
 		return false
 		
 func find_port_by_name(parent_name, port_name):
-	# Ищем родительский объект
+
 	var parent = null
 	
-	# Проверяем основные блоки
 	if parent_name == "OutputBlock" and has_node("OutputBlock"):
 		parent = $OutputBlock
 	elif parent_name == "InputBlock" and has_node("InputBlock"):
 		parent = $InputBlock
 	elif is_three_input_level:
-		# Для трехвходового уровня ищем среди input_blocks
+
 		for input_block in input_blocks:
 			if input_block and input_block.name == parent_name:
 				parent = input_block
 				break
-	
-	# Если не нашли в основных блоках, ищем среди всех movable_objects
+
 	if not parent:
 		for obj in movable_objects:
 			if obj and obj.name == parent_name:
@@ -557,18 +509,16 @@ func find_port_by_name(parent_name, port_name):
 	if not parent:
 		print("Parent not found: ", parent_name)
 		return null
-	
-	# Ищем порт у родителя - исправляем использование get_node_or_null
+
 	var port = null
 	if port_name is String or port_name is NodePath:
 		port = parent.get_node_or_null(port_name)
 	else:
-		# Если port_name не строка, преобразуем в строку
 		port = parent.get_node_or_null(str(port_name))
 	
 	if not port:
 		print("Port not found: ", parent_name, "/", port_name)
-		# Дополнительная отладка: выводим все дочерние узлы
+
 		print("Available children in ", parent_name, ":")
 		for child in parent.get_children():
 			print("  - ", child.name, " (Type: ", child.get_class(), ")")
@@ -585,18 +535,17 @@ func find_port_near_position(position, max_distance = 50.0):
 			
 		var ports = []
 		if has_node("InputBlock") and obj == $InputBlock and obj.visible and not is_three_input_level:
-			# Двухвходовой блок
 			ports = [$InputBlock/OutputA, $InputBlock/OutputB]
 		elif is_three_input_level and obj in input_blocks:
-			# Трехвходовые блоки
+
 			var output = obj.get_node_or_null("Output")
 			if output: ports.append(output)
 		elif obj == $OutputBlock:
-			# Выходной блок
+
 			var input_port = obj.get_node_or_null("InputPort")
 			if input_port: ports.append(input_port)
 		else:
-			# Логические гейты
+
 			var input1 = obj.get_node_or_null("Input1")
 			var input2 = obj.get_node_or_null("Input2")
 			var input_port = obj.get_node_or_null("InputPort")
@@ -624,23 +573,20 @@ func _setup_top_panel_buttons():
 	var run_button = $TopPanel/HBoxContainer/RunButton
 	
 	menu_button.connect("pressed", _on_menu_button_pressed)
-	# Теперь TopPanel сам обрабатывает теорию
+
 	map_button.connect("pressed", _on_map_button_pressed)
 	run_button.connect("pressed", _on_test_pressed)
-	
-	# Показываем только те гейты, которые разрешены для этого уровня
+
 	var gate_buttons_container = $TopPanel/GateButtonsContainer
-	
-	# Скрываем все кнопки сначала
+
 	for child in gate_buttons_container.get_children():
 		child.hide()
-	
-	# Показываем только разрешенные гейты
+
 	for gate_type in level_data.available_gates:
 		var button = gate_buttons_container.get_node_or_null(gate_type)
 		if button:
 			button.show()
-			# Подключаем сигналы только для видимых кнопок
+
 			match gate_type:
 				"NOT":
 					button.connect("pressed", _on_add_not_button_pressed)
@@ -701,11 +647,9 @@ func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		var mouse_pos = get_global_mouse_position()
 		var object_removed = false
-		
-		# Сначала проверяем объекты
+
 		for i in range(movable_objects.size() - 1, -1, -1):
 			var obj = movable_objects[i]
-			# Пропускаем входные и выходные блоки
 			if (not is_three_input_level and (obj == $InputBlock or obj == $OutputBlock)) or \
 			   (is_three_input_level and (obj in input_blocks or obj == $OutputBlock)):
 				continue
@@ -723,8 +667,7 @@ func _input(event):
 					mark_level_state_dirty()
 					print("Object removed: ", obj.name)
 					break
-		
-		# Затем проверяем провода
+
 		if not object_removed:
 			for i in range(wires.size() - 1, -1, -1):
 				var wire = wires[i]
@@ -736,11 +679,11 @@ func _input(event):
 				if wire_points.size() >= 2:
 					var closest_point = get_closest_point_on_line(wire_points, mouse_pos)
 					if closest_point.distance_to(mouse_pos) < 15:
-						# Удаляем провод и сбрасываем порты
+
 						if wire.has_method("disconnect_ports"):
 							wire.disconnect_ports()
 						else:
-							# Резервный метод, если функция disconnect_ports недоступна
+
 							update_all_port_colors()
 						
 						wire.queue_free()
@@ -751,28 +694,24 @@ func _input(event):
 					
 func remove_wires_connected_to_gate(gate):
 	var wires_to_remove = []
-	
-	# Сначала собираем все провода для удаления
+
 	for wire in wires:
 		if wire.start_port.get_parent() == gate or wire.end_port.get_parent() == gate:
 			wires_to_remove.append(wire)
-	
-	# Затем удаляем их
+
 	for wire in wires_to_remove:
 		if wire in wires:
 			wires.erase(wire)
 		if is_instance_valid(wire):
 			wire.queue_free()
-	
-	# Немедленное обновление цветов портов
+
 	update_all_port_colors()
 	print("Removed wires connected to gate: ", gate.name)
 
 func update_all_port_colors():
-	# Сначала сбрасываем ВСЕ порты
+
 	reset_all_port_sprites()
-	
-	# Затем устанавливаем зеленый цвет только для подключенных портов
+
 	for wire in wires:
 		if not wire or not is_instance_valid(wire):
 			continue
@@ -792,9 +731,7 @@ func update_all_port_colors():
 	print("Updated port colors for ", wires.size(), " wires")
 	
 func reset_all_port_sprites():
-	# Сбрасываем все порты более надежным способом
-	
-	# Сбрасываем порты InputBlock для двух входов
+
 	if not is_three_input_level and has_node("InputBlock"):
 		var input_block = $InputBlock
 		for port_name in ["OutputA", "OutputB"]:
@@ -803,8 +740,7 @@ func reset_all_port_sprites():
 				var sprite = port.get_node_or_null("Sprite2D")
 				if sprite and is_instance_valid(sprite):
 					sprite.texture = preload("res://assets/point.png")
-	
-	# Сбрасываем порты InputBlockSingle для трех входов
+
 	if is_three_input_level:
 		for input_block in input_blocks:
 			if input_block and is_instance_valid(input_block):
@@ -813,8 +749,7 @@ func reset_all_port_sprites():
 					var sprite = output_port.get_node_or_null("Sprite2D")
 					if sprite and is_instance_valid(sprite):
 						sprite.texture = preload("res://assets/point.png")
-	
-	# Сбрасываем порты OutputBlock
+
 	if has_node("OutputBlock"):
 		var output_block = $OutputBlock
 		var input_port = output_block.get_node_or_null("InputPort")
@@ -822,18 +757,15 @@ func reset_all_port_sprites():
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = preload("res://assets/point.png")
-	
-	# Сбрасываем порты всех логических гейтов
+
 	for obj in movable_objects:
 		if not obj or not is_instance_valid(obj):
 			continue
-			
-		# Пропускаем InputBlock и OutputBlock, так как их уже обработали
+
 		if (not is_three_input_level and (obj == $InputBlock or obj == $OutputBlock)) or \
 		   (is_three_input_level and (obj in input_blocks or obj == $OutputBlock)):
 			continue
-		
-		# Ищем все возможные порты
+
 		var ports = []
 		var possible_port_names = ["Input1", "Input2", "InputPort", "Output"]
 		
@@ -841,8 +773,7 @@ func reset_all_port_sprites():
 			var port = obj.get_node_or_null(port_name)
 			if port and is_instance_valid(port):
 				ports.append(port)
-		
-		# Сбрасываем спрайты портов
+
 		for port in ports:
 			var sprite = port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
@@ -884,7 +815,7 @@ func get_port_under_mouse():
 	var query = PhysicsPointQueryParameters2D.new()
 	query.position = mouse_pos
 	query.collide_with_areas = true
-	query.collision_mask = 1  # Убедимся, что проверяем правильный слой
+	query.collision_mask = 1 
 	var intersects = space_state.intersect_point(query, 1)
 	if intersects.size() > 0:
 		var collider = intersects[0].collider
@@ -948,9 +879,9 @@ func _on_test_pressed():
 	var player_outputs = []
 	
 	if is_three_input_level:
-		# Тестирование для трех входов (8 тестов)
+
 		for i in range(8):
-			# Устанавливаем текущий индекс теста для всех трех входных блоков
+
 			for input_block in input_blocks:
 				input_block.current_test_index = i
 			
@@ -958,7 +889,7 @@ func _on_test_pressed():
 			if has_node("OutputBlock"):
 				player_outputs.append(int($OutputBlock.received_value))
 	else:
-		# Оригинальная логика для двух входов (4 теста)
+
 		for i in range(4):
 			if has_node("InputBlock"):
 				$InputBlock.current_test_index = i
@@ -967,15 +898,13 @@ func _on_test_pressed():
 				player_outputs.append(int($OutputBlock.received_value))
 	
 	print("Test results - Actual: ", player_outputs)
-	
-	# Обновляем панель результатов
+
 	if test_results_panel:
 		if is_three_input_level and test_results_panel.has_method("update_current_outputs"):
 			test_results_panel.update_current_outputs(player_outputs)
 		elif test_results_panel.has_method("update_current_outputs"):
 			test_results_panel.update_current_outputs(player_outputs)
-	
-	# Проверяем результаты
+
 	if has_node("OutputBlock"):
 		var expected = $OutputBlock.expected
 		if player_outputs == expected:
@@ -1102,7 +1031,7 @@ func propagate_signals():
 	print("=== Signal propagation complete ===")
 	
 func propagate_signals_three_inputs():
-	# Сбрасываем все объекты, кроме входных блоков
+
 	for obj in all_logic_objects:
 		if obj.has_method("reset_inputs") and not (obj in input_blocks):
 			obj.reset_inputs()
@@ -1116,8 +1045,7 @@ func propagate_signals_three_inputs():
 	for obj in all_logic_objects:
 		dependencies[obj] = []
 		dependents[obj] = []
-	
-	# Заполняем зависимости на основе проводов
+
 	for wire in wires:
 		if not wire or not is_instance_valid(wire):
 			continue
@@ -1134,8 +1062,7 @@ func propagate_signals_three_inputs():
 				dependencies[end_gate].append(start_gate)
 			if not dependents[start_gate].has(end_gate):
 				dependents[start_gate].append(end_gate)
-	
-	# Топологическая сортировка (алгоритм Кана)
+
 	var queue = []
 	var in_degree = {}
 	
@@ -1156,21 +1083,18 @@ func propagate_signals_three_inputs():
 				queue.append(dependent)
 	
 	print("Processing order for three inputs: ", processed_order)
-	
-	# Обрабатываем объекты в порядке топологической сортировки
+
 	for current in processed_order:
 		if not current or not is_instance_valid(current):
 			continue
 			
 		print("Processing: ", current.name)
-		
-		# Если это входной блок (InputBlockSingle)
+
 		if current in input_blocks and current.has_method("get_output"):
-			# Получаем выходное значение
+
 			var output_value = int(current.get_output("Output"))
 			print(current.name, " output value: ", output_value)
-			
-			# Передаем значение по всем исходящим проводам
+
 			for wire in wires:
 				if not wire or not is_instance_valid(wire):
 					continue
@@ -1195,14 +1119,12 @@ func propagate_signals_three_inputs():
 						
 						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
 						end_gate.set_input(port_num, output_value)
-		
-		# Если это логический гейт (AND, OR, NOT и т.д.)
+
 		elif current.has_method("get_output") and current != $OutputBlock:
-			# Вычисляем выходное значение гейта
+
 			var output_value = int(current.get_output("Output"))
 			print(current.name, " output value: ", output_value)
-			
-			# Передаем значение по всем исходящим проводам
+
 			for wire in wires:
 				if not wire or not is_instance_valid(wire):
 					continue

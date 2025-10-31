@@ -1,4 +1,3 @@
-# InputBlockSingle.gd
 extends Node2D
 
 var values = []
