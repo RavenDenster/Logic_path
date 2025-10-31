@@ -9,7 +9,7 @@ var levels_data = [
 	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},
 	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},
 	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},
-	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"}  # Добавляем 7 уровень
+	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"}
 ]
 
 func _ready():
@@ -36,8 +36,7 @@ func setup_back_button():
 
 func create_level_buttons():
 	var center = screen_size / 2
-	
-	# Обновляем позиции для 7 уровней (3-2-2)
+
 	var positions = [
 		center + Vector2(-200, -150),  # Уровень 1
 		center + Vector2(0, -150),     # Уровень 2

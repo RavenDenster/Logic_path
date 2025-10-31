@@ -3,7 +3,6 @@ class_name Level1Data
 
 @export var level_name: String = "Level 1"
 @export var available_gates: Array[String] = ["OR"]
-@export var input_config: String = "dual"
 @export var input_values_a: Array[int] = [0, 0, 1, 1]
 @export var input_values_b: Array[int] = [0, 1, 0, 1]
 @export var expected_output: Array[int] = [0, 1, 1, 1]

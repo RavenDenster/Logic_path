@@ -9,7 +9,7 @@ var current_textures = []
 func _ready():
 	await get_tree().process_frame
 	initialize_textures()
-
+ 
 func initialize_textures():
 
 	if not has_node("Background/GridContainer"):
