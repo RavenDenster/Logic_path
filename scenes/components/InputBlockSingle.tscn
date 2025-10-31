@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://d00vka43qsb8"]
+
+[ext_resource type="Script" uid="uid://bkfjm1fbufv2x" path="res://scripts/components/InputBlockSingle.gd" id="1_kmgqk"]
+[ext_resource type="Texture2D" uid="uid://dy2sdihpopb5f" path="res://assets/input1.png" id="2_kjwgg"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_k2afy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qy78u"]
+
+[node name="InputBlockSingle" type="Node2D"]
+script = ExtResource("1_kmgqk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_kjwgg")
+
+[node name="output" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="output"]
+position = Vector2(33, -1)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_qy78u")
+
+[node name="Sprite2D" type="Sprite2D" parent="output"]
+position = Vector2(35, -2)
+texture = ExtResource("3_k2afy")

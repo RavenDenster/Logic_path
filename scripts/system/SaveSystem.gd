@@ -81,6 +81,10 @@ func complete_level(level_number):
 		print("Level ", level_int, " marked as completed")
 	else:
 		print("Level ", level_int, " already completed")
+		
+	# Обновляем last_played_level
+	game_data["last_played_level"] = level_int
+	save_game()
 
 func is_level_completed(level_number):
 	var level_int = int(level_number)
@@ -95,13 +99,9 @@ func get_completed_levels():
 		int_levels.append(int(level))
 	return int_levels
 
-func save_level_state(level_number, gates, wires):
+func save_level_state(level_number, data):
 	var level_int = int(level_number)
-	var state = {
-		"gates": gates,
-		"wires": wires
-	}
-	game_data["level_states"][str(level_int)] = state
+	game_data["level_states"][str(level_int)] = data
 	game_data["last_played_level"] = level_int
 	save_game()
 	print("Level ", level_int, " state saved. Last played level updated to: ", level_int)
@@ -120,17 +120,17 @@ func set_last_played_level(level_number):
 	save_game()
 
 func get_next_level_to_play():
-	var max_level = 6 
+	var max_level = 7 
 	var last_played = game_data["last_played_level"]
 	var completed_levels = game_data["completed_levels"]
 	
 	if not is_level_completed(last_played):
 		return last_played
-	
+
 	for level in range(last_played + 1, max_level + 1):
 		if not is_level_completed(level):
 			return level
-	
+
 	return last_played
 
 static func get_save_system():

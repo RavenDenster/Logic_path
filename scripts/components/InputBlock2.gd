@@ -1,4 +1,6 @@
+# scripts/components/InputBlock2.gd
 extends Node2D
+class_name InputBlock2
 
 var values_A = []
 var values_B = []
@@ -10,8 +12,11 @@ func get_output(port_name: String) -> int:
 		result = values_A[current_test_index]
 	elif port_name == "OutputB": 
 		result = values_B[current_test_index]
-	print("InputBlock output from ", port_name, ": ", result)
+	print("InputBlock2 output from ", port_name, ": ", result)
 	return result
 
 func reset_inputs(): 
 	pass
+
+func get_input_count() -> int:
+	return 2
