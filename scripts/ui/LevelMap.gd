@@ -9,7 +9,9 @@ var levels_data = [
 	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},
 	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},
 	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},
-	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"}
+	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"},
+	{"number": 8, "scene": "res://scenes/levels/Level8.tscn"},
+	{"number": 9, "scene": "res://scenes/levels/Level9.tscn"}
 ]
 
 func _ready():
@@ -37,14 +39,20 @@ func setup_back_button():
 func create_level_buttons():
 	var center = screen_size / 2
 
+	# Обновляем позиции для 9 уровней (3 ряда по 3)
 	var positions = [
-		center + Vector2(-200, -150),  # Уровень 1
-		center + Vector2(0, -150),     # Уровень 2
-		center + Vector2(200, -150),   # Уровень 3
-		center + Vector2(-100, 0),     # Уровень 4
-		center + Vector2(100, 0),      # Уровень 5
-		center + Vector2(-100, 150),   # Уровень 6
-		center + Vector2(100, 150)     # Уровень 7
+		# Первый ряд
+		center + Vector2(-200, -200),  # Уровень 1
+		center + Vector2(0, -200),     # Уровень 2
+		center + Vector2(200, -200),   # Уровень 3
+		# Второй ряд
+		center + Vector2(-200, 0),     # Уровень 4
+		center + Vector2(0, 0),        # Уровень 5
+		center + Vector2(200, 0),      # Уровень 6
+		# Третий ряд
+		center + Vector2(-200, 200),   # Уровень 7
+		center + Vector2(0, 200),      # Уровень 8
+		center + Vector2(200, 200)     # Уровень 9
 	]
 	
 	var save_system = get_node_or_null("/root/SaveSystem")
