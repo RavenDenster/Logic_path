@@ -8,7 +8,8 @@ var levels_data = [
 	{"number": 3, "scene": "res://scenes/levels/Level3.tscn"},
 	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},
 	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},
-	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"}
+	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},
+	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"}  # Добавляем 7 уровень
 ]
 
 func _ready():
@@ -36,13 +37,15 @@ func setup_back_button():
 func create_level_buttons():
 	var center = screen_size / 2
 	
+	# Обновляем позиции для 7 уровней (3-2-2)
 	var positions = [
-		center + Vector2(-200, 100),
-		center + Vector2(0, 100),
-		center + Vector2(200, 100),
-		center + Vector2(-200, -100),
-		center + Vector2(0, -100),
-		center + Vector2(200, -100)
+		center + Vector2(-200, -150),  # Уровень 1
+		center + Vector2(0, -150),     # Уровень 2
+		center + Vector2(200, -150),   # Уровень 3
+		center + Vector2(-100, 0),     # Уровень 4
+		center + Vector2(100, 0),      # Уровень 5
+		center + Vector2(-100, 150),   # Уровень 6
+		center + Vector2(100, 150)     # Уровень 7
 	]
 	
 	var save_system = get_node_or_null("/root/SaveSystem")
@@ -58,7 +61,7 @@ func create_level_buttons():
 		var btn_position = positions[i]
 		
 		var is_completed = save_system.is_level_completed(level.number)
-		print("LevelMap: Level ", level.number, " completed: ", is_completed, " (checking ", level.number, " in ", completed_levels, ")")
+		print("LevelMap: Level ", level.number, " completed: ", is_completed)
 		
 		var button = TextureButton.new()
 		button.name = "Level%dButton" % level.number

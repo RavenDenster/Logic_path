@@ -6,6 +6,9 @@ var arrow_progress = 0.0
 var arrow_speed = 0.4
 
 func connect_ports(start, end):
+	if not start or not end or not is_instance_valid(start) or not is_instance_valid(end):
+		return
+		
 	start_port = start
 	end_port = end
 	default_color = Color("#e39e45")
@@ -20,14 +23,15 @@ func connect_ports(start, end):
 	arrow.z_index = 1
 
 func _process(delta):
-	if not start_port or not end_port:
+	if not start_port or not is_instance_valid(start_port) or not end_port or not is_instance_valid(end_port):
+		queue_free()
 		return
 	
 	update_wire()
 	update_arrow(delta)
 
 func update_wire():
-	if not start_port or not end_port:
+	if not start_port or not is_instance_valid(start_port) or not end_port or not is_instance_valid(end_port):
 		return
 	
 	var start_pos = get_collision_shape_global_position(start_port)
@@ -99,7 +103,22 @@ func update_arrow(delta):
 	arrow.rotation = arrow_rotation
 
 func get_collision_shape_global_position(port):
-	var collision_shape = port.get_node("CollisionShape2D")
-	if collision_shape:
+	if not port or not is_instance_valid(port):
+		return Vector2.ZERO
+		
+	var collision_shape = port.get_node_or_null("CollisionShape2D")
+	if collision_shape and is_instance_valid(collision_shape):
 		return collision_shape.global_position
 	return port.global_position
+	
+func disconnect_ports():
+	# Эта функция вызывается при удалении провода для сброса портов
+	if start_port and is_instance_valid(start_port):
+		var start_sprite = start_port.get_node_or_null("Sprite2D")
+		if start_sprite and is_instance_valid(start_sprite):
+			start_sprite.texture = preload("res://assets/point.png")
+	
+	if end_port and is_instance_valid(end_port):
+		var end_sprite = end_port.get_node_or_null("Sprite2D")
+		if end_sprite and is_instance_valid(end_sprite):
+			end_sprite.texture = preload("res://assets/point.png")
