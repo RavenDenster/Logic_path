@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Level10Data" load_steps=2 format=3 uid="uid://dmbqojuqv4irt"]
+[gd_resource type="Resource" script_class="Level11Data" load_steps=2 format=3 uid="uid://blcuonfph5kda"]
 
-[ext_resource type="Script" uid="uid://bsn36ldktgbej" path="res://data/Level11Data.gd" id="1_2a6uf"]
+[ext_resource type="Script" uid="uid://dimh0v3jmjsaq" path="res://data/Level11Data.gd" id="1_2a6uf"]
 
 [resource]
 script = ExtResource("1_2a6uf")

@@ -1,7 +1,7 @@
 extends "res://scripts/levels/LevelBase.gd"
 
 func _ready():
-	level_data = preload("res://data/level_5_data.tres")
+	level_data = preload("res://data/level_6_data.tres")
 	super._ready()
 
 func _on_add_or_button_pressed():
