@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://cfw2jh1cig6h6"]
+
+[ext_resource type="Script" uid="uid://cbpbo2si3na7t" path="res://scripts/gates/Sel1Gate.gd" id="1_ueajh"]
+[ext_resource type="Texture2D" uid="uid://cp0sp6g7uglhn" path="res://assets/sel_1.png" id="2_ttc4u"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_qbm5p"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ai3b5"]
+
+[node name="Sel1" type="Node2D"]
+script = ExtResource("1_ueajh")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_ttc4u")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(46, 0)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_ai3b5")
+
+[node name="Sprite2D" type="Sprite2D" parent="Area2D"]
+position = Vector2(47, -1)
+texture = ExtResource("3_qbm5p")

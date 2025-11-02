@@ -265,6 +265,10 @@ func get_gates_data():
 			gate_type = "XNOR"
 		elif "ImplicationGate" in scene_file:
 			gate_type = "IMPLICATION"
+		elif "Sel0" in scene_file:
+			gate_type = "SEL0"
+		elif "Sel1" in scene_file:
+			gate_type = "SEL1"
 		
 		var gate_data = {
 			"type": gate_type,
@@ -308,18 +312,20 @@ func save_level_state():
 			"wires": wires_data
 		}
 		
-		print("Saving level ", level_number, " (", "three-input" if is_three_input_level else "two-input", ")")
-		print("Gates: ", gates_data.size(), ", Wires: ", wires_data.size())
-		
-		# Подробное логирование для отладки
+		print("=== SAVING LEVEL ", level_number, " ===")
+		print("Gates to save: ", gates_data.size())
 		for gate in gates_data:
-			print("  Gate: ", gate.get("type", "UNKNOWN"), " at ", gate.get("position", [0, 0]))
+			print("  - ", gate.get("type", "UNKNOWN"), " at ", gate.get("position", [0, 0]))
+		
+		print("Wires to save: ", wires_data.size())
 		
 		var save_system = get_node("/root/SaveSystem")
 		if save_system:
 			save_system.save_level_state(level_number, save_data)
 			print("Level state saved for level ", level_number)
-	
+		else:
+			print("ERROR: SaveSystem not found!")
+
 func load_level_state():
 	var level_number = get_level_number()
 	if level_number > 0:
@@ -441,6 +447,10 @@ func create_gate_from_data(gate_data):
 			gate_scene = preload("res://scenes/gates/XNORGate.tscn")
 		"IMPLICATION":
 			gate_scene = preload("res://scenes/gates/ImplicationGate.tscn")
+		"SEL0":
+			gate_scene = preload("res://scenes/gates/Sel0.tscn")
+		"SEL1":
+			gate_scene = preload("res://scenes/gates/Sel1.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
@@ -524,7 +534,48 @@ func find_port_by_name(parent_name, port_name):
 			print("  - ", child.name, " (Type: ", child.get_class(), ")")
 	
 	return port
+	
+func get_object_type(obj):
+	if obj == null:
+		return "UNKNOWN"
+	
+	if obj.is_in_group("Sel0"):
+		return "SEL0"
+	if obj.is_in_group("Sel1"):
+		return "SEL1"
+	
+	if is_three_input_level:
+		for i in range(input_blocks.size()):
+			if obj == input_blocks[i]:
+				return "INPUT_BLOCK_" + str(i)
+	
+	var scene_file = obj.scene_file_path
+	if "ANDGate" in scene_file:
+		return "AND"
+	elif "ORGate" in scene_file:
+		return "OR" 
+	elif "NOTGate" in scene_file:
+		return "NOT"
+	elif "XORGate" in scene_file:
+		return "XOR"
+	elif "NANDGate" in scene_file:
+		return "NAND"
+	elif "NORGate" in scene_file:
+		return "NOR"
+	elif "XNORGate" in scene_file:
+		return "XNOR"
+	elif "ImplicationGate" in scene_file:
+		return "IMPLICATION"
 
+	if not is_three_input_level and obj == $InputBlock:
+		return "INPUT_BLOCK"
+	elif obj == $OutputBlock:
+		return "OUTPUT_BLOCK"
+	
+	return "UNKNOWN"
+	
+
+	
 func find_port_near_position(position, max_distance = 50.0):
 	var closest_port = null
 	var closest_distance = max_distance
@@ -604,6 +655,10 @@ func _setup_top_panel_buttons():
 					button.connect("pressed", _on_add_nxor_button_pressed)
 				"Implication":
 					button.connect("pressed", _on_add_implication_button_pressed)
+				"SEL0":
+					button.connect("pressed", _on_add_sel0_button_pressed)
+				"SEL1":
+					button.connect("pressed", _on_add_sel1_button_pressed)
 					
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
@@ -1177,11 +1232,24 @@ func _on_add_nxor_button_pressed():
 
 func _on_add_implication_button_pressed():
 	pass
+	
+func _on_add_sel0_button_pressed():
+	pass
+
+func _on_add_sel1_button_pressed():
+	pass
+
+func save_and_exit(scene_path: String):
+	# Немедленно сохраняем состояние
+	level_state_dirty = true
+	save_level_state()
+	# Даем время на сохранение перед сменой сцены
+	await get_tree().create_timer(0.1).timeout
+	get_tree().change_scene_to_file(scene_path)
 
 func _on_menu_button_pressed():
-	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
+	save_and_exit("res://scenes/ui/MainMenu.tscn")
 
 func _on_map_button_pressed():
-	print("Map button pressed - going to level map")
-	get_tree().change_scene_to_file("res://scenes/ui/LevelMap.tscn")
+	save_and_exit("res://scenes/ui/LevelMap.tscn")
 	

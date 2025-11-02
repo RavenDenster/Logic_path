@@ -92,3 +92,11 @@ text = "XNOR"
 [node name="Implication" type="Button" parent="GateButtonsContainer"]
 layout_mode = 2
 text = "IMP"
+
+[node name="SEL0" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "SEL0"
+
+[node name="SEL1" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "SEL1"
