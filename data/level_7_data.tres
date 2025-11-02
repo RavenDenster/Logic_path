@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Level7Data" load_steps=2 format=3 uid="uid://cjsgi6sht04j8"]
+[gd_resource type="Resource" script_class="Level6Data" load_steps=2 format=3 uid="uid://di0rfdl1cjk0r"]
 
-[ext_resource type="Script" uid="uid://bh6wue5aw4cui" path="res://data/Level7Data.gd" id="1_15uw0"]
+[ext_resource type="Script" uid="uid://d0337aro4l5xi" path="res://data/Level7Data.gd" id="1_jpjtp"]
 
 [resource]
-script = ExtResource("1_15uw0")
-metadata/_custom_type_script = "uid://bh6wue5aw4cui"
+script = ExtResource("1_jpjtp")
+metadata/_custom_type_script = "uid://d0337aro4l5xi"

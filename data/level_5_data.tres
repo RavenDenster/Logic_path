@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="Level5Data" load_steps=2 format=3 uid="uid://cagyp3oj4hgws"]
+[gd_resource type="Resource" script_class="Level4Data" load_steps=2 format=3 uid="uid://caga1ef73nhvg"]
 
-[ext_resource type="Script" uid="uid://c0f567mp1a0wv" path="res://data/Level5Data.gd" id="1_5gnbc"]
+[ext_resource type="Script" uid="uid://4sayct2f4x4n" path="res://data/Level5Data.gd" id="1_0wvgf"]
 
 [resource]
-script = ExtResource("1_5gnbc")
-metadata/_custom_type_script = "uid://c0f567mp1a0wv"
+script = ExtResource("1_0wvgf")
+metadata/_custom_type_script = "uid://4sayct2f4x4n"

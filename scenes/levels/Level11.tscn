@@ -1,13 +1,13 @@
 [gd_scene load_steps=7 format=3 uid="uid://2ltkwx2sk1fi"]
 
-[ext_resource type="Script" uid="uid://c303km4lkjg3g" path="res://scripts/levels/Level11.gd" id="1_3sbav"]
+[ext_resource type="Script" uid="uid://djdiak8p4343x" path="res://scripts/levels/Level11.gd" id="1_3sbav"]
 [ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="2_dlbhq"]
 [ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="3_a5q81"]
 [ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="4_2mgmv"]
 [ext_resource type="PackedScene" uid="uid://d00vka43qsb8" path="res://scenes/components/InputBlockSingle.tscn" id="5_5s51e"]
 [ext_resource type="PackedScene" uid="uid://0n7kusmwjodw" path="res://scenes/ui/TestResultsPanel3Inputs.tscn" id="6_mj4hl"]
 
-[node name="Level11" type="Node2D"]
+[node name="Level10" type="Node2D"]
 script = ExtResource("1_3sbav")
 
 [node name="Background" type="TextureRect" parent="."]

@@ -1,13 +1,13 @@
 [gd_scene load_steps=7 format=3 uid="uid://ulmjoaaei5ee"]
 
 [ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="1_k1owj"]
-[ext_resource type="Script" uid="uid://edoibsdggd8f" path="res://scripts/levels/Level7.gd" id="1_kbpm3"]
+[ext_resource type="Script" uid="uid://dwjbfy7qxap6a" path="res://scripts/levels/Level7.gd" id="1_kbpm3"]
 [ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="2_tnkiw"]
 [ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="3_kbpm3"]
-[ext_resource type="PackedScene" uid="uid://d00vka43qsb8" path="res://scenes/components/InputBlockSingle.tscn" id="5_kbpm3"]
-[ext_resource type="PackedScene" uid="uid://0n7kusmwjodw" path="res://scenes/ui/TestResultsPanel3Inputs.tscn" id="6_onqt8"]
+[ext_resource type="PackedScene" uid="uid://5cahp04cxmr" path="res://scenes/components/InputBlock2.tscn" id="3_onqt8"]
+[ext_resource type="PackedScene" uid="uid://d12u305tit15w" path="res://scenes/ui/TestResultsPanel.tscn" id="6_xxriy"]
 
-[node name="Level7" type="Node2D"]
+[node name="Level6" type="Node2D"]
 script = ExtResource("1_kbpm3")
 
 [node name="Background" type="TextureRect" parent="."]
@@ -19,29 +19,16 @@ offset_bottom = 1079.0
 texture = ExtResource("1_k1owj")
 expand_mode = 1
 
+[node name="InputBlock" parent="." instance=ExtResource("3_onqt8")]
+position = Vector2(413, 508)
+
 [node name="OutputBlock" parent="." instance=ExtResource("2_tnkiw")]
 position = Vector2(1323, 501)
 
 [node name="TopPanel" parent="." instance=ExtResource("3_kbpm3")]
 
-[node name="InputBlockA" parent="." instance=ExtResource("5_kbpm3")]
-position = Vector2(255, 314)
-
-[node name="InputBlockB" parent="." instance=ExtResource("5_kbpm3")]
-position = Vector2(261, 477)
-
-[node name="InputBlockC" parent="." instance=ExtResource("5_kbpm3")]
-position = Vector2(263, 646)
-
-[node name="TestResultsPanel3Inputs" parent="." instance=ExtResource("6_onqt8")]
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 961.0
-offset_top = 1082.0
-offset_right = 961.0
-offset_bottom = 1082.0
-grow_horizontal = 1
-grow_vertical = 1
+[node name="TestResultsPanel" parent="." instance=ExtResource("6_xxriy")]
+offset_left = 321.0
+offset_top = 929.0
+offset_right = 1602.0
+offset_bottom = 1080.0

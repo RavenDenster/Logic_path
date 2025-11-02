@@ -6,14 +6,15 @@ var levels_data = [
 	{"number": 1, "scene": "res://scenes/levels/Level1.tscn"},
 	{"number": 2, "scene": "res://scenes/levels/Level2.tscn"},
 	{"number": 3, "scene": "res://scenes/levels/Level3.tscn"},
-	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},
-	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},
-	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},
-	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"},
-	{"number": 8, "scene": "res://scenes/levels/Level8.tscn"},
-	{"number": 9, "scene": "res://scenes/levels/Level9.tscn"},
-	{"number": 10, "scene": "res://scenes/levels/Level10.tscn"},
-	{"number": 11, "scene": "res://scenes/levels/Level11.tscn"}
+	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},  
+	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},  
+	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},  
+	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"}, 
+	{"number": 8, "scene": "res://scenes/levels/Level8.tscn"}, 
+	{"number": 9, "scene": "res://scenes/levels/Level9.tscn"}, 
+	{"number": 10, "scene": "res://scenes/levels/Level10.tscn"}, 
+	{"number": 11, "scene": "res://scenes/levels/Level11.tscn"}, 
+	{"number": 12, "scene": "res://scenes/levels/Level12.tscn"} 
 ]
 
 func _ready():
@@ -56,8 +57,9 @@ func create_level_buttons():
 		center + Vector2(0, 100),      # Уровень 8
 		center + Vector2(200, 100),    # Уровень 9
 		# Четвертый ряд
-		center + Vector2(0, 300),      # Уровень 10
 		center + Vector2(200, 300), 
+		center + Vector2(0, 300), 
+		center + Vector2(-200, 300),     # Уровень 10 
 	]
 	
 	var save_system = get_node_or_null("/root/SaveSystem")

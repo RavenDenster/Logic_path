@@ -1,39 +1,32 @@
 extends Resource
 class_name Level8Data
 
-@export var level_name: String = "Level 8: Parity Check (XOR Cascade)"
-@export var available_gates: Array[String] = ["XOR"]
+@export var level_name: String = "Level 8: Majority Gate"
+@export var available_gates: Array[String] = ["AND", "OR"]
 @export var input_values_a: Array[int] = [0,0,0,0,1,1,1,1]
 @export var input_values_b: Array[int] = [0,0,1,1,0,0,1,1] 
 @export var input_values_c: Array[int] = [0,1,0,1,0,1,0,1]
-@export var expected_output: Array[int] = [0,1,1,0,1,0,0,1]
-@export_multiline var theory_text: String = """Сумматор по модулю 2 (Функция чётности)
+@export var expected_output: Array[int] = [0,0,0,1,0,1,1,1]
+@export_multiline var theory_text: String = """Мажоритарный элемент (правило большинства)
 
-Цель: Построить схему, которая возвращает 1, если число единиц на входах нечётное.
+Цель: Построить схему, которая возвращает 1, если большинство входов (2 или 3 из 3) равны 1.
 
-Формула: A XOR B XOR C
+Формула: (A AND B) OR (A AND C) OR (B AND C)
 
 Таблица истинности для трех входов A, B, C:
 A  B  C | Выход
 --------|------
-0  0  0 |   0  (четное число 1)
-0  0  1 |   1  (нечетное: одна 1)
-0  1  0 |   1  (нечетное: одна 1)  
-0  1  1 |   0  (четное: две 1)
-1  0  0 |   1  (нечетное: одна 1)
-1  0  1 |   0  (четное: две 1)
-1  1  0 |   0  (четное: две 1)
-1  1  1 |   1  (нечетное: три 1)
+0  0  0 |   0
+0  0  1 |   0  
+0  1  0 |   0
+0  1  1 |   1  (B и C = 1)
+1  0  0 |   0
+1  0  1 |   1  (A и C = 1)
+1  1  0 |   1  (A и B = 1)
+1  1  1 |   1  (A, B и C = 1)
 
-Концепция каскадирования:
-- Первый XOR вычисляет A XOR B
-- Второй XOR берёт результат первого и вычисляет (A XOR B) XOR C
+Для решения используйте:
+- 3 элемента AND для проверки пар (A,B), (A,C), (B,C)
+- 1 элемент OR для объединения результатов
 
-Совет: 
-1. Создайте первый XOR-элемент и подключите A и B
-2. Создайте второй XOR-элемент и подключите:
-   - Вход 1: выход первого XOR
-   - Вход 2: вход C
-3. Выход второго XOR подключите к OutputBlock
-
-Это вводит важную концепцию каскадирования логических элементов!"""
+Совет: Соедините выходы трех AND-элементов с входами OR-элемента."""
