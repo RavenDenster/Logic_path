@@ -1,31 +1,30 @@
 extends Resource
 class_name Level4Data
 
-@export var level_name: String = "Level 4: XOR Gate"
-@export var available_gates: Array[String] = ["AND", "OR", "NOT"]
-@export var input_values_a: Array[int] = [0, 0, 1, 1]
-@export var input_values_b: Array[int] = [0, 1, 0, 1]
-@export var expected_output: Array[int] = [0, 1, 1, 0]
+@export var level_name: String = "Level 4: NOR Gate (NOT + OR)"
+@export var available_gates: Array[String] = ["OR", "NOT"]
+@export var input_values_a: Array[int] = [0,0,1,1]
+@export var input_values_b: Array[int] = [0,1,0,1]
+@export var expected_output: Array[int] = [1,0,0,0]
 @export_multiline var theory_text: String = """
-[b]Уровень 4: Логический элемент XOR (исключающее ИЛИ)[/b]
+[b]Уровень 4: Комбинация NOT + OR (NOR)[/b]
 
-XOR возвращает 1, если входы разные.
+Элемент NOR возвращает 1, только если [b]оба[/b] входа равны 0.
 
-[b]Таблица истинности XOR:[/b]
+[b]Таблица истинности NOR:[/b]
 A | B | Результат
-0 | 0 | 0
-0 | 1 | 1
-1 | 0 | 1
+0 | 0 | 1
+0 | 1 | 0
+1 | 0 | 0
 1 | 1 | 0
 
-[b]Математическое выражение:[/b]
-XOR(A, B) = (A AND NOT B) OR (NOT A AND B)
+[b]Как создать NOR:[/b]
+1. Добавьте элемент OR и элемент NOT
+2. Соедините выход OR со входом NOT
+3. Выход NOT будет выходом всей схемы (NOR)
 
-[b]Объяснение:[/b]
-- XOR означает "исключающее ИЛИ"
-- Результат 1 когда входы РАЗНЫЕ
-- Результат 0 когда входы ОДИНАКОВЫЕ
+[b]Логическая формула:[/b]
+NOR(A, B) = NOT(OR(A, B))
 
-[b]Задача:[/b] Соберите XOR используя доступные элементы (AND, OR, NOT).
-[b]Подсказка:[/b] Вам понадобятся 2 элемента AND, 2 элемента NOT и 1 элемент OR.
+[b]Применение:[/b] NOR - универсальный элемент, из которого можно построить любую логическую схему.
 """

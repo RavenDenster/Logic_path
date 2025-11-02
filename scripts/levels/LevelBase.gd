@@ -37,6 +37,11 @@ func get_level_number() -> int:
 	if "Level5" in scene_name: return 5
 	if "Level6" in scene_name: return 6
 	if "Level7" in scene_name: return 7
+	if "Level8" in scene_name: return 8
+	if "Level9" in scene_name: return 9
+	if "Level10" in scene_name: return 10
+	if "Level11" in scene_name: return 11
+	if "Level12" in scene_name: return 12
 	
 	return 0
 	

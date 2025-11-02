@@ -6,14 +6,15 @@ var levels_data = [
 	{"number": 1, "scene": "res://scenes/levels/Level1.tscn"},
 	{"number": 2, "scene": "res://scenes/levels/Level2.tscn"},
 	{"number": 3, "scene": "res://scenes/levels/Level3.tscn"},
-	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},
-	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},
-	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},
-	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"},
-	{"number": 8, "scene": "res://scenes/levels/Level8.tscn"},
-	{"number": 9, "scene": "res://scenes/levels/Level9.tscn"},
-	{"number": 10, "scene": "res://scenes/levels/Level10.tscn"},
-	{"number": 11, "scene": "res://scenes/levels/Level11.tscn"}
+	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},  
+	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},  
+	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},  
+	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"}, 
+	{"number": 8, "scene": "res://scenes/levels/Level8.tscn"}, 
+	{"number": 9, "scene": "res://scenes/levels/Level9.tscn"}, 
+	{"number": 10, "scene": "res://scenes/levels/Level10.tscn"}, 
+	{"number": 11, "scene": "res://scenes/levels/Level11.tscn"}, 
+	{"number": 12, "scene": "res://scenes/levels/Level12.tscn"} 
 ]
 
 func _ready():
@@ -56,8 +57,9 @@ func create_level_buttons():
 		center + Vector2(0, 100),      # Уровень 8
 		center + Vector2(200, 100),    # Уровень 9
 		# Четвертый ряд
-		center + Vector2(0, 300),      # Уровень 10
-		center + Vector2(200, 300), 
+		center + Vector2(-200, 300),  
+		center + Vector2(0, 300),     # Уровень 10 
+		center + Vector2(200, 300),
 	]
 	
 	var save_system = get_node_or_null("/root/SaveSystem")
@@ -102,10 +104,18 @@ func create_level_buttons():
 		add_child(button)
 
 func _on_level_button_pressed(scene_path):
+	print("Attempting to load scene: ", scene_path)
+	
 	if ResourceLoader.exists(scene_path):
+		print("Scene exists, loading...")
 		get_tree().change_scene_to_file(scene_path)
 	else:
 		push_error("Scene not found: " + scene_path)
+		var error_label = Label.new()
+		error_label.text = "ERROR: Scene not found: " + scene_path
+		error_label.add_theme_color_override("font_color", Color.RED)
+		error_label.position = Vector2(100, 100)
+		add_child(error_label)
 
 func _on_back_button_pressed():
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")

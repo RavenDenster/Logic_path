@@ -1,34 +1,31 @@
 extends Resource
 class_name Level6Data
 
-@export var level_name: String = "Level 6: XNOR Gate"
-@export var available_gates: Array[String] = ["AND", "OR", "NOT"]
+@export var level_name: String = "Level 6: Implication"
+@export var available_gates: Array[String] = ["OR", "NOT"]
 @export var input_values_a: Array[int] = [0, 0, 1, 1]
 @export var input_values_b: Array[int] = [0, 1, 0, 1]
-@export var expected_output: Array[int] = [1, 0, 0, 1]
+@export var expected_output: Array[int] = [1, 1, 0, 1]
 @export_multiline var theory_text: String = """
-[b]Уровень 6: Логический элемент XNOR (эквиваленция)[/b]
+[b]Уровень 6: Импликация (логическое следствие)[/b]
 
-XNOR возвращает 1, если входы одинаковые.
+Импликация A → B означает "если A, то B".
+Ложь только когда A=1 и B=0.
 
-[b]Таблица истинности XNOR:[/b]
+[b]Таблица истинности Импликации:[/b]
 A | B | Результат
 0 | 0 | 1
-0 | 1 | 0
+0 | 1 | 1
 1 | 0 | 0
 1 | 1 | 1
 
 [b]Математическое выражение:[/b]
-XNOR(A, B) = (A AND B) OR (NOT A AND NOT B)
-или
-XNOR(A, B) = NOT(XOR(A, B))
+A → B = NOT A OR B
 
 [b]Объяснение:[/b]
-- XNOR означает "исключающее НЕ-ИЛИ"
-- Результат 1 когда входы ОДИНАКОВЫЕ
-- Результат 0 когда входы РАЗНЫЕ
-- XNOR противоположен XOR
+- Импликация ложна только в одном случае: когда посылка истинна, а следствие ложно
+- "Если идет дождь, то я беру зонт" - ложь только если дождь идет, а зонта нет
+- Во всех остальных случаях импликация истинна
 
-[b]Задача:[/b] Создайте XNOR схему используя доступные элементы.
-[b]Подсказка:[/b] Можно реализовать как NOT(XOR), или напрямую по формуле.
+[b]Задача:[/b] Реализуйте импликацию используя OR и NOT.
 """
