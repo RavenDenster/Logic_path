@@ -1,5 +1,3 @@
-# TestResultsPanelHalfAdder.gd
-
 extends Control
 
 var input1_textures = []
@@ -27,45 +25,38 @@ func initialize_textures():
 		print("ERROR: GridContainer has only ", grid_container.get_child_count(), " children, expected at least 36")
 		return
 
-	# Очищаем массивы
 	input1_textures.clear()
 	input2_textures.clear()
 	desired_sum_textures.clear()
 	desired_carry_textures.clear()
 	current_sum_textures.clear()
 	current_carry_textures.clear()
-	
-	# Input A (ряд 1: индексы 1-4)
+
 	for i in range(1, 5):
 		var child = grid_container.get_child(i)
 		if child is TextureRect:
 			input1_textures.append(child)
-	
-	# Input B (ряд 2: индексы 7-10)  
+
 	for i in range(7, 11):
 		var child = grid_container.get_child(i)
 		if child is TextureRect:
 			input2_textures.append(child)
-	
-	# Desired Sum (ряд 3: индексы 13-16)
+
 	for i in range(13, 17):
 		var child = grid_container.get_child(i)
 		if child is TextureRect:
 			desired_sum_textures.append(child)
-	
-	# Desired Carry (ряд 4: индексы 19-22)
+
 	for i in range(19, 23):
 		var child = grid_container.get_child(i)
 		if child is TextureRect:
 			desired_carry_textures.append(child)
-	
-	# Current Sum (ряд 5: индексы 25-28)
+
 	for i in range(25, 29):
 		var child = grid_container.get_child(i)
 		if child is TextureRect:
 			current_sum_textures.append(child)
-	
-	# Current Carry (ряд 6: индексы 31-34)
+
 	for i in range(31, 35):
 		var child = grid_container.get_child(i)
 		if child is TextureRect:
@@ -83,8 +74,7 @@ func load_initial_data(inputs_a, inputs_b, expected_sum, expected_carry):
 	if input1_textures.is_empty():
 		print("ERROR: Textures arrays are not initialized!")
 		return
-	
-	# Input A
+
 	for i in range(4):
 		if i < input1_textures.size() and input1_textures[i] is TextureRect:
 			if inputs_a[i] == 1:
@@ -92,23 +82,20 @@ func load_initial_data(inputs_a, inputs_b, expected_sum, expected_carry):
 			else:
 				input1_textures[i].texture = preload("res://assets/point.png")
 
-	# Input B
 	for i in range(4):
 		if i < input2_textures.size() and input2_textures[i] is TextureRect:
 			if inputs_b[i] == 1:
 				input2_textures[i].texture = preload("res://assets/pointGreen.png")
 			else:
 				input2_textures[i].texture = preload("res://assets/point.png")
-	
-	# Desired Sum
+
 	for i in range(4):
 		if i < desired_sum_textures.size() and desired_sum_textures[i] is TextureRect:
 			if expected_sum[i] == 1:
 				desired_sum_textures[i].texture = preload("res://assets/pointGreen.png")
 			else:
 				desired_sum_textures[i].texture = preload("res://assets/point.png")
-	
-	# Desired Carry
+
 	for i in range(4):
 		if i < desired_carry_textures.size() and desired_carry_textures[i] is TextureRect:
 			if expected_carry[i] == 1:
@@ -116,7 +103,6 @@ func load_initial_data(inputs_a, inputs_b, expected_sum, expected_carry):
 			else:
 				desired_carry_textures[i].texture = preload("res://assets/point.png")
 
-	# Reset current outputs
 	for i in range(4):
 		if i < current_sum_textures.size() and current_sum_textures[i] is TextureRect:
 			current_sum_textures[i].texture = preload("res://assets/point.png")
@@ -134,7 +120,6 @@ func update_current_outputs(sum_outputs, carry_outputs):
 		print("ERROR: Current textures arrays are not initialized!")
 		return
 
-	# Проверяем размеры массивов
 	if sum_outputs.size() < 4:
 		print("ERROR: sum_outputs has only ", sum_outputs.size(), " elements, expected 4")
 		return
@@ -143,7 +128,7 @@ func update_current_outputs(sum_outputs, carry_outputs):
 		return
 
 	for i in range(4):
-		# Обновляем Current Sum
+
 		if i < current_sum_textures.size() and current_sum_textures[i] is TextureRect:
 			if sum_outputs[i] == 1:
 				current_sum_textures[i].texture = preload("res://assets/pointGreen.png")
@@ -153,8 +138,7 @@ func update_current_outputs(sum_outputs, carry_outputs):
 				print("Set current_sum[", i, "] to red")
 		else:
 			print("WARNING: current_sum_textures[", i, "] is invalid")
-		
-		# Обновляем Current Carry
+
 		if i < current_carry_textures.size() and current_carry_textures[i] is TextureRect:
 			if carry_outputs[i] == 1:
 				current_carry_textures[i].texture = preload("res://assets/pointGreen.png")
