@@ -120,7 +120,7 @@ func set_last_played_level(level_number):
 	save_game()
 
 func get_next_level_to_play():
-	var max_level = 12
+	var max_level = 13
 	var last_played = game_data["last_played_level"]
 	var completed_levels = game_data["completed_levels"]
 

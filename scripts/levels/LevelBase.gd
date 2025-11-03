@@ -42,6 +42,7 @@ func get_level_number() -> int:
 	if "Level10" in scene_name: return 10
 	if "Level11" in scene_name: return 11
 	if "Level12" in scene_name: return 12
+	if "Level13" in scene_name: return 13
 	
 	return 0
 	
@@ -59,15 +60,24 @@ func _ready():
 	
 	is_three_input_level = level_data.get("input_values_c") != null and level_data.input_values_c.size() > 0
 	
+	# Проверяем, является ли уровень полусумматором
+	var is_half_adder_level = level_data.get("expected_sum") != null and level_data.get("expected_carry") != null
+	
 	if has_node("TopPanel") and $TopPanel.has_method("set_level_name"):
 		$TopPanel.set_level_name(level_data.level_name)
 		$TopPanel.set_theory_text(level_data.theory_text)
 	
-	if has_node("OutputBlock"):
+	# Для полусумматора настройка делается в дочернем классе
+	if is_half_adder_level:
+		print("Detected Half Adder level - setup will be handled in child class")
+	elif has_node("OutputBlock"):
 		$OutputBlock.expected = level_data.expected_output.duplicate()
 	
 	if is_three_input_level:
 		setup_three_input_level()
+	elif is_half_adder_level:
+		# Для полусумматора базовая настройка не требуется
+		pass
 	else:
 		setup_two_input_level()
 	
@@ -79,17 +89,22 @@ func _ready():
 	
 	_setup_top_panel_buttons()
 	
-	update_all_logic_objects()
+	# НЕ вызываем update_all_logic_objects() здесь - дочерний класс сделает это сам
+	# update_all_logic_objects()
 	
 	await get_tree().process_frame
 	
+	# ОБНОВЛЕННЫЙ КОД: Загрузка данных в панель результатов с проверкой типа уровня
 	if test_results_panel:
 		if is_three_input_level and test_results_panel.has_method("load_initial_data"):
 			test_results_panel.load_initial_data(level_data.input_values_a, level_data.input_values_b, level_data.input_values_c, level_data.expected_output)
+		elif is_half_adder_level and test_results_panel.has_method("load_initial_data"):
+			# Для полусумматора данные загружаются в дочернем классе
+			print("Half Adder level - data loading handled in child class")
 		elif test_results_panel.has_method("load_initial_data"):
 			test_results_panel.load_initial_data(level_data.input_values_a, level_data.input_values_b, level_data.expected_output)
 	else:
-		print("WARNING: test_results_panel is null - this is normal for three-input levels")
+		print("WARNING: test_results_panel is null")
 
 	load_level_state()
 
@@ -214,7 +229,28 @@ func _on_auto_save_timeout():
 func get_gates_data():
 	var gates_data = []
 
-	if not is_three_input_level:
+	# Для полусумматора (уровень 13)
+	if has_node("OutputBlockSum") and has_node("OutputBlockCarry"):
+		if has_node("InputBlock"):
+			var input_block_data = {
+				"type": "INPUT_BLOCK",
+				"position": [$InputBlock.position.x, $InputBlock.position.y]
+			}
+			gates_data.append(input_block_data)
+		
+		var output_block_sum_data = {
+			"type": "OUTPUT_BLOCK_SUM", 
+			"position": [$OutputBlockSum.position.x, $OutputBlockSum.position.y]
+		}
+		gates_data.append(output_block_sum_data)
+		
+		var output_block_carry_data = {
+			"type": "OUTPUT_BLOCK_CARRY", 
+			"position": [$OutputBlockCarry.position.x, $OutputBlockCarry.position.y]
+		}
+		gates_data.append(output_block_carry_data)
+	elif not is_three_input_level:
+		# Обычный двухвходовый уровень
 		if has_node("InputBlock"):
 			var input_block_data = {
 				"type": "INPUT_BLOCK",
@@ -229,7 +265,7 @@ func get_gates_data():
 			}
 			gates_data.append(output_block_data)
 	else:
-
+		# Трехвходовый уровень
 		for input_block in input_blocks:
 			if input_block and is_instance_valid(input_block):
 				var input_block_data = {
@@ -246,28 +282,50 @@ func get_gates_data():
 			}
 			gates_data.append(output_block_data)
 	
+	# Добавляем обычные вентили
 	for obj in movable_objects:
-		if (not is_three_input_level and (obj == $InputBlock or obj == $OutputBlock)) or \
-		   (is_three_input_level and (obj in input_blocks or obj == $OutputBlock)):
+		# Пропускаем специальные блоки в зависимости от типа уровня
+		var skip = false
+		
+		# Для полусумматора
+		if has_node("OutputBlockSum") and has_node("OutputBlockCarry"):
+			if obj == $InputBlock or obj == $OutputBlockSum or obj == $OutputBlockCarry:
+				skip = true
+		# Для обычного двухвходового уровня
+		elif not is_three_input_level:
+			if has_node("InputBlock") and obj == $InputBlock:
+				skip = true
+			if has_node("OutputBlock") and obj == $OutputBlock:
+				skip = true
+		# Для трехвходового уровня
+		else:
+			if obj in input_blocks:
+				skip = true
+			if has_node("OutputBlock") and obj == $OutputBlock:
+				skip = true
+
+		if skip:
 			continue
 			
 		var scene_file = obj.scene_file_path
 		var gate_type = "UNKNOWN"
 		
-		if "ANDGate" in scene_file:
-			gate_type = "AND"
-		elif "ORGate" in scene_file:
-			gate_type = "OR"
-		elif "NOTGate" in scene_file:
-			gate_type = "NOT"
+		# Исправленная логика определения типа ворот:
+		# Проверяем более специфичные совпадения сначала
+		if "XNORGate" in scene_file:
+			gate_type = "XNOR"
 		elif "XORGate" in scene_file:
 			gate_type = "XOR"
 		elif "NANDGate" in scene_file:
 			gate_type = "NAND"
 		elif "NORGate" in scene_file:
 			gate_type = "NOR"
-		elif "XNORGate" in scene_file:
-			gate_type = "XNOR"
+		elif "ANDGate" in scene_file:
+			gate_type = "AND"
+		elif "ORGate" in scene_file:
+			gate_type = "OR"
+		elif "NOTGate" in scene_file:
+			gate_type = "NOT"
 		elif "ImplicationGate" in scene_file:
 			gate_type = "IMPLICATION"
 		elif "Sel0" in scene_file:
@@ -282,6 +340,7 @@ func get_gates_data():
 		gates_data.append(gate_data)
 	
 	return gates_data
+
 
 func get_wires_data():
 	var wires_data = []
@@ -372,7 +431,6 @@ func restore_level_state(state):
 	print("Level state restored successfully")
 
 func clear_level():
-
 	for wire in wires:
 		if is_instance_valid(wire):
 			wire.queue_free()
@@ -381,13 +439,21 @@ func clear_level():
 	for i in range(movable_objects.size() - 1, -1, -1):
 		var obj = movable_objects[i]
 		
-		if not is_three_input_level:
-
-			if obj == $InputBlock or obj == $OutputBlock:
-				continue
-		else:
-			if obj in input_blocks or obj == $OutputBlock:
-				continue
+		# Пропускаем специальные блоки в зависимости от типа уровня
+		var skip = false
+		
+		# Обычный двухвходовый уровень
+		if not is_three_input_level and has_node("OutputBlock") and (obj == $InputBlock or obj == $OutputBlock):
+			skip = true
+		# Трехвходовый уровень
+		elif is_three_input_level and (obj in input_blocks or (has_node("OutputBlock") and obj == $OutputBlock)):
+			skip = true
+		# Полусумматор (уровень 13)
+		elif has_node("OutputBlockSum") and has_node("OutputBlockCarry") and (obj == $InputBlock or obj == $OutputBlockSum or obj == $OutputBlockCarry):
+			skip = true
+			
+		if skip:
+			continue
 			
 		if is_instance_valid(obj):
 			obj.queue_free()
@@ -411,10 +477,16 @@ func create_gate_from_data(gate_data):
 		$OutputBlock.position = position
 		print("Restored OutputBlock position: ", position)
 		return
+	elif gate_type == "OUTPUT_BLOCK_SUM" and has_node("OutputBlockSum"):
+		$OutputBlockSum.position = position
+		print("Restored OutputBlockSum position: ", position)
+		return
+	elif gate_type == "OUTPUT_BLOCK_CARRY" and has_node("OutputBlockCarry"):
+		$OutputBlockCarry.position = position
+		print("Restored OutputBlockCarry position: ", position)
+		return
 	elif gate_type == "INPUT_BLOCK_SINGLE" and is_three_input_level:
-
 		var block_name = gate_data.get("name", "")
-
 		var found_block = null
 		for obj in get_children():
 			if obj.name == block_name:
@@ -424,7 +496,6 @@ func create_gate_from_data(gate_data):
 		if found_block and is_instance_valid(found_block):
 			found_block.position = position
 			print("Restored InputBlockSingle position: ", block_name, " at ", position)
-
 			if not found_block in input_blocks:
 				input_blocks.append(found_block)
 			if not found_block in movable_objects:
@@ -590,18 +661,27 @@ func find_port_near_position(position, max_distance = 50.0):
 			continue
 			
 		var ports = []
+		
+		# Обычный двухвходовый уровень
 		if has_node("InputBlock") and obj == $InputBlock and obj.visible and not is_three_input_level:
 			ports = [$InputBlock/OutputA, $InputBlock/OutputB]
+		# Трехвходовый уровень
 		elif is_three_input_level and obj in input_blocks:
-
 			var output = obj.get_node_or_null("Output")
 			if output: ports.append(output)
-		elif obj == $OutputBlock:
-
+		# Обычный выходной блок
+		elif has_node("OutputBlock") and obj == $OutputBlock:
 			var input_port = obj.get_node_or_null("InputPort")
 			if input_port: ports.append(input_port)
+		# Выходные блоки полусумматора
+		elif has_node("OutputBlockSum") and obj == $OutputBlockSum:
+			var input_port = obj.get_node_or_null("InputPort")
+			if input_port: ports.append(input_port)
+		elif has_node("OutputBlockCarry") and obj == $OutputBlockCarry:
+			var input_port = obj.get_node_or_null("InputPort")
+			if input_port: ports.append(input_port)
+		# Обычные вентили
 		else:
-
 			var input1 = obj.get_node_or_null("Input1")
 			var input2 = obj.get_node_or_null("Input2")
 			var input_port = obj.get_node_or_null("InputPort")
@@ -710,8 +790,15 @@ func _input(event):
 
 		for i in range(movable_objects.size() - 1, -1, -1):
 			var obj = movable_objects[i]
-			if (not is_three_input_level and (obj == $InputBlock or obj == $OutputBlock)) or \
-			   (is_three_input_level and (obj in input_blocks or obj == $OutputBlock)):
+			var skip = false
+			if not is_three_input_level and has_node("OutputBlock") and (obj == $InputBlock or obj == $OutputBlock):
+				skip = true
+			elif is_three_input_level and (obj in input_blocks or (has_node("OutputBlock") and obj == $OutputBlock)):
+				skip = true
+			elif has_node("OutputBlockSum") and has_node("OutputBlockCarry") and (obj == $InputBlock or obj == $OutputBlockSum or obj == $OutputBlockCarry):
+				skip = true
+
+			if skip:
 				continue
 				
 			var sprite = obj.get_node_or_null("Sprite2D")
@@ -769,7 +856,6 @@ func remove_wires_connected_to_gate(gate):
 	print("Removed wires connected to gate: ", gate.name)
 
 func update_all_port_colors():
-
 	reset_all_port_sprites()
 
 	for wire in wires:
@@ -789,10 +875,10 @@ func update_all_port_colors():
 			end_sprite.texture = preload("res://assets/pointGreen.png")
 	
 	print("Updated port colors for ", wires.size(), " wires")
-	
+		
 func reset_all_port_sprites():
-
-	if not is_three_input_level and has_node("InputBlock"):
+	# Обычный двухвходовый уровень
+	if not is_three_input_level and has_node("InputBlock") and has_node("OutputBlock"):
 		var input_block = $InputBlock
 		for port_name in ["OutputA", "OutputB"]:
 			var port = input_block.get_node_or_null(port_name)
@@ -801,6 +887,14 @@ func reset_all_port_sprites():
 				if sprite and is_instance_valid(sprite):
 					sprite.texture = preload("res://assets/point.png")
 
+		var output_block = $OutputBlock
+		var input_port = output_block.get_node_or_null("InputPort")
+		if input_port and is_instance_valid(input_port):
+			var sprite = input_port.get_node_or_null("Sprite2D")
+			if sprite and is_instance_valid(sprite):
+				sprite.texture = preload("res://assets/point.png")
+
+	# Трехвходовый уровень
 	if is_three_input_level:
 		for input_block in input_blocks:
 			if input_block and is_instance_valid(input_block):
@@ -810,20 +904,54 @@ func reset_all_port_sprites():
 					if sprite and is_instance_valid(sprite):
 						sprite.texture = preload("res://assets/point.png")
 
-	if has_node("OutputBlock"):
-		var output_block = $OutputBlock
-		var input_port = output_block.get_node_or_null("InputPort")
-		if input_port and is_instance_valid(input_port):
-			var sprite = input_port.get_node_or_null("Sprite2D")
+		if has_node("OutputBlock"):
+			var output_block = $OutputBlock
+			var input_port = output_block.get_node_or_null("InputPort")
+			if input_port and is_instance_valid(input_port):
+				var sprite = input_port.get_node_or_null("Sprite2D")
+				if sprite and is_instance_valid(sprite):
+					sprite.texture = preload("res://assets/point.png")
+
+	# Полусумматор (уровень 13)
+	if has_node("OutputBlockSum") and has_node("OutputBlockCarry"):
+		if has_node("InputBlock"):
+			var input_block = $InputBlock
+			for port_name in ["OutputA", "OutputB"]:
+				var port = input_block.get_node_or_null(port_name)
+				if port and is_instance_valid(port):
+					var sprite = port.get_node_or_null("Sprite2D")
+					if sprite and is_instance_valid(sprite):
+						sprite.texture = preload("res://assets/point.png")
+
+		var output_block_sum = $OutputBlockSum
+		var input_port_sum = output_block_sum.get_node_or_null("InputPort")
+		if input_port_sum and is_instance_valid(input_port_sum):
+			var sprite = input_port_sum.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = preload("res://assets/point.png")
 
+		var output_block_carry = $OutputBlockCarry
+		var input_port_carry = output_block_carry.get_node_or_null("InputPort")
+		if input_port_carry and is_instance_valid(input_port_carry):
+			var sprite = input_port_carry.get_node_or_null("Sprite2D")
+			if sprite and is_instance_valid(sprite):
+				sprite.texture = preload("res://assets/point.png")
+
+	# Общие вентили
 	for obj in movable_objects:
 		if not obj or not is_instance_valid(obj):
 			continue
 
-		if (not is_three_input_level and (obj == $InputBlock or obj == $OutputBlock)) or \
-		   (is_three_input_level and (obj in input_blocks or obj == $OutputBlock)):
+		# Пропускаем специальные блоки в зависимости от типа уровня
+		var skip = false
+		if not is_three_input_level and has_node("OutputBlock") and (obj == $InputBlock or obj == $OutputBlock):
+			skip = true
+		elif is_three_input_level and (obj in input_blocks or (has_node("OutputBlock") and obj == $OutputBlock)):
+			skip = true
+		elif has_node("OutputBlockSum") and has_node("OutputBlockCarry") and (obj == $InputBlock or obj == $OutputBlockSum or obj == $OutputBlockCarry):
+			skip = true
+
+		if skip:
 			continue
 
 		var ports = []
@@ -840,6 +968,8 @@ func reset_all_port_sprites():
 				sprite.texture = preload("res://assets/point.png")
 	
 	print("Reset all port sprites")
+	
+	
 
 func get_closest_point_on_line(points, target_point):
 	var closest_point = points[0]
@@ -965,7 +1095,7 @@ func _on_test_pressed():
 		elif test_results_panel.has_method("update_current_outputs"):
 			test_results_panel.update_current_outputs(player_outputs)
 
-	if has_node("OutputBlock"):
+	if has_node("OutputBlock") and not has_node("OutputBlockSum"):
 		var expected = $OutputBlock.expected
 		if player_outputs == expected:
 			$OutputBlock.set_correct_style()
