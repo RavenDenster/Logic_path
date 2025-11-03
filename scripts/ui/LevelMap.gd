@@ -14,7 +14,8 @@ var levels_data = [
 	{"number": 9, "scene": "res://scenes/levels/Level9.tscn"}, 
 	{"number": 10, "scene": "res://scenes/levels/Level10.tscn"}, 
 	{"number": 11, "scene": "res://scenes/levels/Level11.tscn"}, 
-	{"number": 12, "scene": "res://scenes/levels/Level12.tscn"} 
+	{"number": 12, "scene": "res://scenes/levels/Level12.tscn"},
+	{"number": 13, "scene": "res://scenes/levels/Level13.tscn"}
 ]
 
 func _ready():
@@ -60,6 +61,8 @@ func create_level_buttons():
 		center + Vector2(-200, 300),  
 		center + Vector2(0, 300),     # Уровень 10 
 		center + Vector2(200, 300),
+		
+		center + Vector2(-200, 400),
 	]
 	
 	var save_system = get_node_or_null("/root/SaveSystem")

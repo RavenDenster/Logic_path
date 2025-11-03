@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Level8Data" load_steps=2 format=3 uid="uid://cx3xai2ty5vry"]
+[gd_resource type="Resource" script_class="Level9Data" load_steps=2 format=3 uid="uid://cx3xai2ty5vry"]
 
 [ext_resource type="Script" uid="uid://ddopyhifqi0km" path="res://data/Level9Data.gd" id="1_ytt08"]
 
