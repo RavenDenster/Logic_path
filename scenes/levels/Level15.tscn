@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3 uid="uid://cg6vl7q3xyxci"]
+
+[ext_resource type="Script" uid="uid://bsi3ua834qps5" path="res://scripts/levels/Level15.gd" id="1_et5ed"]
+[ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="2_tys1q"]
+[ext_resource type="PackedScene" uid="uid://5cahp04cxmr" path="res://scenes/components/InputBlock2.tscn" id="3_64hue"]
+[ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="4_xnsm0"]
+[ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="5_yr581"]
+[ext_resource type="PackedScene" uid="uid://xag8makear2m" path="res://scenes/ui/TestResultsPanel2BitAdder.tscn" id="6_5wxs6"]
+
+[node name="Level15" type="Node2D"]
+script = ExtResource("1_et5ed")
+
+[node name="Background" type="TextureRect" parent="."]
+z_index = -35
+offset_left = 3.0
+offset_top = -3.0
+offset_right = 1921.0
+offset_bottom = 1079.0
+texture = ExtResource("4_xnsm0")
+expand_mode = 1
+
+[node name="TopPanel" parent="." instance=ExtResource("5_yr581")]
+
+[node name="TestResultsPanel2BitAdder" parent="." instance=ExtResource("6_5wxs6")]
+offset_left = 962.0
+offset_top = 1082.0
+offset_right = 962.0
+offset_bottom = 1082.0
+
+[node name="OutputCout" parent="." instance=ExtResource("2_tys1q")]
+position = Vector2(1400, 534)
+
+[node name="OutputS0" parent="." instance=ExtResource("2_tys1q")]
+position = Vector2(1389, 277)
+
+[node name="OutputS1" parent="." instance=ExtResource("2_tys1q")]
+position = Vector2(1396, 401)
+
+[node name="InputBlockB" parent="." instance=ExtResource("3_64hue")]
+position = Vector2(398, 634)
+
+[node name="InputBlockA" parent="." instance=ExtResource("3_64hue")]
+position = Vector2(403, 333)
