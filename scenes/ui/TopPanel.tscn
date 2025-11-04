@@ -100,3 +100,15 @@ text = "SEL0"
 [node name="SEL1" type="Button" parent="GateButtonsContainer"]
 layout_mode = 2
 text = "SEL1"
+
+[node name="FullAdder" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "SUM"
+
+[node name="HalfAdder" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "HSUM"
+
+[node name="Cout0" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "COUT0"

@@ -1,0 +1,71 @@
+[gd_scene load_steps=6 format=3 uid="uid://buk0fcxwm3mr0"]
+
+[ext_resource type="Script" uid="uid://cl3hcsk5ilnxn" path="res://scripts/gates/FullAdder.gd" id="1_l543d"]
+[ext_resource type="Texture2D" uid="uid://ckj2frnluj6x2" path="res://assets/sum.png" id="2_5iy0y"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_ktjc6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jenhw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tdscw"]
+
+[node name="FullAdder" type="Node2D"]
+script = ExtResource("1_l543d")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_5iy0y")
+
+[node name="Input1" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input1"]
+position = Vector2(-37, -36)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_jenhw")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input1"]
+position = Vector2(-36, -37)
+texture = ExtResource("3_ktjc6")
+
+[node name="Input2" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input2"]
+position = Vector2(-39, -5)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_jenhw")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input2"]
+position = Vector2(-37, -7)
+texture = ExtResource("3_ktjc6")
+
+[node name="Input3" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input3"]
+position = Vector2(-38, 27)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_jenhw")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input3"]
+position = Vector2(-37, 26)
+texture = ExtResource("3_ktjc6")
+
+[node name="OutputSum" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputSum"]
+position = Vector2(42, -20)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_tdscw")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputSum"]
+position = Vector2(43, -22)
+texture = ExtResource("3_ktjc6")
+
+[node name="OutputCarry" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputCarry"]
+position = Vector2(42, 19)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_tdscw")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputCarry"]
+position = Vector2(43, 18)
+texture = ExtResource("3_ktjc6")

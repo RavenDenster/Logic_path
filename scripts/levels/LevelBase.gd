@@ -264,6 +264,12 @@ func _setup_top_panel_buttons():
 					button.connect("pressed", _on_add_sel0_button_pressed)
 				"SEL1":
 					button.connect("pressed", _on_add_sel1_button_pressed)
+				"HalfAdder":
+					button.connect("pressed", _on_add_half_adder_button_pressed)
+				"FullAdder":
+					button.connect("pressed", _on_add_full_adder_button_pressed)
+				"Cout0":
+					button.connect("pressed", _on_add_cout0_button_pressed)
 					
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
@@ -455,6 +461,10 @@ func _on_add_implication_button_pressed(): pass
 func _on_add_sel0_button_pressed(): pass
 
 func _on_add_sel1_button_pressed(): pass
+
+func _on_add_half_adder_button_pressed(): pass
+func _on_add_full_adder_button_pressed(): pass
+func _on_add_cout0_button_pressed(): pass
 
 func save_and_exit(scene_path: String):
 
