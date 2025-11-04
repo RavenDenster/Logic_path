@@ -1,4 +1,4 @@
-extends "res://scripts/levels/LevelBase.gd"
+extends "res://scripts/levels/LevelTwoInputs.gd"
 
 func _ready():
 	level_data = preload("res://data/level_2_data.tres")

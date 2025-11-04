@@ -59,7 +59,6 @@ func _ready():
 	test_results_panel = null
 	
 	is_three_input_level = level_data.get("input_values_c") != null and level_data.input_values_c.size() > 0
-
 	var is_half_adder_level = level_data.get("expected_sum") != null and level_data.get("expected_carry") != null
 	
 	if has_node("TopPanel") and $TopPanel.has_method("set_level_name"):
@@ -71,12 +70,20 @@ func _ready():
 	elif has_node("OutputBlock"):
 		$OutputBlock.expected = level_data.expected_output.duplicate()
 	
+	# ВЫЗОВ МЕТОДОВ SETUP В ЗАВИСИМОСТИ ОТ ТИПА УРОВНЯ
 	if is_three_input_level:
-		setup_three_input_level()
+		if has_method("setup_three_input_level"):
+			setup_three_input_level()
+		else:
+			push_error("Three input level but no setup_three_input_level method!")
 	elif is_half_adder_level:
+		# Для полусумматора setup делается в дочернем классе
 		pass
 	else:
-		setup_two_input_level()
+		if has_method("setup_two_input_level"):
+			setup_two_input_level()
+		else:
+			push_error("Two input level but no setup_two_input_level method!")
 	
 	temp_line = Line2D.new()
 	add_child(temp_line)
@@ -732,6 +739,10 @@ func _setup_top_panel_buttons():
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
 	print("Updated all_logic_objects: ", all_logic_objects)
+	
+func _on_test_pressed():
+	# Базовый метод - будет переопределен в дочерних классах
+	push_error("_on_test_pressed not implemented in child class for level type!")
 
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -1041,53 +1052,6 @@ func get_collision_shape_global_position(port):
 	if collision_shape and is_instance_valid(collision_shape):
 		return collision_shape.global_position
 	return port.global_position
-
-func _on_test_pressed():
-	reset_all_port_sprites()
-	if has_node("OutputBlock"):
-		$OutputBlock.set_default_style()
-	
-	var player_outputs = []
-	
-	if is_three_input_level:
-
-		for i in range(8):
-
-			for input_block in input_blocks:
-				input_block.current_test_index = i
-			
-			propagate_signals_three_inputs()
-			if has_node("OutputBlock"):
-				player_outputs.append(int($OutputBlock.received_value))
-	else:
-
-		for i in range(4):
-			if has_node("InputBlock"):
-				$InputBlock.current_test_index = i
-			propagate_signals()
-			if has_node("OutputBlock"):
-				player_outputs.append(int($OutputBlock.received_value))
-	
-	print("Test results - Actual: ", player_outputs)
-
-	if test_results_panel:
-		if is_three_input_level and test_results_panel.has_method("update_current_outputs"):
-			test_results_panel.update_current_outputs(player_outputs)
-		elif test_results_panel.has_method("update_current_outputs"):
-			test_results_panel.update_current_outputs(player_outputs)
-
-	if has_node("OutputBlock") and not has_node("OutputBlockSum"):
-		var expected = $OutputBlock.expected
-		if player_outputs == expected:
-			$OutputBlock.set_correct_style()
-			if not level_completed_this_session:
-				save_level_progress()
-				level_completed_this_session = true
-		else:
-			$OutputBlock.set_default_style()
-			level_completed_this_session = false
-	
-	update_all_port_colors()
 	
 func save_level_progress():
 	var level_number = get_level_number()
@@ -1107,222 +1071,6 @@ func extract_level_number(scene_name):
 		return result.get_string(1).to_int()
 	return 0
 
-func propagate_signals():
-	for obj in all_logic_objects:
-		if obj.has_method("reset_inputs"):
-			obj.reset_inputs()
-	
-	print("=== Starting signal propagation ===")
-	
-	var dependencies = {}
-	var dependents = {}
-	
-	for obj in all_logic_objects:
-		dependencies[obj] = []
-		dependents[obj] = []
-	
-	for wire in wires:
-		var start_gate = wire.start_port.get_parent()
-		var end_gate = wire.end_port.get_parent()
-		
-		if start_gate != end_gate:
-			if not dependencies[end_gate].has(start_gate):
-				dependencies[end_gate].append(start_gate)
-			if not dependents[start_gate].has(end_gate):
-				dependents[start_gate].append(end_gate)
-	
-	var queue = []
-	var in_degree = {}
-	
-	for obj in all_logic_objects:
-		in_degree[obj] = dependencies[obj].size()
-		if in_degree[obj] == 0:
-			queue.append(obj)
-	
-	var processed_order = []
-	
-	while queue.size() > 0:
-		var current = queue.pop_front()
-		processed_order.append(current)
-		
-		for dependent in dependents[current]:
-			in_degree[dependent] -= 1
-			if in_degree[dependent] == 0:
-				queue.append(dependent)
-	
-	print("Processing order: ", processed_order)
-	
-	for current in processed_order:
-		print("Processing: ", current.name)
-		
-		if current == $InputBlock:
-			for port_name in ["OutputA", "OutputB"]:
-				var port = current.get_node_or_null(port_name)
-				if port:
-					for wire in wires:
-						if wire.start_port == port:
-							var end_gate = wire.end_port.get_parent()
-							var end_port_name = wire.end_port.name
-							var val = int(current.get_output(port_name))
-							
-							if end_gate.has_method("set_input"):
-								var port_num = 1
-								if end_port_name == "Input2":
-									port_num = 2
-								elif end_port_name == "InputPort":
-									port_num = 1
-								elif end_port_name == "Input":
-									port_num = 1
-								
-								print("Setting input for ", end_gate.name, " port ", port_num, " to ", val)
-								end_gate.set_input(port_num, val)
-		
-		elif current.has_method("get_output"):
-			var output_value = int(current.get_output("Output"))
-			print(current.name, " output value: ", output_value)
-			
-			for wire in wires:
-				if wire.start_port.get_parent() == current:
-					var end_gate = wire.end_port.get_parent()
-					var end_port_name = wire.end_port.name
-					
-					if end_gate.has_method("set_input"):
-						var port_num = 1
-						if end_port_name == "Input2":
-							port_num = 2
-						elif end_port_name == "InputPort":
-							port_num = 1
-						elif end_port_name == "Input":
-							port_num = 1
-						
-						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
-						end_gate.set_input(port_num, output_value)
-	
-	print("Final OutputBlock value: ", $OutputBlock.received_value)
-	print("=== Signal propagation complete ===")
-	
-func propagate_signals_three_inputs():
-
-	for obj in all_logic_objects:
-		if obj.has_method("reset_inputs") and not (obj in input_blocks):
-			obj.reset_inputs()
-	
-	print("=== Starting signal propagation for three inputs ===")
-
-	var dependencies = {}
-	var dependents = {}
-	
-	for obj in all_logic_objects:
-		dependencies[obj] = []
-		dependents[obj] = []
-
-	for wire in wires:
-		if not wire or not is_instance_valid(wire):
-			continue
-		if not wire.start_port or not is_instance_valid(wire.start_port):
-			continue
-		if not wire.end_port or not is_instance_valid(wire.end_port):
-			continue
-			
-		var start_gate = wire.start_port.get_parent()
-		var end_gate = wire.end_port.get_parent()
-		
-		if start_gate != end_gate:
-			if not dependencies[end_gate].has(start_gate):
-				dependencies[end_gate].append(start_gate)
-			if not dependents[start_gate].has(end_gate):
-				dependents[start_gate].append(end_gate)
-
-	var queue = []
-	var in_degree = {}
-	
-	for obj in all_logic_objects:
-		in_degree[obj] = dependencies[obj].size()
-		if in_degree[obj] == 0:
-			queue.append(obj)
-	
-	var processed_order = []
-	
-	while queue.size() > 0:
-		var current = queue.pop_front()
-		processed_order.append(current)
-		
-		for dependent in dependents[current]:
-			in_degree[dependent] -= 1
-			if in_degree[dependent] == 0:
-				queue.append(dependent)
-	
-	print("Processing order for three inputs: ", processed_order)
-
-	for current in processed_order:
-		if not current or not is_instance_valid(current):
-			continue
-			
-		print("Processing: ", current.name)
-
-		if current in input_blocks and current.has_method("get_output"):
-
-			var output_value = int(current.get_output("Output"))
-			print(current.name, " output value: ", output_value)
-
-			for wire in wires:
-				if not wire or not is_instance_valid(wire):
-					continue
-				if not wire.start_port or not is_instance_valid(wire.start_port):
-					continue
-					
-				if wire.start_port.get_parent() == current:
-					var end_gate = wire.end_port.get_parent()
-					if not end_gate or not is_instance_valid(end_gate):
-						continue
-						
-					var end_port_name = wire.end_port.name
-					
-					if end_gate.has_method("set_input"):
-						var port_num = 1
-						if end_port_name == "Input2":
-							port_num = 2
-						elif end_port_name == "InputPort":
-							port_num = 1
-						elif end_port_name == "Input":
-							port_num = 1
-						
-						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
-						end_gate.set_input(port_num, output_value)
-
-		elif current.has_method("get_output") and current != $OutputBlock:
-
-			var output_value = int(current.get_output("Output"))
-			print(current.name, " output value: ", output_value)
-
-			for wire in wires:
-				if not wire or not is_instance_valid(wire):
-					continue
-				if not wire.start_port or not is_instance_valid(wire.start_port):
-					continue
-					
-				if wire.start_port.get_parent() == current:
-					var end_gate = wire.end_port.get_parent()
-					if not end_gate or not is_instance_valid(end_gate):
-						continue
-						
-					var end_port_name = wire.end_port.name
-					
-					if end_gate.has_method("set_input"):
-						var port_num = 1
-						if end_port_name == "Input2":
-							port_num = 2
-						elif end_port_name == "InputPort":
-							port_num = 1
-						elif end_port_name == "Input":
-							port_num = 1
-						
-						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
-						end_gate.set_input(port_num, output_value)
-	
-	if has_node("OutputBlock"):
-		print("Final OutputBlock value: ", $OutputBlock.received_value)
-	print("=== Signal propagation for three inputs complete ===")
 
 func _on_add_not_button_pressed():
 	pass
