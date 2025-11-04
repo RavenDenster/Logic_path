@@ -1,10 +1,8 @@
-# Level13.gd
 extends "res://scripts/levels/LevelHalfAdder.gd"
 
 func _ready():
 	level_data = preload("res://data/level_13_data.tres")
-	
-	# Проверяем, что данные загружены правильно
+
 	if not level_data:
 		push_error("Level13: level_data is null!")
 		return
@@ -16,8 +14,7 @@ func _ready():
 	print("  Expected Carry: ", level_data.expected_carry)
 	
 	super._ready()
-	
-	# Вызываем нашу собственную настройку
+
 	setup_half_adder_level()
 
 func _on_add_and_button_pressed():

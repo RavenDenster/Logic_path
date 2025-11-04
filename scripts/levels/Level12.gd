@@ -52,19 +52,17 @@ func _on_test_pressed():
 		$OutputBlock.set_default_style()
 	
 	var player_outputs = []
-	
-	# Получаем все Sel0 и Sel1 гейты
+
 	var sel0_gates = get_tree().get_nodes_in_group("Sel0")
 	var sel1_gates = get_tree().get_nodes_in_group("Sel1")
 	
 	print("Testing with ", sel0_gates.size(), " Sel0 gates and ", sel1_gates.size(), " Sel1 gates")
 	
 	for i in range(8):
-		# Устанавливаем входные блоки
+
 		for input_block in input_blocks:
 			input_block.current_test_index = i
-		
-		# Устанавливаем Sel0 и Sel1 гейты
+
 		for sel0 in sel0_gates:
 			if sel0.has_method("set_test_index"):
 				sel0.set_test_index(i)
