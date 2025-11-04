@@ -1,79 +1,115 @@
 extends "res://scripts/levels/LevelBase.gd"
 
+var input_block_a
+var input_block_b  
+var input_block_cin
 var output_block_sum
-var output_block_carry
+var output_block_cout
 
-func setup_half_adder_level():
-	print("Setting up Half Adder level with two outputs")
+func _ready():
+	if not level_data:
+		push_error("Level data not set!")
+		return
+	
+	wires = []
+	movable_objects = []
+	all_logic_objects = []
+	
+	if has_node("TopPanel") and $TopPanel.has_method("set_level_name"):
+		$TopPanel.set_level_name(level_data.level_name)
+		$TopPanel.set_theory_text(level_data.theory_text)
 
+	setup_full_adder_level()
+	
+	temp_line = Line2D.new()
+	add_child(temp_line)
+	temp_line.default_color = Color("#e39e45")
+	temp_line.width = 8
+	temp_line.points = []
+	
+	_setup_top_panel_buttons()
+	
+	await get_tree().process_frame
+
+	if test_results_panel and test_results_panel.has_method("load_initial_data"):
+		test_results_panel.load_initial_data(
+			level_data.input_values_a, 
+			level_data.input_values_b,
+			level_data.input_values_cin,
+			level_data.expected_sum,
+			level_data.expected_cout
+		)
+
+	load_level_state()
+
+	auto_save_timer = Timer.new()
+	auto_save_timer.wait_time = 2.0
+	auto_save_timer.one_shot = true
+	auto_save_timer.timeout.connect(_on_auto_save_timeout)
+	add_child(auto_save_timer)
+	
+	print("Full Adder level ready completed successfully")
+
+func setup_full_adder_level():
+	print("Setting up Full Adder level with three inputs and two outputs")
+	
 	movable_objects = []
 	
-	if has_node("InputBlock"):
-		$InputBlock.values_A = level_data.input_values_a.duplicate()
-		$InputBlock.values_B = level_data.input_values_b.duplicate()
-		movable_objects.append($InputBlock)
-		print("InputBlock initialized with values A: ", $InputBlock.values_A, " B: ", $InputBlock.values_B)
-	else:
-		push_error("InputBlock not found!")
-
-	output_block_sum = get_node_or_null("OutputBlockSum")
-	output_block_carry = get_node_or_null("OutputBlockCarry")
+	# Get input blocks using simple get_node
+	input_block_a = get_node_or_null("InputBlockA")
+	input_block_b = get_node_or_null("InputBlockB")
+	input_block_cin = get_node_or_null("InputBlockCin")
 	
-	if output_block_sum and output_block_carry:
+	if input_block_a and input_block_b and input_block_cin:
+		input_block_a.values = level_data.input_values_a.duplicate()
+		input_block_b.values = level_data.input_values_b.duplicate()
+		input_block_cin.values = level_data.input_values_cin.duplicate()
+		movable_objects.append(input_block_a)
+		movable_objects.append(input_block_b)
+		movable_objects.append(input_block_cin)
+		print("Full Adder input blocks initialized")
+	else:
+		push_error("Input blocks not found in Full Adder level!")
+
+	# Get output blocks using simple get_node
+	output_block_sum = get_node_or_null("OutputBlockSum")
+	output_block_cout = get_node_or_null("OutputBlockCout")
+	
+	if output_block_sum and output_block_cout:
 		output_block_sum.expected = level_data.expected_sum.duplicate()
-		output_block_carry.expected = level_data.expected_carry.duplicate()
+		output_block_cout.expected = level_data.expected_cout.duplicate()
 		movable_objects.append(output_block_sum)
-		movable_objects.append(output_block_carry)
-		print("Half Adder output blocks initialized")
+		movable_objects.append(output_block_cout)
+		print("Full Adder output blocks initialized")
 	else:
-		push_error("Output blocks not found in Half Adder level!")
+		push_error("Output blocks not found in Full Adder level!")
 
-	test_results_panel = get_node_or_null("TestResultsPanelHalfAdder")
+	test_results_panel = get_node_or_null("TestResultsPanelFullAdder")
 	if test_results_panel:
-		print("Half Adder test panel found")
-
-		await get_tree().process_frame
-		if test_results_panel.has_method("load_initial_data"):
-			test_results_panel.load_initial_data(
-				level_data.input_values_a, 
-				level_data.input_values_b,
-				level_data.expected_sum,
-				level_data.expected_carry
-			)
-			print("Half Adder test panel initialized")
-	else:
-		print("WARNING: TestResultsPanelHalfAdder not found")
+		print("Full Adder test panel found")
 
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())
 	print("All logic objects: ", all_logic_objects.size())
 
 func _on_test_pressed():
-	print("=== Testing Half Adder level ===")
+	print("=== Testing Full Adder level ===")
 	reset_all_port_sprites()
 
 	if output_block_sum:
 		output_block_sum.set_default_style()
-	if output_block_carry:
-		output_block_carry.set_default_style()
+	if output_block_cout:
+		output_block_cout.set_default_style()
 	
 	var player_sum_outputs = []
-	var player_carry_outputs = []
+	var player_cout_outputs = []
 	
-	if not has_node("InputBlock"):
-		push_error("InputBlock not found!")
-		return
-
-	if $InputBlock.values_A.size() < 4 or $InputBlock.values_B.size() < 4:
-		print("InputBlock values_A size: ", $InputBlock.values_A.size())
-		print("InputBlock values_B size: ", $InputBlock.values_B.size())
-		push_error("Input arrays are too small!")
-		return
-
-	for i in range(4):
+	for i in range(8):
 		print("--- Test case ", i, " ---")
-		$InputBlock.current_test_index = i
-		print("InputBlock values: A=", $InputBlock.values_A[i], " B=", $InputBlock.values_B[i])
+		input_block_a.current_test_index = i
+		input_block_b.current_test_index = i
+		input_block_cin.current_test_index = i
+		print("Inputs: A=", input_block_a.values[i], " B=", input_block_b.values[i], " Cin=", input_block_cin.values[i])
 
 		for obj in all_logic_objects:
 			if obj and obj.has_method("reset_inputs"):
@@ -81,8 +117,8 @@ func _on_test_pressed():
 
 		if output_block_sum:
 			output_block_sum.received_value = 0
-		if output_block_carry:
-			output_block_carry.received_value = 0
+		if output_block_cout:
+			output_block_cout.received_value = 0
 			
 		propagate_signals()
 		
@@ -91,44 +127,33 @@ func _on_test_pressed():
 			print("Sum output: ", output_block_sum.received_value)
 		else:
 			player_sum_outputs.append(0)
-			print("WARNING: output_block_sum is null")
 		
-		if output_block_carry:
-			player_carry_outputs.append(int(output_block_carry.received_value))
-			print("Carry output: ", output_block_carry.received_value)
+		if output_block_cout:
+			player_cout_outputs.append(int(output_block_cout.received_value))
+			print("Cout output: ", output_block_cout.received_value)
 		else:
-			player_carry_outputs.append(0)
-			print("WARNING: output_block_carry is null")
+			player_cout_outputs.append(0)
 	
 	print("=== Test results ===")
 	print("Player Sum: ", player_sum_outputs)
 	print("Expected Sum: ", level_data.expected_sum)
-	print("Player Carry: ", player_carry_outputs)
-	print("Expected Carry: ", level_data.expected_carry)
-
-	if player_sum_outputs.size() != 4:
-		push_error("player_sum_outputs has wrong size: " + str(player_sum_outputs.size()))
-		return
-	if player_carry_outputs.size() != 4:
-		push_error("player_carry_outputs has wrong size: " + str(player_carry_outputs.size()))
-		return
+	print("Player Cout: ", player_cout_outputs)
+	print("Expected Cout: ", level_data.expected_cout)
 
 	if test_results_panel and test_results_panel.has_method("update_current_outputs"):
-		test_results_panel.update_current_outputs(player_sum_outputs, player_carry_outputs)
+		test_results_panel.update_current_outputs(player_sum_outputs, player_cout_outputs)
 		print("Test panel updated")
-	else:
-		print("WARNING: Could not update test panel")
 
 	var sum_correct = player_sum_outputs == level_data.expected_sum
-	var carry_correct = player_carry_outputs == level_data.expected_carry
+	var cout_correct = player_cout_outputs == level_data.expected_cout
 	
-	print("Sum correct: ", sum_correct, " Carry correct: ", carry_correct)
+	print("Sum correct: ", sum_correct, " Cout correct: ", cout_correct)
 	
-	if sum_correct and carry_correct:
+	if sum_correct and cout_correct:
 		if output_block_sum:
 			output_block_sum.set_correct_style()
-		if output_block_carry:
-			output_block_carry.set_correct_style()
+		if output_block_cout:
+			output_block_cout.set_correct_style()
 		if not level_completed_this_session:
 			save_level_progress()
 			level_completed_this_session = true
@@ -136,21 +161,19 @@ func _on_test_pressed():
 	else:
 		if output_block_sum:
 			output_block_sum.set_default_style()
-		if output_block_carry:
-			output_block_carry.set_default_style()
+		if output_block_cout:
+			output_block_cout.set_default_style()
 		level_completed_this_session = false
 		print("Level not completed - outputs don't match")
 	
 	update_all_port_colors()
 
 func propagate_signals():
-	print("=== Starting signal propagation for Half Adder ===")
-	print("All logic objects count: ", all_logic_objects.size())
+	print("=== Starting signal propagation for Full Adder ===")
 
 	for obj in all_logic_objects:
 		if obj and obj.has_method("reset_inputs"):
 			obj.reset_inputs()
-			print("Reset inputs for: ", obj.name)
 
 	var dependencies = {}
 	var dependents = {}
@@ -160,7 +183,6 @@ func propagate_signals():
 			continue
 		dependencies[obj] = []
 		dependents[obj] = []
-		print("Added to graph: ", obj.name)
 
 	for wire in wires:
 		if not wire or not is_instance_valid(wire):
@@ -181,7 +203,6 @@ func propagate_signals():
 				dependencies[end_gate].append(start_gate)
 			if dependents.has(start_gate) and not dependents[start_gate].has(end_gate):
 				dependents[start_gate].append(end_gate)
-			print("Wire: ", start_gate.name, " -> ", end_gate.name)
 
 	var queue = []
 	var in_degree = {}
@@ -209,47 +230,13 @@ func propagate_signals():
 					in_degree[dependent] -= 1
 					if in_degree[dependent] == 0:
 						queue.append(dependent)
-	
-	print("Processing order: ", processed_order.size(), " objects")
-	for obj in processed_order:
-		print("  - ", obj.name)
 
 	for current in processed_order:
 		if not current or not is_instance_valid(current):
 			continue
 			
-		print("Processing: ", current.name)
-
-		if current == $InputBlock:
-			print("InputBlock processing - values_A: ", current.values_A, " values_B: ", current.values_B)
-			for port_name in ["OutputA", "OutputB"]:
-				var port = current.get_node_or_null(port_name)
-				if port and is_instance_valid(port):
-					for wire in wires:
-						if not wire or not is_instance_valid(wire):
-							continue
-						if wire.start_port == port:
-							var end_gate = wire.end_port.get_parent()
-							var end_port_name = wire.end_port.name
-							var val = int(current.get_output(port_name))
-							
-							print("  Sending value ", val, " from ", current.name, ".", port_name, " to ", end_gate.name, ".", end_port_name)
-							
-							if end_gate and end_gate.has_method("set_input"):
-								var port_num = 1
-								if end_port_name == "Input2":
-									port_num = 2
-								elif end_port_name == "InputPort":
-									port_num = 1
-								elif end_port_name == "Input":
-									port_num = 1
-								
-								print("  Setting input for ", end_gate.name, " port ", port_num, " to ", val)
-								end_gate.set_input(port_num, val)
-
-		elif current.has_method("get_output"):
+		if current in [input_block_a, input_block_b, input_block_cin]:
 			var output_value = int(current.get_output("Output"))
-			print(current.name, " output value: ", output_value)
 			
 			for wire in wires:
 				if not wire or not is_instance_valid(wire):
@@ -273,46 +260,81 @@ func propagate_signals():
 						elif end_port_name == "Input":
 							port_num = 1
 						
-						print("  Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
+						end_gate.set_input(port_num, output_value)
+
+		elif current.has_method("get_output") and current != output_block_sum and current != output_block_cout:
+			var output_value = int(current.get_output("Output"))
+			
+			for wire in wires:
+				if not wire or not is_instance_valid(wire):
+					continue
+				if not wire.start_port or not is_instance_valid(wire.start_port):
+					continue
+					
+				if wire.start_port.get_parent() == current:
+					var end_gate = wire.end_port.get_parent()
+					if not end_gate or not is_instance_valid(end_gate):
+						continue
+						
+					var end_port_name = wire.end_port.name
+					
+					if end_gate.has_method("set_input"):
+						var port_num = 1
+						if end_port_name == "Input2":
+							port_num = 2
+						elif end_port_name == "InputPort":
+							port_num = 1
+						elif end_port_name == "Input":
+							port_num = 1
+						
 						end_gate.set_input(port_num, output_value)
 	
-	print("Final OutputBlockSum value: ", output_block_sum.received_value if output_block_sum else "N/A")
-	print("Final OutputBlockCarry value: ", output_block_carry.received_value if output_block_carry else "N/A")
 	print("=== Signal propagation complete ===")
 
 func get_gates_data():
 	var gates_data = []
 
-	# Для полусумматора
-	if has_node("InputBlock"):
-		var input_block_data = {
-			"type": "INPUT_BLOCK",
-			"position": [$InputBlock.position.x, $InputBlock.position.y]
+	if input_block_a:
+		var input_block_a_data = {
+			"type": "INPUT_BLOCK_A",
+			"position": [input_block_a.position.x, input_block_a.position.y]
 		}
-		gates_data.append(input_block_data)
+		gates_data.append(input_block_a_data)
 	
-	if has_node("OutputBlockSum"):
+	if input_block_b:
+		var input_block_b_data = {
+			"type": "INPUT_BLOCK_B",
+			"position": [input_block_b.position.x, input_block_b.position.y]
+		}
+		gates_data.append(input_block_b_data)
+
+	if input_block_cin:
+		var input_block_cin_data = {
+			"type": "INPUT_BLOCK_CIN",
+			"position": [input_block_cin.position.x, input_block_cin.position.y]
+		}
+		gates_data.append(input_block_cin_data)
+	
+	if output_block_sum:
 		var output_block_sum_data = {
 			"type": "OUTPUT_BLOCK_SUM", 
-			"position": [$OutputBlockSum.position.x, $OutputBlockSum.position.y]
+			"position": [output_block_sum.position.x, output_block_sum.position.y]
 		}
 		gates_data.append(output_block_sum_data)
 	
-	if has_node("OutputBlockCarry"):
-		var output_block_carry_data = {
-			"type": "OUTPUT_BLOCK_CARRY", 
-			"position": [$OutputBlockCarry.position.x, $OutputBlockCarry.position.y]
+	if output_block_cout:
+		var output_block_cout_data = {
+			"type": "OUTPUT_BLOCK_COUT", 
+			"position": [output_block_cout.position.x, output_block_cout.position.y]
 		}
-		gates_data.append(output_block_carry_data)
+		gates_data.append(output_block_cout_data)
 
 	for obj in movable_objects:
 		var skip = false
 
-		if has_node("InputBlock") and obj == $InputBlock:
+		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
 			skip = true
-		if has_node("OutputBlockSum") and obj == $OutputBlockSum:
-			skip = true
-		if has_node("OutputBlockCarry") and obj == $OutputBlockCarry:
+		if obj == output_block_sum or obj == output_block_cout:
 			skip = true
 
 		if skip:
@@ -360,11 +382,9 @@ func clear_level():
 		var obj = movable_objects[i]
 
 		var skip = false
-		if has_node("InputBlock") and obj == $InputBlock:
+		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
 			skip = true
-		if has_node("OutputBlockSum") and obj == $OutputBlockSum:
-			skip = true
-		if has_node("OutputBlockCarry") and obj == $OutputBlockCarry:
+		if obj == output_block_sum or obj == output_block_cout:
 			skip = true
 
 		if skip:
@@ -377,24 +397,32 @@ func clear_level():
 	update_all_logic_objects()
 	reset_all_port_sprites()
 	
-	print("Half Adder level cleared - kept Input/Output blocks, removed gates and wires")
+	print("Full Adder level cleared - kept Input/Output blocks, removed gates and wires")
 	
 func create_gate_from_data(gate_data):
 	var gate_type = gate_data.get("type", "")
 	var position_array = gate_data.get("position", [0, 0])
 	var position = Vector2(position_array[0], position_array[1])
 	
-	if gate_type == "INPUT_BLOCK" and has_node("InputBlock"):
-		$InputBlock.position = position
-		print("Restored InputBlock position: ", position)
+	if gate_type == "INPUT_BLOCK_A" and input_block_a:
+		input_block_a.position = position
+		print("Restored InputBlockA position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_SUM" and has_node("OutputBlockSum"):
-		$OutputBlockSum.position = position
+	elif gate_type == "INPUT_BLOCK_B" and input_block_b:
+		input_block_b.position = position
+		print("Restored InputBlockB position: ", position)
+		return
+	elif gate_type == "INPUT_BLOCK_CIN" and input_block_cin:
+		input_block_cin.position = position
+		print("Restored InputBlockCin position: ", position)
+		return
+	elif gate_type == "OUTPUT_BLOCK_SUM" and output_block_sum:
+		output_block_sum.position = position
 		print("Restored OutputBlockSum position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_CARRY" and has_node("OutputBlockCarry"):
-		$OutputBlockCarry.position = position
-		print("Restored OutputBlockCarry position: ", position)
+	elif gate_type == "OUTPUT_BLOCK_COUT" and output_block_cout:
+		output_block_cout.position = position
+		print("Restored OutputBlockCout position: ", position)
 		return
 
 	var gate_scene = null
@@ -431,12 +459,16 @@ func create_gate_from_data(gate_data):
 func find_port_by_name(parent_name, port_name):
 	var parent = null
 	
-	if parent_name == "OutputBlockSum" and has_node("OutputBlockSum"):
-		parent = $OutputBlockSum
-	elif parent_name == "OutputBlockCarry" and has_node("OutputBlockCarry"):
-		parent = $OutputBlockCarry
-	elif parent_name == "InputBlock" and has_node("InputBlock"):
-		parent = $InputBlock
+	if parent_name == "InputBlockA" and input_block_a:
+		parent = input_block_a
+	elif parent_name == "InputBlockB" and input_block_b:
+		parent = input_block_b
+	elif parent_name == "InputBlockCin" and input_block_cin:
+		parent = input_block_cin
+	elif parent_name == "OutputBlockSum" and output_block_sum:
+		parent = output_block_sum
+	elif parent_name == "OutputBlockCout" and output_block_cout:
+		parent = output_block_cout
 
 	if not parent:
 		for obj in movable_objects:
@@ -448,18 +480,10 @@ func find_port_by_name(parent_name, port_name):
 		print("Parent not found: ", parent_name)
 		return null
 
-	var port = null
-	if port_name is String or port_name is NodePath:
-		port = parent.get_node_or_null(port_name)
-	else:
-		port = parent.get_node_or_null(str(port_name))
+	var port = parent.get_node_or_null(str(port_name))
 	
 	if not port:
 		print("Port not found: ", parent_name, "/", port_name)
-
-		print("Available children in ", parent_name, ":")
-		for child in parent.get_children():
-			print("  - ", child.name, " (Type: ", child.get_class(), ")")
 	
 	return port
 
@@ -490,12 +514,16 @@ func get_object_type(obj):
 	elif "ImplicationGate" in scene_file:
 		return "IMPLICATION"
 
-	if has_node("InputBlock") and obj == $InputBlock:
-		return "INPUT_BLOCK"
-	elif has_node("OutputBlockSum") and obj == $OutputBlockSum:
+	if obj == input_block_a:
+		return "INPUT_BLOCK_A"
+	elif obj == input_block_b:
+		return "INPUT_BLOCK_B"
+	elif obj == input_block_cin:
+		return "INPUT_BLOCK_CIN"
+	elif obj == output_block_sum:
 		return "OUTPUT_BLOCK_SUM"
-	elif has_node("OutputBlockCarry") and obj == $OutputBlockCarry:
-		return "OUTPUT_BLOCK_CARRY"
+	elif obj == output_block_cout:
+		return "OUTPUT_BLOCK_COUT"
 	
 	return "UNKNOWN"
 
@@ -509,16 +537,12 @@ func find_port_near_position(position, max_distance = 50.0):
 			
 		var ports = []
 
-		if has_node("InputBlock") and obj == $InputBlock:
-			ports = [$InputBlock/OutputA, $InputBlock/OutputB]
-
-		elif has_node("OutputBlockSum") and obj == $OutputBlockSum:
+		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
+			var output = obj.get_node_or_null("Output")
+			if output: ports.append(output)
+		elif obj == output_block_sum or obj == output_block_cout:
 			var input_port = obj.get_node_or_null("InputPort")
 			if input_port: ports.append(input_port)
-		elif has_node("OutputBlockCarry") and obj == $OutputBlockCarry:
-			var input_port = obj.get_node_or_null("InputPort")
-			if input_port: ports.append(input_port)
-
 		else:
 			var input1 = obj.get_node_or_null("Input1")
 			var input2 = obj.get_node_or_null("Input2")
@@ -541,29 +565,38 @@ func find_port_near_position(position, max_distance = 50.0):
 	return closest_port
 
 func reset_all_port_sprites():
-
-	if has_node("InputBlock"):
-		var input_block = $InputBlock
-		for port_name in ["OutputA", "OutputB"]:
-			var port = input_block.get_node_or_null(port_name)
-			if port and is_instance_valid(port):
-				var sprite = port.get_node_or_null("Sprite2D")
-				if sprite and is_instance_valid(sprite):
-					sprite.texture = preload("res://assets/point.png")
-
-	if has_node("OutputBlockSum"):
-		var output_block_sum = $OutputBlockSum
-		var input_port_sum = output_block_sum.get_node_or_null("InputPort")
-		if input_port_sum and is_instance_valid(input_port_sum):
-			var sprite = input_port_sum.get_node_or_null("Sprite2D")
+	if input_block_a:
+		var output_port = input_block_a.get_node_or_null("Output")
+		if output_port and is_instance_valid(output_port):
+			var sprite = output_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = preload("res://assets/point.png")
 
-	if has_node("OutputBlockCarry"):
-		var output_block_carry = $OutputBlockCarry
-		var input_port_carry = output_block_carry.get_node_or_null("InputPort")
-		if input_port_carry and is_instance_valid(input_port_carry):
-			var sprite = input_port_carry.get_node_or_null("Sprite2D")
+	if input_block_b:
+		var output_port = input_block_b.get_node_or_null("Output")
+		if output_port and is_instance_valid(output_port):
+			var sprite = output_port.get_node_or_null("Sprite2D")
+			if sprite and is_instance_valid(sprite):
+				sprite.texture = preload("res://assets/point.png")
+
+	if input_block_cin:
+		var output_port = input_block_cin.get_node_or_null("Output")
+		if output_port and is_instance_valid(output_port):
+			var sprite = output_port.get_node_or_null("Sprite2D")
+			if sprite and is_instance_valid(sprite):
+				sprite.texture = preload("res://assets/point.png")
+
+	if output_block_sum:
+		var input_port = output_block_sum.get_node_or_null("InputPort")
+		if input_port and is_instance_valid(input_port):
+			var sprite = input_port.get_node_or_null("Sprite2D")
+			if sprite and is_instance_valid(sprite):
+				sprite.texture = preload("res://assets/point.png")
+
+	if output_block_cout:
+		var input_port = output_block_cout.get_node_or_null("InputPort")
+		if input_port and is_instance_valid(input_port):
+			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = preload("res://assets/point.png")
 
@@ -571,15 +604,9 @@ func reset_all_port_sprites():
 		if not obj or not is_instance_valid(obj):
 			continue
 
-		var skip = false
-		if has_node("InputBlock") and obj == $InputBlock:
-			skip = true
-		if has_node("OutputBlockSum") and obj == $OutputBlockSum:
-			skip = true
-		if has_node("OutputBlockCarry") and obj == $OutputBlockCarry:
-			skip = true
-
-		if skip:
+		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
+			continue
+		if obj == output_block_sum or obj == output_block_cout:
 			continue
 
 		var ports = []
@@ -595,55 +622,8 @@ func reset_all_port_sprites():
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = preload("res://assets/point.png")
 	
-	print("Half Adder level: Reset all port sprites")
+	print("Full Adder level: Reset all port sprites")
 
-func _ready():
-	if not level_data:
-		push_error("Level data not set!")
-		return
-	
-	wires = []
-	movable_objects = []
-	all_logic_objects = []
-	input_blocks = []
-	test_results_panel = null
-	
-	is_three_input_level = false
-	
-	if has_node("TopPanel") and $TopPanel.has_method("set_level_name"):
-		$TopPanel.set_level_name(level_data.level_name)
-		$TopPanel.set_theory_text(level_data.theory_text)
-
-	setup_half_adder_level()
-	
-	temp_line = Line2D.new()
-	add_child(temp_line)
-	temp_line.default_color = Color("#e39e45")
-	temp_line.width = 8
-	temp_line.points = []
-	
-	_setup_top_panel_buttons()
-	
-	await get_tree().process_frame
-
-	if test_results_panel and test_results_panel.has_method("load_initial_data"):
-		test_results_panel.load_initial_data(
-			level_data.input_values_a, 
-			level_data.input_values_b,
-			level_data.expected_sum,
-			level_data.expected_carry
-		)
-
-	load_level_state()
-
-	auto_save_timer = Timer.new()
-	auto_save_timer.wait_time = 2.0
-	auto_save_timer.one_shot = true
-	auto_save_timer.timeout.connect(_on_auto_save_timeout)
-	add_child(auto_save_timer)
-	
-	print("Half Adder level ready completed successfully")
-	
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
@@ -687,11 +667,9 @@ func _input(event):
 			var obj = movable_objects[i]
 			var skip = false
 
-			if has_node("InputBlock") and obj == $InputBlock:
+			if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
 				skip = true
-			if has_node("OutputBlockSum") and obj == $OutputBlockSum:
-				skip = true
-			if has_node("OutputBlockCarry") and obj == $OutputBlockCarry:
+			if obj == output_block_sum or obj == output_block_cout:
 				skip = true
 
 			if skip:
@@ -722,7 +700,7 @@ func _input(event):
 				if wire_points.size() >= 2:
 					var closest_point = get_closest_point_on_line(wire_points, mouse_pos)
 					if closest_point.distance_to(mouse_pos) < 15:
-						remove_wire(wire)  # Используем новый метод
+						remove_wire(wire)
 						mark_level_state_dirty()
 						print("Wire removed")
 						break

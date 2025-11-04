@@ -659,8 +659,7 @@ func _input(event):
 				if wire_points.size() >= 2:
 					var closest_point = get_closest_point_on_line(wire_points, mouse_pos)
 					if closest_point.distance_to(mouse_pos) < 15:
-						wire.queue_free()
-						wires.remove_at(i)
+						remove_wire(wire)
 						mark_level_state_dirty()
 						print("Wire removed")
 						break

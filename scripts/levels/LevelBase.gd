@@ -293,6 +293,15 @@ func remove_wires_connected_to_gate(gate):
 	update_all_port_colors()
 	print("Removed wires connected to gate: ", gate.name)
 
+func remove_wire(wire):
+	if wire in wires:
+		wires.erase(wire)
+	if is_instance_valid(wire):
+		wire.queue_free()
+	
+	update_all_port_colors()
+	print("Wire removed and port colors updated")
+
 func update_all_port_colors():
 	reset_all_port_sprites()
 
