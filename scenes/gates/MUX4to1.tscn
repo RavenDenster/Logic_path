@@ -1,0 +1,87 @@
+[gd_scene load_steps=5 format=3 uid="uid://begf18t6cpevq"]
+
+[ext_resource type="Script" uid="uid://cnv2fexu6atvh" path="res://scripts/gates/MUX4to1.gd" id="1_35cyh"]
+[ext_resource type="Texture2D" uid="uid://d003c0qyj4dga" path="res://assets/mux.png" id="2_tnje1"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_pnac1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2qid3"]
+
+[node name="Mux4To1" type="Node2D"]
+script = ExtResource("1_35cyh")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_tnje1")
+
+[node name="Input0" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input0"]
+position = Vector2(-40, -32)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_2qid3")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input0"]
+position = Vector2(-38, -34)
+texture = ExtResource("3_pnac1")
+
+[node name="Input1" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input1"]
+position = Vector2(-40, 0)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_2qid3")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input1"]
+position = Vector2(-38, -2)
+texture = ExtResource("3_pnac1")
+
+[node name="Input2" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input2"]
+position = Vector2(-38, 31)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_2qid3")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input2"]
+position = Vector2(-37, 30)
+texture = ExtResource("3_pnac1")
+
+[node name="Input3" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input3"]
+position = Vector2(-3, -37)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_2qid3")
+
+[node name="Sel0" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sel0"]
+position = Vector2(-12, 37)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_2qid3")
+
+[node name="Sprite2D" type="Sprite2D" parent="Sel0"]
+position = Vector2(-10, 36)
+texture = ExtResource("3_pnac1")
+
+[node name="Sel1" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sel1"]
+position = Vector2(17, 38)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_2qid3")
+
+[node name="Sprite2D" type="Sprite2D" parent="Sel1"]
+position = Vector2(19, 36)
+texture = ExtResource("3_pnac1")
+
+[node name="Output" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Output"]
+position = Vector2(42, -1)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_2qid3")
+
+[node name="Sprite2D" type="Sprite2D" parent="Output"]
+position = Vector2(44, -3)
+texture = ExtResource("3_pnac1")

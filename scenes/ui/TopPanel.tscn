@@ -112,3 +112,11 @@ text = "HSUM"
 [node name="Cout0" type="Button" parent="GateButtonsContainer"]
 layout_mode = 2
 text = "COUT0"
+
+[node name="MUX4to1" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "MUX"
+
+[node name="OpCode" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "OpCode"
