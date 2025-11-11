@@ -120,3 +120,7 @@ text = "MUX"
 [node name="OpCode" type="Button" parent="GateButtonsContainer"]
 layout_mode = 2
 text = "OpCode"
+
+[node name="OneBitComparator" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "OneBitComparator"
