@@ -1,0 +1,69 @@
+[gd_scene load_steps=5 format=3 uid="uid://go0kgaugcg4x"]
+
+[ext_resource type="Script" uid="uid://mubvu1x738b0" path="res://scripts/gates/OneBitComparatorGate.gd" id="1_ir6ki"]
+[ext_resource type="Texture2D" uid="uid://ht0g3ijjkbf1" path="res://assets/1compar.png" id="2_4dcpt"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_syq61"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vi8ub"]
+
+[node name="OneBitComparatorGate" type="Node2D"]
+script = ExtResource("1_ir6ki")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_4dcpt")
+
+[node name="InputA" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InputA"]
+position = Vector2(-39, -18)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_vi8ub")
+
+[node name="Sprite2D" type="Sprite2D" parent="InputA"]
+position = Vector2(-38, -19)
+texture = ExtResource("3_syq61")
+
+[node name="InputB" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InputB"]
+position = Vector2(-39, 13)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_vi8ub")
+
+[node name="Sprite2D" type="Sprite2D" parent="InputB"]
+position = Vector2(-37, 12)
+texture = ExtResource("3_syq61")
+
+[node name="OutputAgtb" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputAgtb"]
+position = Vector2(41, -32)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_vi8ub")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputAgtb"]
+position = Vector2(42, -34)
+texture = ExtResource("3_syq61")
+
+[node name="OutputAltb" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputAltb"]
+position = Vector2(41, 0)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_vi8ub")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputAltb"]
+position = Vector2(43, -1)
+texture = ExtResource("3_syq61")
+
+[node name="OutputAeqb" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputAeqb"]
+position = Vector2(40, 29)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_vi8ub")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputAeqb"]
+position = Vector2(41, 28)
+texture = ExtResource("3_syq61")

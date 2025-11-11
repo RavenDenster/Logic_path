@@ -274,6 +274,8 @@ func _setup_top_panel_buttons():
 					button.connect("pressed", _on_add_mux4to1_button_pressed)
 				"OpCode":
 					button.connect("pressed", _on_add_opcode_button_pressed)
+				"OneBitComparator": 
+					button.connect("pressed", _on_add_onebit_comparator_button_pressed)
 					
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
@@ -471,6 +473,22 @@ func _on_add_full_adder_button_pressed(): pass
 func _on_add_cout0_button_pressed(): pass
 func _on_add_mux4to1_button_pressed(): pass
 func _on_add_opcode_button_pressed(): pass
+
+func _on_add_onebit_comparator_button_pressed():
+	print("Adding OneBitComparator gate")
+	var gate_scene = preload("res://scenes/gates/OneBitComparatorGate.tscn")
+	var gate = gate_scene.instantiate()
+	
+	# Позиция рядом с курсором или в центре экрана
+	var viewport_size = get_viewport_rect().size
+	gate.position = Vector2(viewport_size.x / 2, viewport_size.y / 2)
+	
+	add_child(gate)
+	movable_objects.append(gate)
+	update_all_logic_objects()
+	mark_level_state_dirty()
+	
+	print("OneBitComparator gate added at position: ", gate.position)
 
 func save_and_exit(scene_path: String):
 
