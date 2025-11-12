@@ -250,7 +250,7 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/ANDGAte.tscn")
 		"OR":
 			gate_scene = preload("res://scenes/gates/ORGate.tscn")
 		"NOT":
