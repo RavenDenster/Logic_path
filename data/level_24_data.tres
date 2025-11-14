@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="Level24Data" load_steps=2 format=3 uid="uid://dxq6oa8tfk8q0"]
+
+[ext_resource type="Script" uid="uid://cry6ele3xs0v4" path="res://data/Level24Data.gd" id="1_phmki"]
+
+[resource]
+script = ExtResource("1_phmki")
+metadata/_custom_type_script = "uid://cry6ele3xs0v4"
