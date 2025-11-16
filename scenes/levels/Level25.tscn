@@ -1,0 +1,42 @@
+[gd_scene load_steps=9 format=3 uid="uid://c25qedt04sqmm"]
+
+[ext_resource type="Script" uid="uid://drkoi5t14kv4n" path="res://scripts/levels/Level25.gd" id="1_hj065"]
+[ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="2_3ofh0"]
+[ext_resource type="PackedScene" uid="uid://b0ojwut8667y3" path="res://scenes/components/InputBlockR.tscn" id="3_4xp52"]
+[ext_resource type="PackedScene" uid="uid://dpbkff1x7kluj" path="res://scenes/components/InputBlockS.tscn" id="4_pjn40"]
+[ext_resource type="PackedScene" uid="uid://cq45nuyhw8yl8" path="res://scenes/components/OutputBlockNotQ.tscn" id="5_arvnb"]
+[ext_resource type="PackedScene" uid="uid://brcq2himmsece" path="res://scenes/components/OutputBlockQ.tscn" id="6_qdq40"]
+[ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="7_wlqgk"]
+[ext_resource type="PackedScene" uid="uid://fvxmtso73apy" path="res://scenes/ui/TestResultsPanelRS.tscn" id="8_jvd6j"]
+
+[node name="Level25" type="Node2D"]
+script = ExtResource("1_hj065")
+
+[node name="Background" type="TextureRect" parent="."]
+z_index = -35
+offset_left = 3.0
+offset_top = -3.0
+offset_right = 1921.0
+offset_bottom = 1079.0
+texture = ExtResource("2_3ofh0")
+expand_mode = 1
+
+[node name="TopPanel" parent="." instance=ExtResource("7_wlqgk")]
+
+[node name="InputBlockR" parent="." instance=ExtResource("3_4xp52")]
+position = Vector2(295, 304)
+
+[node name="InputBlockS" parent="." instance=ExtResource("4_pjn40")]
+position = Vector2(336, 489)
+
+[node name="OutputBlockNotQ" parent="." instance=ExtResource("5_arvnb")]
+position = Vector2(1398, 370)
+
+[node name="OutputBlockQ" parent="." instance=ExtResource("6_qdq40")]
+position = Vector2(1399, 504)
+
+[node name="TestResultsPanelRS" parent="." instance=ExtResource("8_jvd6j")]
+offset_left = 961.0
+offset_top = 966.0
+offset_right = 961.0
+offset_bottom = 966.0

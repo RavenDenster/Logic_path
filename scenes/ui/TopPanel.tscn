@@ -124,3 +124,7 @@ text = "OpCode"
 [node name="OneBitComparator" type="Button" parent="GateButtonsContainer"]
 layout_mode = 2
 text = "OneBitComparator"
+
+[node name="RSFlipFlop" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "RSFlipFlop"
