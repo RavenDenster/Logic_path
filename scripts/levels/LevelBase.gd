@@ -276,6 +276,8 @@ func _setup_top_panel_buttons():
 					button.connect("pressed", _on_add_opcode_button_pressed)
 				"OneBitComparator": 
 					button.connect("pressed", _on_add_onebit_comparator_button_pressed)
+				"RSFlipFlop": 
+					button.connect("pressed", _on_add_rs_flip_flop_button_pressed)
 					
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
@@ -473,6 +475,7 @@ func _on_add_full_adder_button_pressed(): pass
 func _on_add_cout0_button_pressed(): pass
 func _on_add_mux4to1_button_pressed(): pass
 func _on_add_opcode_button_pressed(): pass
+func _on_add_rs_flip_flop_button_pressed(): pass
 
 func _on_add_onebit_comparator_button_pressed():
 	print("Adding OneBitComparator gate")

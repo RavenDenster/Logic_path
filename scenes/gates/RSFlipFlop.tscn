@@ -1,0 +1,62 @@
+[gd_scene load_steps=5 format=3 uid="uid://4qje6n7rmmrg"]
+
+[ext_resource type="Script" uid="uid://bfmccl8hhqu2u" path="res://scripts/gates/RSFlipFlop.gd" id="1_donc0"]
+[ext_resource type="Texture2D" uid="uid://cwfcb7m6df4w" path="res://assets/rsff.png" id="2_te4ty"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_6ir71"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7cpre"]
+
+[node name="RsFlipFlop" type="Node2D"]
+script = ExtResource("1_donc0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_te4ty")
+
+[node name="InputR" type="Area2D" parent="."]
+position = Vector2(-50, -40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InputR"]
+position = Vector2(9, 13)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_7cpre")
+
+[node name="Sprite2D" type="Sprite2D" parent="InputR"]
+position = Vector2(11, 12)
+texture = ExtResource("3_6ir71")
+
+[node name="InputS" type="Area2D" parent="."]
+position = Vector2(-50, -40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InputS"]
+position = Vector2(10, 61)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_7cpre")
+
+[node name="Sprite2D" type="Sprite2D" parent="InputS"]
+position = Vector2(11, 59)
+texture = ExtResource("3_6ir71")
+
+[node name="OutputQ" type="Area2D" parent="."]
+position = Vector2(-50, -40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputQ"]
+position = Vector2(90, 14)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_7cpre")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputQ"]
+position = Vector2(92, 13)
+texture = ExtResource("3_6ir71")
+
+[node name="OutputQ2" type="Area2D" parent="."]
+position = Vector2(-50, -40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputQ2"]
+position = Vector2(91, 64)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_7cpre")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputQ2"]
+position = Vector2(93, 62)
+texture = ExtResource("3_6ir71")
