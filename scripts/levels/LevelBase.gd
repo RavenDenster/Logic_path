@@ -507,3 +507,7 @@ func _on_menu_button_pressed():
 func _on_map_button_pressed():
 	save_and_exit("res://scenes/ui/LevelMap.tscn")
 	
+func _on_add_tflipflop_button_pressed(): 
+	print("Base TFlipFlop button pressed - should be overridden in child class")
+	pass
+	
