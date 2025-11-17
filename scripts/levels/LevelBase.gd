@@ -278,6 +278,10 @@ func _setup_top_panel_buttons():
 					button.connect("pressed", _on_add_onebit_comparator_button_pressed)
 				"RSFlipFlop": 
 					button.connect("pressed", _on_add_rs_flip_flop_button_pressed)
+				"DFlipFlop":
+					button.connect("pressed", _on_add_d_flip_flop_button_pressed)
+				"CLK":
+					button.connect("pressed", _on_add_clk_button_pressed)
 					
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
@@ -511,3 +515,8 @@ func _on_add_tflipflop_button_pressed():
 	print("Base TFlipFlop button pressed - should be overridden in child class")
 	pass
 	
+func _on_add_d_flip_flop_button_pressed(): 
+	print("Adding D Flip-Flop from base class")
+
+func _on_add_clk_button_pressed():
+	print("Adding CLK Gate from base class") 

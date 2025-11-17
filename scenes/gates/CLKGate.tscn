@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://bvsugiudky77r"]
+
+[ext_resource type="Script" uid="uid://cfdtlcf5ju2jk" path="res://scripts/gates/CLKGate.gd" id="1_r8xia"]
+[ext_resource type="Texture2D" uid="uid://c6aooh426776a" path="res://assets/clk.png" id="2_gglau"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_6qwl2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_4nncb"]
+
+[node name="ClkGate" type="Node2D"]
+script = ExtResource("1_r8xia")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2_gglau")
+
+[node name="Input1" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Input1"]
+position = Vector2(-41, 2)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_4nncb")
+
+[node name="Sprite2D" type="Sprite2D" parent="Input1"]
+position = Vector2(-39, 1)
+texture = ExtResource("3_6qwl2")
+
+[node name="Output" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Output"]
+position = Vector2(41, 1)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_4nncb")
+
+[node name="Sprite2D" type="Sprite2D" parent="Output"]
+position = Vector2(42, 0)
+texture = ExtResource("3_6qwl2")

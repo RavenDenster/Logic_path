@@ -132,3 +132,11 @@ text = "RSFlipFlop"
 [node name="TFlipFlop" type="Button" parent="GateButtonsContainer"]
 layout_mode = 2
 text = "TFlipFlop"
+
+[node name="DFlipFlop" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "DFlipFlop"
+
+[node name="CLK" type="Button" parent="GateButtonsContainer"]
+layout_mode = 2
+text = "CLK"
