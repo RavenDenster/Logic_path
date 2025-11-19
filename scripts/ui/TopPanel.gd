@@ -2,11 +2,29 @@ extends ColorRect
 
 @onready var level_name_label: Label = $LevelNameLabel
 @onready var theory_button: TextureButton = $HBoxContainer/TheoryButton
+@onready var menu_button: TextureButton = $HBoxContainer/MenuButton
+@onready var map_button: TextureButton = $HBoxContainer/MapButton
+@onready var run_button: TextureButton = $HBoxContainer/RunButton
 
 var theory_window_instance: Window
 var current_theory_text: String = ""
+var hover_style: StyleBoxFlat
 
 func _ready():
+	# Создаем стиль для подсветки
+	hover_style = StyleBoxFlat.new()
+	hover_style.bg_color = Color.YELLOW
+	hover_style.corner_radius_top_left = 5
+	hover_style.corner_radius_top_right = 5
+	hover_style.corner_radius_bottom_right = 5
+	hover_style.corner_radius_bottom_left = 5
+	hover_style.border_width_left = 2
+	hover_style.border_width_right = 2
+	hover_style.border_width_top = 2
+	hover_style.border_width_bottom = 2
+	hover_style.border_color = Color.GOLD
+
+	# Загрузка теории окна
 	var theory_window_scene = preload("res://scenes/ui/TheoryWindow.tscn")
 	if theory_window_scene:
 		theory_window_instance = theory_window_scene.instantiate()
@@ -16,8 +34,29 @@ func _ready():
 		if theory_window_instance.get_script() == null:
 			push_error("TheoryWindow instance has no script assigned!")
 
+	# Подключаем сигналы для каждой кнопки отдельно
+	if menu_button:
+		menu_button.connect("mouse_entered", _on_button_mouse_entered.bind(menu_button))
+		menu_button.connect("mouse_exited", _on_button_mouse_exited.bind(menu_button))
+	
 	if theory_button:
+		theory_button.connect("mouse_entered", _on_button_mouse_entered.bind(theory_button))
+		theory_button.connect("mouse_exited", _on_button_mouse_exited.bind(theory_button))
 		theory_button.connect("pressed", _on_theory_button_pressed)
+	
+	if map_button:
+		map_button.connect("mouse_entered", _on_button_mouse_entered.bind(map_button))
+		map_button.connect("mouse_exited", _on_button_mouse_exited.bind(map_button))
+	
+	if run_button:
+		run_button.connect("mouse_entered", _on_button_mouse_entered.bind(run_button))
+		run_button.connect("mouse_exited", _on_button_mouse_exited.bind(run_button))
+
+func _on_button_mouse_entered(button: TextureButton):
+	button.modulate = Color.YELLOW  # Изменяем цвет кнопки
+
+func _on_button_mouse_exited(button: TextureButton):
+	button.modulate = Color.WHITE  # Возвращаем исходный цвет
 
 func set_level_name(name: String):
 	if level_name_label:
