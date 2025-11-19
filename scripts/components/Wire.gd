@@ -4,6 +4,7 @@ var start_port = null
 var end_port = null
 var arrow_progress = 0.0
 var arrow_speed = 0.4
+var outline_line: Line2D
 
 func connect_ports(start, end):
 	if not start or not end or not is_instance_valid(start) or not is_instance_valid(end):
@@ -11,8 +12,19 @@ func connect_ports(start, end):
 		
 	start_port = start
 	end_port = end
+	
+	# Создаем обводку (черная линия)
+	outline_line = Line2D.new()
+	outline_line.default_color = Color("c8641fff")
+	outline_line.width = 12  # Немного шире основной линии
+	outline_line.z_index = -1
+	add_child(outline_line)
+	
+	# Основная линия - оранжевая для установленных соединений
 	default_color = Color("#e39e45")
 	width = 8
+	z_index = 0
+	
 	update_wire()
 	
 	var arrow = Sprite2D.new()
@@ -59,9 +71,15 @@ func update_wire():
 		
 		wire_points.append(end_pos)
 	
+	# Обновляем обе линии
 	clear_points()
+	if outline_line:
+		outline_line.clear_points()
+	
 	for point in wire_points:
 		add_point(point)
+		if outline_line:
+			outline_line.add_point(point)
 
 func update_arrow(delta):
 	var arrow = get_node_or_null("Arrow")

@@ -6,7 +6,8 @@ var game_data = {
 	"completed_levels": [],
 	"level_states": {},
 	"player_name": "Player",
-	"last_played_level": 1
+	"last_played_level": 1,
+	"theory_viewed": {}
 }
 
 func _ready():
@@ -68,7 +69,8 @@ func reset_progress():
 		"completed_levels": [],
 		"level_states": {},
 		"player_name": "Player",
-		"last_played_level": 1
+		"last_played_level": 1,
+		"theory_viewed": {} 
 	}
 	save_game()
 	print("Game progress reset")
@@ -135,3 +137,17 @@ func get_next_level_to_play():
 
 static func get_save_system():
 	return Engine.get_main_loop().root.get_node("SaveSystem")
+
+func is_theory_viewed(level_number: int) -> bool:
+	var level_str = str(level_number)
+	if game_data.has("theory_viewed") and game_data["theory_viewed"].has(level_str):
+		return game_data["theory_viewed"][level_str]
+	return false
+
+func set_theory_viewed(level_number: int, viewed: bool):
+	if not game_data.has("theory_viewed"):
+		game_data["theory_viewed"] = {}
+	
+	game_data["theory_viewed"][str(level_number)] = viewed
+	save_game()
+	print("Theory viewed flag set for level ", level_number, ": ", viewed)

@@ -24,6 +24,7 @@ scale = Vector2(1.1, 1.1)
 shape = SubResource("CircleShape2D_v24r8")
 
 [node name="Sprite2D" type="Sprite2D" parent="OutputA"]
+z_index = 2
 position = Vector2(76, -31)
 texture = ExtResource("3_v24r8")
 
@@ -37,5 +38,6 @@ scale = Vector2(1.1, 1.1)
 shape = SubResource("CircleShape2D_1npul")
 
 [node name="Sprite2D" type="Sprite2D" parent="OutputB"]
+z_index = 2
 position = Vector2(-24, 27)
 texture = ExtResource("3_v24r8")
