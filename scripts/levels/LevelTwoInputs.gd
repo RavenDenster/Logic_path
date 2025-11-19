@@ -530,6 +530,11 @@ func _input(event):
 				var local_mouse = sprite.to_local(mouse_pos)
 				var sprite_rect = sprite.get_rect()
 				if sprite_rect.has_point(local_mouse):
+					# Определяем тип гейта и обновляем счетчик если это OR гейт
+					var scene_file = obj.scene_file_path
+					if "ORGate" in scene_file and has_method("remove_or_gate"):
+						remove_or_gate()
+					
 					remove_wires_connected_to_gate(obj)
 					obj.queue_free()
 					movable_objects.remove_at(i)
@@ -554,3 +559,6 @@ func _input(event):
 						mark_level_state_dirty()
 						print("Wire removed")
 						break
+
+func remove_or_gate():
+	pass

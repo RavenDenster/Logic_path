@@ -21,6 +21,7 @@ scale = Vector2(1.1, 1.1)
 shape = SubResource("CircleShape2D_vkcc2")
 
 [node name="Sprite2D" type="Sprite2D" parent="InputPort"]
+z_index = 2
 position = Vector2(-28.999994, -1.0000001)
 scale = Vector2(0.9268293, 0.9268293)
 texture = ExtResource("3_uxds8")

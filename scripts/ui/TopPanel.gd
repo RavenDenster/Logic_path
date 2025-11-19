@@ -5,13 +5,15 @@ extends ColorRect
 @onready var menu_button: TextureButton = $HBoxContainer/MenuButton
 @onready var map_button: TextureButton = $HBoxContainer/MapButton
 @onready var run_button: TextureButton = $HBoxContainer/RunButton
+@onready var gate_buttons_container = $GateButtonsContainer
 
 var theory_window_instance: Window
 var current_theory_text: String = ""
 var hover_style: StyleBoxFlat
+var current_level_number: int = 0
+var glow_animation_tween: Tween
 
 func _ready():
-	# Создаем стиль для подсветки
 	hover_style = StyleBoxFlat.new()
 	hover_style.bg_color = Color.YELLOW
 	hover_style.corner_radius_top_left = 5
@@ -24,7 +26,6 @@ func _ready():
 	hover_style.border_width_bottom = 2
 	hover_style.border_color = Color.GOLD
 
-	# Загрузка теории окна
 	var theory_window_scene = preload("res://scenes/ui/TheoryWindow.tscn")
 	if theory_window_scene:
 		theory_window_instance = theory_window_scene.instantiate()
@@ -34,7 +35,6 @@ func _ready():
 		if theory_window_instance.get_script() == null:
 			push_error("TheoryWindow instance has no script assigned!")
 
-	# Подключаем сигналы для каждой кнопки отдельно
 	if menu_button:
 		menu_button.connect("mouse_entered", _on_button_mouse_entered.bind(menu_button))
 		menu_button.connect("mouse_exited", _on_button_mouse_exited.bind(menu_button))
@@ -52,20 +52,88 @@ func _ready():
 		run_button.connect("mouse_entered", _on_button_mouse_entered.bind(run_button))
 		run_button.connect("mouse_exited", _on_button_mouse_exited.bind(run_button))
 
-func _on_button_mouse_entered(button: TextureButton):
-	button.modulate = Color.YELLOW  # Изменяем цвет кнопки
+	_determine_level_number()
+	_check_theory_button_animation()
 
-func _on_button_mouse_exited(button: TextureButton):
-	button.modulate = Color.WHITE  # Возвращаем исходный цвет
+func _determine_level_number():
 
-func set_level_name(name: String):
-	if level_name_label:
-		level_name_label.text = name
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		var scene_path = current_scene.scene_file_path
+		if scene_path:
+			var regex = RegEx.new()
+			regex.compile("Level(\\d+)")
+			var result = regex.search(scene_path)
+			if result:
+				current_level_number = result.get_string(1).to_int()
+				print("Determined level number: ", current_level_number)
+				return
 
-func set_theory_text(text: String):
-	current_theory_text = text
+		var scene_name = current_scene.name
+		if "Level1" in scene_name: current_level_number = 1
+		elif "Level2" in scene_name: current_level_number = 2
+		elif "Level3" in scene_name: current_level_number = 3
+		elif "Level4" in scene_name: current_level_number = 4
+		elif "Level5" in scene_name: current_level_number = 5
+		elif "Level6" in scene_name: current_level_number = 6
+		elif "Level7" in scene_name: current_level_number = 7
+		elif "Level8" in scene_name: current_level_number = 8
+		elif "Level9" in scene_name: current_level_number = 9
+		elif "Level10" in scene_name: current_level_number = 10
+		elif "Level11" in scene_name: current_level_number = 11
+		elif "Level12" in scene_name: current_level_number = 12
+		elif "Level13" in scene_name: current_level_number = 13
+		else: current_level_number = 0
+
+func _check_theory_button_animation():
+	if current_level_number > 0:
+		var save_system = get_node_or_null("/root/SaveSystem")
+		if save_system:
+			var theory_viewed = save_system.is_theory_viewed(current_level_number)
+			if theory_viewed:
+				print("Theory already viewed for level ", current_level_number)
+				return
+
+			print("Starting glow animation for level ", current_level_number)
+			_start_glow_animation()
+		else:
+			print("SaveSystem not found")
+	else:
+		print("Could not determine level number")
+
+func _start_glow_animation():
+	if not theory_button:
+		return
+
+	if glow_animation_tween:
+		glow_animation_tween.kill()
+	
+	glow_animation_tween = create_tween()
+	glow_animation_tween.set_loops()
+
+	var normal_color = Color.WHITE
+	var glow_color = Color.ORANGE
+	
+	glow_animation_tween.tween_property(theory_button, "modulate", glow_color, 1.2)
+	glow_animation_tween.tween_property(theory_button, "modulate", normal_color, 1.2)
+
+func _stop_glow_animation():
+	if glow_animation_tween:
+		glow_animation_tween.kill()
+		glow_animation_tween = null
+
+	if theory_button:
+		theory_button.modulate = Color.WHITE
 
 func _on_theory_button_pressed():
+	_stop_glow_animation()
+
+	if current_level_number > 0:
+		var save_system = get_node_or_null("/root/SaveSystem")
+		if save_system:
+			save_system.set_theory_viewed(current_level_number, true)
+			print("Theory viewed flag saved for level ", current_level_number)
+
 	if not theory_window_instance:
 		push_error("Theory window instance is null")
 		return
@@ -80,6 +148,36 @@ func _on_theory_button_pressed():
 	else:
 		push_error("TheoryWindow instance missing 'set_theory_text' method")
 		create_fallback_theory_window()
+
+func update_gate_buttons_state(gate_counts: Dictionary, gate_limits: Dictionary):
+	for child in gate_buttons_container.get_children():
+		var gate_type = child.name
+		if gate_limits.has(gate_type):
+			var current_count = gate_counts.get(gate_type, 0)
+			var limit = gate_limits[gate_type]
+			child.disabled = (current_count >= limit)
+
+			if child.disabled:
+				child.modulate = Color(1, 1, 1, 0.5) 
+			else:
+				child.modulate = Color(1, 1, 1, 1)
+
+func _on_button_mouse_entered(button: TextureButton):
+	if not button.disabled:
+		button.modulate = Color.YELLOW
+
+func _on_button_mouse_exited(button: TextureButton):
+	if button.disabled:
+		button.modulate = Color(1, 1, 1, 0.5)
+	else:
+		button.modulate = Color.WHITE
+
+func set_level_name(name: String):
+	if level_name_label:
+		level_name_label.text = name
+
+func set_theory_text(text: String):
+	current_theory_text = text
 
 func create_fallback_theory_window():
 	var fallback_window = Window.new()
