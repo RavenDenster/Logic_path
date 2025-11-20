@@ -13,7 +13,12 @@ func setup_two_input_level():
 
 		if has_node("TestResultsPanel"):
 			test_results_panel = $TestResultsPanel
-			print("Two-input level: TestResultsPanel found")
+			
+			# Устанавливаем ссылку на test_results_panel для InputBlock и OutputBlock
+			$InputBlock.test_results_panel = test_results_panel
+			$OutputBlock.test_results_panel = test_results_panel
+			
+			print("Two-input level: TestResultsPanel found and set")
 		else:
 			print("WARNING: TestResultsPanel not found in two-input level")
 	else:
@@ -562,3 +567,19 @@ func _input(event):
 
 func remove_or_gate():
 	pass
+
+func get_port_under_mouse():
+	var mouse_pos = get_global_mouse_position()
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsPointQueryParameters2D.new()
+	query.position = mouse_pos
+	query.collide_with_areas = true
+	query.collision_mask = 1  # Используем только слой 1 для портов
+	var intersects = space_state.intersect_point(query, 1)
+	if intersects.size() > 0:
+		var collider = intersects[0].collider
+		if collider is Area2D and is_instance_valid(collider):
+			# Проверяем, что это не Area2D для подсветки (не на слое 2)
+			if collider.collision_layer != 2:
+				return collider
+	return null
