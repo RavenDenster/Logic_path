@@ -1,4 +1,4 @@
-extends "res://scripts/levels/LevelTwoInputs.gd"
+extends "res://scripts/levels/level_templates/LevelBaseLE.gd"
 
 var or_gate_count: int = 0
 var not_gate_count: int = 0
@@ -6,7 +6,7 @@ var max_or_gates: int = 2
 var max_not_gates: int = 2
 
 func _ready():
-	level_data = preload("res://data/level_4_data.tres")
+	level_data = preload("res://data/level_6_data.tres")
 	super._ready()
 	recount_gates()
 	update_gate_buttons_state()
@@ -29,7 +29,7 @@ func _on_add_or_button_pressed():
 		return
 	
 	var or_gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
-	or_gate.position = Vector2(600, 400)
+	or_gate.position = Vector2(600, 300)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
 	or_gate_count += 1
@@ -44,7 +44,7 @@ func _on_add_not_button_pressed():
 		return
 	
 	var not_gate = preload("res://scenes/gates/NOTGate.tscn").instantiate()
-	not_gate.position = Vector2(600, 500)
+	not_gate.position = Vector2(600, 400)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
 	not_gate_count += 1
@@ -81,13 +81,11 @@ func clear_level():
 	or_gate_count = 0
 	not_gate_count = 0
 	update_gate_buttons_state()
-	print("Level4 cleared - OR gate count reset to 0, NOT gate count reset to 0")
+	print("Level6 cleared - OR gate count reset to 0, NOT gate count reset to 0")
 
 func restore_level_state(state):
-	# Сначала очищаем уровень
 	clear_level()
-	
-	# Затем восстанавливаем состояние
+
 	if state.has("gates"):
 		print("Restoring ", state["gates"].size(), " gates")
 		for gate_data in state["gates"]:
@@ -99,7 +97,7 @@ func restore_level_state(state):
 			create_wire_from_data(wire_data)
 	
 	update_all_logic_objects()
-	recount_gates()  # Пересчитываем после восстановления
+	recount_gates()
 	update_gate_buttons_state()
 	update_all_port_colors()
 	
@@ -109,8 +107,7 @@ func create_gate_from_data(gate_data):
 	var gate_type = gate_data.get("type", "")
 	var position_array = gate_data.get("position", [0, 0])
 	var position = Vector2(position_array[0], position_array[1])
-	
-	# Проверяем ограничения для гейтов
+
 	if gate_type == "OR" and or_gate_count >= max_or_gates:
 		print("Cannot restore OR gate: maximum limit reached")
 		return
@@ -140,8 +137,7 @@ func create_gate_from_data(gate_data):
 		gate.position = position
 		add_child(gate)
 		movable_objects.append(gate)
-		
-		# Увеличиваем счетчики
+
 		if gate_type == "OR":
 			or_gate_count += 1
 		elif gate_type == "NOT":

@@ -1,4 +1,4 @@
-extends "res://scripts/levels/LevelTwoInputs.gd"
+extends "res://scripts/levels/level_templates/LevelBaseLE.gd"
 
 var and_gate_count: int = 0
 var or_gate_count: int = 0
@@ -115,10 +115,8 @@ func clear_level():
 	print("Level7 cleared - AND gate count reset to 0, OR gate count reset to 0, NOT gate count reset to 0")
 
 func restore_level_state(state):
-	# Сначала очищаем уровень
 	clear_level()
-	
-	# Затем восстанавливаем состояние
+
 	if state.has("gates"):
 		print("Restoring ", state["gates"].size(), " gates")
 		for gate_data in state["gates"]:
@@ -130,7 +128,7 @@ func restore_level_state(state):
 			create_wire_from_data(wire_data)
 	
 	update_all_logic_objects()
-	recount_gates()  # Пересчитываем после восстановления
+	recount_gates() 
 	update_gate_buttons_state()
 	update_all_port_colors()
 	
@@ -140,8 +138,7 @@ func create_gate_from_data(gate_data):
 	var gate_type = gate_data.get("type", "")
 	var position_array = gate_data.get("position", [0, 0])
 	var position = Vector2(position_array[0], position_array[1])
-	
-	# Проверяем ограничения для гейтов
+
 	if gate_type == "AND" and and_gate_count >= max_and_gates:
 		print("Cannot restore AND gate: maximum limit reached")
 		return
@@ -176,8 +173,7 @@ func create_gate_from_data(gate_data):
 		gate.position = position
 		add_child(gate)
 		movable_objects.append(gate)
-		
-		# Увеличиваем счетчики
+
 		if gate_type == "AND":
 			and_gate_count += 1
 		elif gate_type == "OR":
