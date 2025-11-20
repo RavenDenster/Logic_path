@@ -1,12 +1,12 @@
 extends Resource
 class_name Level1Data
 
-@export var level_name: String = "Level 1: Logical element OR"
+@export var level_name: String = "Level 1: OR Gate"
 @export var available_gates: Array[String] = ["OR"]
 @export var input_values_a: Array[int] = [0, 0, 1, 1]
 @export var input_values_b: Array[int] = [0, 1, 0, 1]
 @export var expected_output: Array[int] = [0, 1, 1, 1]
-@export var gate_limits: Dictionary = {"OR": 3} 
+@export var gate_limits: Dictionary = {"OR": 2} 
 @export_multiline var theory_text: String = """
 [b]Логический элемент OR (ИЛИ)[/b]
 
