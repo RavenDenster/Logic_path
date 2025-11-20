@@ -1,4 +1,4 @@
-extends "res://scripts/levels/LevelTwoInputs.gd"
+extends "res://scripts/levels/level_templates/LevelBaseLE.gd"
 
 var and_gate_count: int = 0
 var max_and_gates: int = 2
@@ -6,7 +6,6 @@ var max_and_gates: int = 2
 func _ready():
 	level_data = preload("res://data/level_2_data.tres")
 	super._ready()
-	# Пересчитываем AND гейты после загрузки состояния
 	recount_and_gates()
 	update_gate_buttons_state()
 
@@ -53,10 +52,7 @@ func clear_level():
 	print("Level2 cleared - AND gate count reset to 0")
 
 func restore_level_state(state):
-	# Сначала очищаем уровень
 	clear_level()
-	
-	# Затем восстанавливаем состояние
 	if state.has("gates"):
 		print("Restoring ", state["gates"].size(), " gates")
 		for gate_data in state["gates"]:
@@ -68,7 +64,7 @@ func restore_level_state(state):
 			create_wire_from_data(wire_data)
 	
 	update_all_logic_objects()
-	recount_and_gates()  # Пересчитываем после восстановления
+	recount_and_gates()
 	update_gate_buttons_state()
 	update_all_port_colors()
 	
@@ -78,8 +74,7 @@ func create_gate_from_data(gate_data):
 	var gate_type = gate_data.get("type", "")
 	var position_array = gate_data.get("position", [0, 0])
 	var position = Vector2(position_array[0], position_array[1])
-	
-	# Проверяем ограничение для AND гейтов
+
 	if gate_type == "AND" and and_gate_count >= max_and_gates:
 		print("Cannot restore AND gate: maximum limit reached")
 		return
@@ -102,15 +97,13 @@ func create_gate_from_data(gate_data):
 			gate_scene = preload("res://scenes/gates/ORGate.tscn")
 		"NOT":
 			gate_scene = preload("res://scenes/gates/NOTGate.tscn")
-		# Добавьте другие типы гейтов по необходимости
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
 		gate.position = position
 		add_child(gate)
 		movable_objects.append(gate)
-		
-		# Увеличиваем счетчик только для AND гейтов
+
 		if gate_type == "AND":
 			and_gate_count += 1
 			

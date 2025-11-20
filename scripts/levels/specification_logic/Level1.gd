@@ -1,4 +1,4 @@
-extends "res://scripts/levels/LevelTwoInputs.gd"
+extends "res://scripts/levels/level_templates/LevelBaseLE.gd"
 
 var or_gate_count: int = 0
 var max_or_gates: int = 2
@@ -43,7 +43,6 @@ func clear_level():
 
 func restore_level_state(state):
 	super.restore_level_state(state)
-	# Пересчитываем количество OR гейтов после восстановления состояния
 	or_gate_count = 0
 	for obj in movable_objects:
 		if obj and is_instance_valid(obj):

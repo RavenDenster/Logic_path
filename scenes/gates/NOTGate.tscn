@@ -16,6 +16,7 @@ z_index = 5
 texture = ExtResource("2_mqw4n")
 
 [node name="InputPort" type="Area2D" parent="."]
+z_index = 2
 position = Vector2(-50, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InputPort"]
@@ -28,6 +29,7 @@ position = Vector2(1, 0)
 texture = ExtResource("3_2b2au")
 
 [node name="Output" type="Area2D" parent="."]
+z_index = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Output"]
 position = Vector2(45, 0)
