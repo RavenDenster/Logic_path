@@ -1,7 +1,7 @@
 extends Resource
 class_name Level2Data
 
-@export var level_name: String = "Level 2"
+@export var level_name: String = "Level 2: Logical element AND"
 @export var available_gates: Array[String] = ["AND"]
 @export var input_values_a: Array[int] = [0, 1, 1, 1]
 @export var input_values_b: Array[int] = [0, 1, 0, 1]
