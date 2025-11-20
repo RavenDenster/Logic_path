@@ -1,7 +1,7 @@
 extends "res://scripts/levels/LevelTwoInputs.gd"
 
 var or_gate_count: int = 0
-var max_or_gates: int = 3
+var max_or_gates: int = 2
 
 func _ready():
 	level_data = preload("res://data/level_1_data.tres")
