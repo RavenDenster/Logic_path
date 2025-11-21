@@ -64,3 +64,4 @@ func reset_game_progress():
 			get_tree().reload_current_scene()
 	else:
 		push_error("SaveSystem not found!")
+	

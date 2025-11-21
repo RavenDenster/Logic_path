@@ -5,17 +5,11 @@ var received_value: int = 0
 var expected = []
 var main_sprite: Sprite2D
 var test_results_panel: Node
-var highlight_timer: Timer
 var area: Area2D
 
 func _ready():
 	print("OutputBlock ready! Has set_input: ", has_method("set_input"))
 	main_sprite = $Sprite2D
-	
-	# Создаем таймер для подсветки
-	highlight_timer = Timer.new()
-	add_child(highlight_timer)
-	highlight_timer.timeout.connect(_on_highlight_timeout)
 	
 	# Добавляем Area2D только для обнаружения наведения
 	area = Area2D.new()
@@ -72,9 +66,6 @@ func _highlight_desired_output():
 		if not test_results_panel:
 			return
 	
-	# Останавливаем предыдущий таймер
-	highlight_timer.stop()
-	
 	# Сбрасываем все подсветки
 	_reset_all_highlights()
 	
@@ -84,12 +75,6 @@ func _highlight_desired_output():
 		if child is Label and child.text == "Desired Output":
 			child.modulate = Color.YELLOW
 			break
-	
-	# Запускаем таймер на 3 секунды
-	highlight_timer.start(4.0)
-
-func _on_highlight_timeout():
-	_reset_all_highlights()
 
 func _reset_all_highlights():
 	if test_results_panel:

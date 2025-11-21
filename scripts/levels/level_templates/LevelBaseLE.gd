@@ -24,34 +24,56 @@ func setup_two_input_level():
 		push_error("InputBlock not found in two-input level!")
 
 func propagate_signals():
+	# Сбрасываем входы для всех логических объектов
 	for obj in all_logic_objects:
 		if obj.has_method("reset_inputs"):
 			obj.reset_inputs()
 	
 	print("=== Starting signal propagation ===")
 	
+	# Безопасно получаем OutputBlock
+	var output_block = get_node_or_null("OutputBlock")
+	if not output_block:
+		print("ERROR: OutputBlock not found!")
+		return
+	
 	var dependencies = {}
 	var dependents = {}
 	
+	# Инициализируем зависимости
 	for obj in all_logic_objects:
 		dependencies[obj] = []
 		dependents[obj] = []
 	
+	# Строим граф зависимостей
 	for wire in wires:
+		if not wire or not is_instance_valid(wire):
+			continue
+		if not wire.start_port or not is_instance_valid(wire.start_port):
+			continue
+		if not wire.end_port or not is_instance_valid(wire.end_port):
+			continue
+			
 		var start_gate = wire.start_port.get_parent()
 		var end_gate = wire.end_port.get_parent()
 		
 		if start_gate != end_gate:
+			if not dependencies.has(end_gate):
+				dependencies[end_gate] = []
 			if not dependencies[end_gate].has(start_gate):
 				dependencies[end_gate].append(start_gate)
+			
+			if not dependents.has(start_gate):
+				dependents[start_gate] = []
 			if not dependents[start_gate].has(end_gate):
 				dependents[start_gate].append(end_gate)
 	
+	# Топологическая сортировка
 	var queue = []
 	var in_degree = {}
 	
 	for obj in all_logic_objects:
-		in_degree[obj] = dependencies[obj].size()
+		in_degree[obj] = dependencies.get(obj, []).size()
 		if in_degree[obj] == 0:
 			queue.append(obj)
 	
@@ -61,27 +83,38 @@ func propagate_signals():
 		var current = queue.pop_front()
 		processed_order.append(current)
 		
-		for dependent in dependents[current]:
+		for dependent in dependents.get(current, []):
 			in_degree[dependent] -= 1
 			if in_degree[dependent] == 0:
 				queue.append(dependent)
 	
+	# Добавляем OutputBlock в конец, если он еще не добавлен
+	if output_block and not processed_order.has(output_block):
+		processed_order.append(output_block)
+	
 	print("Processing order: ", processed_order)
 	
+	# Обрабатываем объекты в порядке зависимостей
 	for current in processed_order:
+		if not current or not is_instance_valid(current):
+			continue
+			
 		print("Processing: ", current.name)
 		
-		if current == $InputBlock:
+		# Обрабатываем InputBlock
+		if current == get_node_or_null("InputBlock"):
 			for port_name in ["OutputA", "OutputB"]:
 				var port = current.get_node_or_null(port_name)
 				if port:
 					for wire in wires:
+						if not wire or not is_instance_valid(wire):
+							continue
 						if wire.start_port == port:
 							var end_gate = wire.end_port.get_parent()
 							var end_port_name = wire.end_port.name
 							var val = int(current.get_output(port_name))
 							
-							if end_gate.has_method("set_input"):
+							if end_gate and end_gate.has_method("set_input"):
 								var port_num = 1
 								if end_port_name == "Input2":
 									port_num = 2
@@ -92,17 +125,27 @@ func propagate_signals():
 								
 								print("Setting input for ", end_gate.name, " port ", port_num, " to ", val)
 								end_gate.set_input(port_num, val)
+								# Немедленно пересчитываем выход гейта
+								if end_gate.has_method("calculate_output"):
+									end_gate.calculate_output()
+							elif end_gate == output_block:
+								# Прямое соединение InputBlock с OutputBlock
+								print("Direct connection to OutputBlock: ", val)
+								output_block.set_input(1, val)
 		
-		elif current.has_method("get_output"):
+		# Обрабатываем обычные гейты
+		elif current.has_method("get_output") and current != output_block:
 			var output_value = int(current.get_output("Output"))
 			print(current.name, " output value: ", output_value)
 			
 			for wire in wires:
+				if not wire or not is_instance_valid(wire):
+					continue
 				if wire.start_port.get_parent() == current:
 					var end_gate = wire.end_port.get_parent()
 					var end_port_name = wire.end_port.name
 					
-					if end_gate.has_method("set_input"):
+					if end_gate and end_gate.has_method("set_input"):
 						var port_num = 1
 						if end_port_name == "Input2":
 							port_num = 2
@@ -113,10 +156,17 @@ func propagate_signals():
 						
 						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
 						end_gate.set_input(port_num, output_value)
+						# Немедленно пересчитываем выход гейта
+						if end_gate.has_method("calculate_output"):
+							end_gate.calculate_output()
+					elif end_gate == output_block:
+						# Прямое соединение гейта с OutputBlock
+						print("Direct connection to OutputBlock: ", output_value)
+						output_block.set_input(1, output_value)
 	
-	print("Final OutputBlock value: ", $OutputBlock.received_value)
+	print("Final OutputBlock value: ", output_block.received_value)
 	print("=== Signal propagation complete ===")
-
+	
 func _on_test_pressed():
 	reset_all_port_sprites()
 	if has_node("OutputBlock"):
@@ -236,6 +286,29 @@ func clear_level():
 	
 	print("Two-input level cleared - kept Input/Output blocks, removed gates and wires")
 	
+func update_all_logic_objects():
+	all_logic_objects.clear()
+	
+	# Добавляем InputBlock если он существует
+	if has_node("InputBlock"):
+		if not all_logic_objects.has($InputBlock):
+			all_logic_objects.append($InputBlock)
+	
+	# Добавляем OutputBlock если он существует
+	if has_node("OutputBlock"):
+		if not all_logic_objects.has($OutputBlock):
+			all_logic_objects.append($OutputBlock)
+	
+	# Добавляем все остальные movable_objects
+	for obj in movable_objects:
+		if obj and is_instance_valid(obj) and not all_logic_objects.has(obj):
+			# Пропускаем InputBlock и OutputBlock, так как они уже добавлены
+			if (has_node("InputBlock") and obj == $InputBlock) or (has_node("OutputBlock") and obj == $OutputBlock):
+				continue
+			all_logic_objects.append(obj)
+	
+	print("Updated all_logic_objects: ", all_logic_objects)
+
 func create_gate_from_data(gate_data):
 	var gate_type = gate_data.get("type", "")
 	var position_array = gate_data.get("position", [0, 0])
@@ -469,6 +542,9 @@ func _ready():
 		test_results_panel.load_initial_data(level_data.input_values_a, level_data.input_values_b, level_data.expected_output)
 
 	load_level_state()
+
+	# Явно обновляем логические объекты после загрузки
+	update_all_logic_objects()
 
 	auto_save_timer = Timer.new()
 	auto_save_timer.wait_time = 2.0

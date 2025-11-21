@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://0n7kusmwjodw"]
 
-[ext_resource type="Script" uid="uid://cpaxf73mwbdvj" path="res://scripts/ui/TestResultsPanel3Inputs.gd" id="1_a5wrv"]
+[ext_resource type="Script" uid="uid://cpaxf73mwbdvj" path="res://scripts/ui/bottom_panels/BottonPanel3Inputs.gd" id="1_a5wrv"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="1_wqa4d"]
 
 [node name="TestResultsPanel3Inputs" type="Control"]

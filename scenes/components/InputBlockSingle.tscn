@@ -13,6 +13,7 @@ script = ExtResource("1_kmgqk")
 texture = ExtResource("2_kjwgg")
 
 [node name="output" type="Area2D" parent="."]
+z_index = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="output"]
 position = Vector2(33, -1)

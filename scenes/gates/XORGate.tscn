@@ -10,7 +10,7 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_17uut"]
 
-[node name="XorGate" type="Node2D"]
+[node name="XORGate" type="Node2D"]
 script = ExtResource("1_l37vb")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -18,6 +18,7 @@ z_index = 4
 texture = ExtResource("2_ffts7")
 
 [node name="Input1" type="Area2D" parent="."]
+z_index = 2
 position = Vector2(-50, -40)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Input1"]
@@ -29,6 +30,7 @@ position = Vector2(1, -1)
 texture = ExtResource("3_e7hbc")
 
 [node name="Input2" type="Area2D" parent="."]
+z_index = 2
 position = Vector2(-50, 40)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Input2"]
@@ -40,6 +42,7 @@ position = Vector2(1, -1)
 texture = ExtResource("3_e7hbc")
 
 [node name="Output" type="Area2D" parent="."]
+z_index = 2
 position = Vector2(50, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Output"]
