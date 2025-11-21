@@ -1,4 +1,3 @@
-
 extends "res://scripts/levels/LevelBase.gd"
 
 func setup_three_input_level():
@@ -50,10 +49,19 @@ func setup_three_input_level():
 		
 		input_blocks = [input_block_a, input_block_b, input_block_c]
 
+	# Устанавливаем метки для подсветки и test_results_panel
 	for input_block in input_blocks:
 		if not input_block in movable_objects:
 			movable_objects.append(input_block)
 			print("Added to movable_objects: ", input_block.name)
+		
+		# Устанавливаем соответствующие метки для каждого InputBlock
+		if input_block.name == "InputBlockA":
+			input_block.input_label = "Input 1"
+		elif input_block.name == "InputBlockB":
+			input_block.input_label = "Input 2"
+		elif input_block.name == "InputBlockC":
+			input_block.input_label = "Input 3"
 	
 	if not $OutputBlock in movable_objects:
 		movable_objects.append($OutputBlock)
@@ -63,7 +71,7 @@ func setup_three_input_level():
 	
 	if not test_results_panel:
 		print("Creating TestResultsPanel3Inputs programmatically")
-		var new_panel_scene = preload("res://scenes/ui/TestResultsPanel3Inputs.tscn")
+		var new_panel_scene = preload("res://scenes/ui/bottom_panels/BottonPanel3Inputs.tscn")
 		if ResourceLoader.exists(new_panel_scene.resource_path):
 			var new_panel = new_panel_scene.instantiate()
 
@@ -77,22 +85,37 @@ func setup_three_input_level():
 	else:
 		print("Using existing TestResultsPanel3Inputs")
 	
+	# Устанавливаем test_results_panel для всех InputBlock и OutputBlock
+	for input_block in input_blocks:
+		input_block.test_results_panel = test_results_panel
+	
+	$OutputBlock.test_results_panel = test_results_panel
+	
 	print("Three-input level setup completed with ", input_blocks.size(), " input blocks")
 
 func propagate_signals_three_inputs():
+	# Сбрасываем входы для всех логических объектов
 	for obj in all_logic_objects:
 		if obj.has_method("reset_inputs") and not (obj in input_blocks):
 			obj.reset_inputs()
 	
 	print("=== Starting signal propagation for three inputs ===")
+	
+	# Безопасно получаем OutputBlock
+	var output_block = get_node_or_null("OutputBlock")
+	if not output_block:
+		print("ERROR: OutputBlock not found!")
+		return
 
 	var dependencies = {}
 	var dependents = {}
 	
+	# Инициализируем зависимости
 	for obj in all_logic_objects:
 		dependencies[obj] = []
 		dependents[obj] = []
 
+	# Строим граф зависимостей
 	for wire in wires:
 		if not wire or not is_instance_valid(wire):
 			continue
@@ -105,16 +128,22 @@ func propagate_signals_three_inputs():
 		var end_gate = wire.end_port.get_parent()
 		
 		if start_gate != end_gate:
+			if not dependencies.has(end_gate):
+				dependencies[end_gate] = []
 			if not dependencies[end_gate].has(start_gate):
 				dependencies[end_gate].append(start_gate)
+			
+			if not dependents.has(start_gate):
+				dependents[start_gate] = []
 			if not dependents[start_gate].has(end_gate):
 				dependents[start_gate].append(end_gate)
 
+	# Топологическая сортировка
 	var queue = []
 	var in_degree = {}
 	
 	for obj in all_logic_objects:
-		in_degree[obj] = dependencies[obj].size()
+		in_degree[obj] = dependencies.get(obj, []).size()
 		if in_degree[obj] == 0:
 			queue.append(obj)
 	
@@ -124,19 +153,25 @@ func propagate_signals_three_inputs():
 		var current = queue.pop_front()
 		processed_order.append(current)
 		
-		for dependent in dependents[current]:
+		for dependent in dependents.get(current, []):
 			in_degree[dependent] -= 1
 			if in_degree[dependent] == 0:
 				queue.append(dependent)
 	
+	# Добавляем OutputBlock в конец, если он еще не добавлен
+	if output_block and not processed_order.has(output_block):
+		processed_order.append(output_block)
+	
 	print("Processing order for three inputs: ", processed_order)
 
+	# Обрабатываем объекты в порядке зависимостей
 	for current in processed_order:
 		if not current or not is_instance_valid(current):
 			continue
 			
 		print("Processing: ", current.name)
 
+		# Обрабатываем InputBlocks
 		if current in input_blocks and current.has_method("get_output"):
 			var output_value = int(current.get_output("Output"))
 			print(current.name, " output value: ", output_value)
@@ -165,8 +200,13 @@ func propagate_signals_three_inputs():
 						
 						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
 						end_gate.set_input(port_num, output_value)
+					elif end_gate == output_block:
+						# Прямое соединение InputBlock с OutputBlock
+						print("Direct connection to OutputBlock: ", output_value)
+						output_block.set_input(1, output_value)
 
-		elif current.has_method("get_output") and current != $OutputBlock:
+		# Обрабатываем обычные гейты (но не OutputBlock)
+		elif current.has_method("get_output") and current != output_block:
 			var output_value = int(current.get_output("Output"))
 			print(current.name, " output value: ", output_value)
 
@@ -194,11 +234,14 @@ func propagate_signals_three_inputs():
 						
 						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
 						end_gate.set_input(port_num, output_value)
+					elif end_gate == output_block:
+						# Прямое соединение гейта с OutputBlock
+						print("Direct connection to OutputBlock: ", output_value)
+						output_block.set_input(1, output_value)
 	
-	if has_node("OutputBlock"):
-		print("Final OutputBlock value: ", $OutputBlock.received_value)
+	print("Final OutputBlock value: ", output_block.received_value)
 	print("=== Signal propagation for three inputs complete ===")
-
+	
 func _on_test_pressed():
 	reset_all_port_sprites()
 	if has_node("OutputBlock"):
@@ -496,7 +539,7 @@ func reset_all_port_sprites():
 
 	for input_block in input_blocks:
 		if input_block and is_instance_valid(input_block):
-			var output_port = input_block.get_node_or_null("Output")
+			var output_port = input_block.get_node_or_null("output")
 			if output_port and is_instance_valid(output_port):
 				var sprite = output_port.get_node_or_null("Sprite2D")
 				if sprite and is_instance_valid(sprite):
@@ -575,6 +618,9 @@ func _ready():
 
 	load_level_state()
 
+	# Явно обновляем логические объекты после загрузки
+	update_all_logic_objects()
+
 	auto_save_timer = Timer.new()
 	auto_save_timer.wait_time = 2.0
 	auto_save_timer.one_shot = true
@@ -639,6 +685,45 @@ func _input(event):
 				var local_mouse = sprite.to_local(mouse_pos)
 				var sprite_rect = sprite.get_rect()
 				if sprite_rect.has_point(local_mouse):
+					# Определяем тип гейта и обновляем счетчики
+					var scene_file = obj.scene_file_path
+					print("Removing object with scene file: ", scene_file)
+					
+					# Более точная проверка типов гейтов с правильным порядком
+					# Сначала проверяем более специфичные типы, потом общие
+					if scene_file.find("XORGate") != -1:
+						if has_method("remove_xor_gate"):
+							remove_xor_gate()
+						else:
+							print("WARNING: remove_xor_gate method not found")
+					elif scene_file.find("Sel0") != -1:
+						if has_method("remove_sel0_gate"):
+							remove_sel0_gate()
+						else:
+							print("WARNING: remove_sel0_gate method not found")
+					elif scene_file.find("Sel1") != -1:
+						if has_method("remove_sel1_gate"):
+							remove_sel1_gate()
+						else:
+							print("WARNING: remove_sel1_gate method not found")
+					elif scene_file.find("ORGate") != -1:
+						if has_method("remove_or_gate"):
+							remove_or_gate()
+						else:
+							print("WARNING: remove_or_gate method not found")
+					elif scene_file.find("ANDGate") != -1:
+						if has_method("remove_and_gate"):
+							remove_and_gate()
+						else:
+							print("WARNING: remove_and_gate method not found")
+					elif scene_file.find("NOTGate") != -1:
+						if has_method("remove_not_gate"):
+							remove_not_gate()
+						else:
+							print("WARNING: remove_not_gate method not found")
+					else:
+						print("Unknown gate type: ", scene_file)
+					
 					remove_wires_connected_to_gate(obj)
 					obj.queue_free()
 					movable_objects.remove_at(i)
@@ -663,3 +748,60 @@ func _input(event):
 						mark_level_state_dirty()
 						print("Wire removed")
 						break
+						
+func update_all_logic_objects():
+	all_logic_objects.clear()
+	
+	# Добавляем все input_blocks
+	for input_block in input_blocks:
+		if input_block and is_instance_valid(input_block) and not all_logic_objects.has(input_block):
+			all_logic_objects.append(input_block)
+	
+	# Добавляем OutputBlock если он существует
+	if has_node("OutputBlock"):
+		if not all_logic_objects.has($OutputBlock):
+			all_logic_objects.append($OutputBlock)
+	
+	# Добавляем все остальные movable_objects
+	for obj in movable_objects:
+		if obj and is_instance_valid(obj) and not all_logic_objects.has(obj):
+			# Пропускаем input_blocks и OutputBlock, так как они уже добавлены
+			if obj in input_blocks or (has_node("OutputBlock") and obj == $OutputBlock):
+				continue
+			all_logic_objects.append(obj)
+	
+	print("Updated all_logic_objects: ", all_logic_objects)
+	
+func remove_not_gate():
+	pass
+	
+func remove_or_gate():
+	pass
+
+func remove_and_gate():
+	pass
+
+func remove_xor_gate():
+	pass
+
+func remove_sel0_gate():
+	pass
+	
+func remove_sel1_gate():
+	pass
+						
+func get_port_under_mouse():
+	var mouse_pos = get_global_mouse_position()
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsPointQueryParameters2D.new()
+	query.position = mouse_pos
+	query.collide_with_areas = true
+	query.collision_mask = 1  # Используем только слой 1 для портов
+	var intersects = space_state.intersect_point(query, 1)
+	if intersects.size() > 0:
+		var collider = intersects[0].collider
+		if collider is Area2D and is_instance_valid(collider):
+			# Проверяем, что это не Area2D для подсветки (не на слое 2)
+			if collider.collision_layer != 2:
+				return collider
+	return null

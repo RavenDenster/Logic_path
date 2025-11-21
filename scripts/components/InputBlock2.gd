@@ -6,15 +6,9 @@ var values_A = []
 var values_B = []
 var current_test_index = 0
 var test_results_panel: Node
-var highlight_timer: Timer
 var area: Area2D
 
 func _ready():
-	# Создаем таймер для подсветки
-	highlight_timer = Timer.new()
-	add_child(highlight_timer)
-	highlight_timer.timeout.connect(_on_highlight_timeout)
-	
 	# Добавляем Area2D только для обнаружения наведения
 	area = Area2D.new()
 	var collision = CollisionShape2D.new()
@@ -70,9 +64,6 @@ func _highlight_input_labels():
 		if not test_results_panel:
 			return
 	
-	# Останавливаем предыдущий таймер
-	highlight_timer.stop()
-	
 	# Сбрасываем все подсветки
 	_reset_all_highlights()
 	
@@ -82,12 +73,6 @@ func _highlight_input_labels():
 		if child is Label:
 			if child.text == "Input 1" or child.text == "Input 2":
 				child.modulate = Color.YELLOW
-	
-	# Запускаем таймер на 3 секунды
-	highlight_timer.start(4.0)
-
-func _on_highlight_timeout():
-	_reset_all_highlights()
 
 func _reset_all_highlights():
 	if test_results_panel:

@@ -18,26 +18,27 @@ texture = ExtResource("2_iwbf0")
 [node name="ColorRect" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 0
-offset_left = 1.0
-offset_top = 342.0
-offset_right = 1922.0
-offset_bottom = 724.0
+offset_left = 2.0
+offset_top = 292.0
+offset_right = 1923.0
+offset_bottom = 780.0
 color = Color(0.15294118, 0.22352941, 0.2901961, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(0, 700)
 layout_mode = 0
-offset_left = 830.0
-offset_top = 174.0
-offset_right = 1065.0
-offset_bottom = 874.0
+offset_left = 857.0
+offset_top = 176.0
+offset_right = 1092.0
+offset_bottom = 876.0
 theme_override_constants/separation = 24
 alignment = 1
 
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "LOGIC PATH"
+theme_override_font_sizes/font_size = 40
+text = "LOGIC PATH
+"
 horizontal_alignment = 1
 
 [node name="PlayCampaignButton" type="Button" parent="VBoxContainer"]
