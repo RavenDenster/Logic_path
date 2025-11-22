@@ -48,7 +48,7 @@ func _on_add_or_button_pressed():
 		print("Cannot add more OR gates. Maximum limit reached: ", max_or_gates)
 		return
 	
-	var or_gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
+	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 600)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
@@ -63,7 +63,7 @@ func _on_add_not_button_pressed():
 		print("Cannot add more NOT gates. Maximum limit reached: ", max_not_gates)
 		return
 	
-	var not_gate = preload("res://scenes/gates/NOTGate.tscn").instantiate()
+	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 800)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
@@ -162,11 +162,11 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/ORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/NOTGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()

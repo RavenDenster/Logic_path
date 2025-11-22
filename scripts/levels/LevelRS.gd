@@ -427,7 +427,7 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"NOR":
-			gate_scene = preload("res://scenes/gates/NORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NORGate.tscn")
 		"RSFLIPFLOP":
 			gate_scene = preload("res://scenes/gates/RSFlipFlop.tscn")
 	

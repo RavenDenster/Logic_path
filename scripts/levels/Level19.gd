@@ -30,7 +30,7 @@ func _on_add_and_button_pressed():
 
 func _on_add_not_button_pressed():
 	print("Adding NOT gate")
-	var not_gate = preload("res://scenes/gates/NOTGate.tscn").instantiate()
+	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 500)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
@@ -39,7 +39,7 @@ func _on_add_not_button_pressed():
 
 func _on_add_nxor_button_pressed():
 	print("Adding XNOR gate")
-	var xnor_gate = preload("res://scenes/gates/XNORGate.tscn").instantiate()
+	var xnor_gate = preload("res://scenes/gates/base_logic_el/XNORGate.tscn").instantiate()
 	xnor_gate.position = Vector2(600, 600)
 	add_child(xnor_gate)
 	movable_objects.append(xnor_gate)

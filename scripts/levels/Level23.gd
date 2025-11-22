@@ -7,7 +7,7 @@ func _ready():
 
 func _on_add_and_button_pressed():
 	print("Adding AND gate")
-	var and_gate = preload("res://scenes/gates/ANDGate.tscn").instantiate()
+	var and_gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 400)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
@@ -16,7 +16,7 @@ func _on_add_and_button_pressed():
 
 func _on_add_not_button_pressed():
 	print("Adding NOT gate")
-	var not_gate = preload("res://scenes/gates/NOTGate.tscn").instantiate()
+	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 500)
 	add_child(not_gate)
 	movable_objects.append(not_gate)

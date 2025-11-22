@@ -434,7 +434,7 @@ func create_gate_from_data(gate_data):
 			movable_objects.append(gate)
 			print("Restored AND gate: ", gate.name, " at ", position)
 		"OR":
-			var gate_scene = preload("res://scenes/gates/ORGate.tscn")
+			var gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
 			var gate = gate_scene.instantiate()
 			gate.position = position
 			if gate_name != "":

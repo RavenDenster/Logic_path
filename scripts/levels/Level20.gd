@@ -29,7 +29,7 @@ func _on_add_comparator_button_pressed():
 
 func _on_add_and_button_pressed():
 	print("Adding AND gate")
-	var and_gate = preload("res://scenes/gates/ANDGate.tscn").instantiate()
+	var and_gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 500)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
@@ -38,7 +38,7 @@ func _on_add_and_button_pressed():
 
 func _on_add_or_button_pressed():
 	print("Adding OR gate")
-	var or_gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
+	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 600)
 	add_child(or_gate)
 	movable_objects.append(or_gate)

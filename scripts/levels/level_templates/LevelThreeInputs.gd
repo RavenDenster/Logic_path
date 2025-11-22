@@ -49,13 +49,11 @@ func setup_three_input_level():
 		
 		input_blocks = [input_block_a, input_block_b, input_block_c]
 
-	# Устанавливаем метки для подсветки и test_results_panel
 	for input_block in input_blocks:
 		if not input_block in movable_objects:
 			movable_objects.append(input_block)
 			print("Added to movable_objects: ", input_block.name)
-		
-		# Устанавливаем соответствующие метки для каждого InputBlock
+
 		if input_block.name == "InputBlockA":
 			input_block.input_label = "Input 1"
 		elif input_block.name == "InputBlockB":
@@ -84,8 +82,7 @@ func setup_three_input_level():
 			push_error("TestResultsPanel3Inputs scene not found")
 	else:
 		print("Using existing TestResultsPanel3Inputs")
-	
-	# Устанавливаем test_results_panel для всех InputBlock и OutputBlock
+
 	for input_block in input_blocks:
 		input_block.test_results_panel = test_results_panel
 	
@@ -93,15 +90,138 @@ func setup_three_input_level():
 	
 	print("Three-input level setup completed with ", input_blocks.size(), " input blocks")
 
+func create_wire_from_data(wire_data):
+	if wire_data.has("start_parent_name") and not wire_data.has("start_parent_id"):
+		wire_data["start_parent_id"] = wire_data["start_parent_name"]
+	if wire_data.has("end_parent_name") and not wire_data.has("end_parent_id"):
+		wire_data["end_parent_id"] = wire_data["end_parent_name"]
+	var start_parent_id = wire_data.get("start_parent_id", "")
+	var start_port_name = wire_data.get("start_port_name", "")
+	var end_parent_id = wire_data.get("end_parent_id", "")
+	var end_port_name = wire_data.get("end_port_name", "")
+	var start_parent_type = wire_data.get("start_parent_type", "")
+	var end_parent_type = wire_data.get("end_parent_type", "")
+	
+	print("Attempting to restore wire: ", start_parent_id, ".", start_port_name, " -> ", end_parent_id, ".", end_port_name)
+
+	# Находим порты по новому идентификатору
+	var start_port = find_port_by_id(start_parent_id, start_port_name, start_parent_type)
+	var end_port = find_port_by_id(end_parent_id, end_port_name, end_parent_type)
+	
+	# Если не нашли по ID, пытаемся найти по позициям
+	if not start_port or not end_port:
+		var start_pos_array = wire_data.get("start_position", [0, 0])
+		var end_pos_array = wire_data.get("end_position", [0, 0])
+		var start_pos = Vector2(start_pos_array[0], start_pos_array[1])
+		var end_pos = Vector2(end_pos_array[0], end_pos_array[1])
+		
+		var max_distance = 150.0
+		if not start_port:
+			start_port = find_port_near_position(start_pos, max_distance)
+			if start_port:
+				print("Found start port by position: ", start_port.get_parent().name, ".", start_port.name)
+		if not end_port:
+			end_port = find_port_near_position(end_pos, max_distance)
+			if end_port:
+				print("Found end port by position: ", end_port.get_parent().name, ".", end_port.name)
+	
+	if start_port and end_port and start_port != end_port:
+		# Проверяем, не существует ли уже такое соединение
+		var wire_exists = false
+		for existing_wire in wires:
+			if existing_wire.start_port == start_port and existing_wire.end_port == end_port:
+				wire_exists = true
+				break
+		
+		if not wire_exists:
+			var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+			wire.connect_ports(start_port, end_port)
+			add_child(wire)
+			wires.append(wire)
+			print("Successfully restored wire: ", start_parent_id, ".", start_port_name, " -> ", end_parent_id, ".", end_port_name)
+			return true
+		else:
+			print("Wire already exists, skipping")
+			return false
+	else:
+		print("WARNING: Could not restore wire")
+		print("  Start port found: ", start_port != null)
+		print("  End port found: ", end_port != null)
+		if start_port: print("  Start port: ", start_port.get_parent().name, ".", start_port.name)
+		if end_port: print("  End port: ", end_port.get_parent().name, ".", end_port.name)
+		return false
+
+func find_port_by_id(parent_id, port_name, parent_type = ""):
+	var parent = null
+	
+	# Для стандартных блоков используем имя
+	if parent_id == "OutputBlock" and has_node("OutputBlock"):
+		parent = $OutputBlock
+
+	# Проверяем входные блоки
+	for input_block in input_blocks:
+		if input_block and input_block.name == parent_id:
+			parent = input_block
+			break
+	
+	# Если не нашли по имени, пытаемся найти по типу + позиции
+	if not parent and "_" in parent_id:
+		var parts = parent_id.split("_")
+		if parts.size() >= 3:
+			var gate_type = parts[0]
+			var pos_x = parts[1].to_float()
+			var pos_y = parts[2].to_float()
+			var target_position = Vector2(pos_x, pos_y)
+			
+			for obj in movable_objects:
+				if not obj or not is_instance_valid(obj):
+					continue
+					
+				# Пропускаем стандартные блоки
+				if obj in input_blocks or (has_node("OutputBlock") and obj == $OutputBlock):
+					continue
+					
+				var obj_type = get_object_type(obj)
+				if obj_type == gate_type:
+					# Сравниваем позиции с допуском
+					if obj.position.distance_to(target_position) < 10.0:
+						parent = obj
+						break
+	
+	if not parent:
+		print("Parent not found by ID: ", parent_id)
+		return null
+
+	# Ищем порт
+	var port = null
+	if port_name is String or port_name is NodePath:
+		port = parent.get_node_or_null(port_name)
+	else:
+		port = parent.get_node_or_null(str(port_name))
+	
+	# Если порт не найден стандартным способом, пытаемся найти по типу
+	if not port:
+		if port_name == "Area2D": # Общее имя для выходных портов Sel0/Sel1
+			port = parent.get_node_or_null("Output")
+		elif port_name == "InputPort": # Общее имя для входных портов
+			port = parent.get_node_or_null("Input1") or parent.get_node_or_null("InputPort")
+	
+	if not port:
+		print("Port not found: ", parent_id, "/", port_name)
+		print("Available children in ", parent_id, ":")
+		for child in parent.get_children():
+			print("  - ", child.name, " (Type: ", child.get_class(), ")")
+	
+	return port
+
 func propagate_signals_three_inputs():
-	# Сбрасываем входы для всех логических объектов
+
 	for obj in all_logic_objects:
 		if obj.has_method("reset_inputs") and not (obj in input_blocks):
 			obj.reset_inputs()
 	
 	print("=== Starting signal propagation for three inputs ===")
-	
-	# Безопасно получаем OutputBlock
+
 	var output_block = get_node_or_null("OutputBlock")
 	if not output_block:
 		print("ERROR: OutputBlock not found!")
@@ -109,13 +229,11 @@ func propagate_signals_three_inputs():
 
 	var dependencies = {}
 	var dependents = {}
-	
-	# Инициализируем зависимости
+
 	for obj in all_logic_objects:
 		dependencies[obj] = []
 		dependents[obj] = []
 
-	# Строим граф зависимостей
 	for wire in wires:
 		if not wire or not is_instance_valid(wire):
 			continue
@@ -138,7 +256,6 @@ func propagate_signals_three_inputs():
 			if not dependents[start_gate].has(end_gate):
 				dependents[start_gate].append(end_gate)
 
-	# Топологическая сортировка
 	var queue = []
 	var in_degree = {}
 	
@@ -158,20 +275,17 @@ func propagate_signals_three_inputs():
 			if in_degree[dependent] == 0:
 				queue.append(dependent)
 	
-	# Добавляем OutputBlock в конец, если он еще не добавлен
 	if output_block and not processed_order.has(output_block):
 		processed_order.append(output_block)
 	
 	print("Processing order for three inputs: ", processed_order)
 
-	# Обрабатываем объекты в порядке зависимостей
 	for current in processed_order:
 		if not current or not is_instance_valid(current):
 			continue
 			
 		print("Processing: ", current.name)
 
-		# Обрабатываем InputBlocks
 		if current in input_blocks and current.has_method("get_output"):
 			var output_value = int(current.get_output("Output"))
 			print(current.name, " output value: ", output_value)
@@ -201,11 +315,10 @@ func propagate_signals_three_inputs():
 						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
 						end_gate.set_input(port_num, output_value)
 					elif end_gate == output_block:
-						# Прямое соединение InputBlock с OutputBlock
+
 						print("Direct connection to OutputBlock: ", output_value)
 						output_block.set_input(1, output_value)
 
-		# Обрабатываем обычные гейты (но не OutputBlock)
 		elif current.has_method("get_output") and current != output_block:
 			var output_value = int(current.get_output("Output"))
 			print(current.name, " output value: ", output_value)
@@ -235,7 +348,6 @@ func propagate_signals_three_inputs():
 						print("Setting input for ", end_gate.name, " port ", port_num, " to ", output_value)
 						end_gate.set_input(port_num, output_value)
 					elif end_gate == output_block:
-						# Прямое соединение гейта с OutputBlock
 						print("Direct connection to OutputBlock: ", output_value)
 						output_block.set_input(1, output_value)
 	
@@ -397,21 +509,21 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/ORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/NOTGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/XORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"NAND":
-			gate_scene = preload("res://scenes/gates/NANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NANDGate.tscn")
 		"NOR":
-			gate_scene = preload("res://scenes/gates/NORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NORGate.tscn")
 		"XNOR":
-			gate_scene = preload("res://scenes/gates/XNORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XNORGate.tscn")
 		"IMPLICATION":
-			gate_scene = preload("res://scenes/gates/ImplicationGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
 		"SEL0":
 			gate_scene = preload("res://scenes/gates/Sel0.tscn")
 		"SEL1":
@@ -427,33 +539,67 @@ func create_gate_from_data(gate_data):
 func find_port_by_name(parent_name, port_name):
 	var parent = null
 	
+	# Сначала проверяем стандартные блоки
 	if parent_name == "OutputBlock" and has_node("OutputBlock"):
 		parent = $OutputBlock
 
+	# Проверяем входные блоки
 	for input_block in input_blocks:
 		if input_block and input_block.name == parent_name:
 			parent = input_block
 			break
 
+	# Если не нашли среди стандартных блоков, ищем среди movable_objects
 	if not parent:
 		for obj in movable_objects:
 			if obj and obj.name == parent_name:
 				parent = obj
 				break
 	
+	# Если родитель не найден, пытаемся найти по частичному совпадению
+	if not parent:
+		# Для Sel0 и Sel1 gates
+		if "Sel0" in parent_name:
+			for obj in movable_objects:
+				if obj and obj.is_in_group("Sel0"):
+					parent = obj
+					break
+		elif "Sel1" in parent_name:
+			for obj in movable_objects:
+				if obj and obj.is_in_group("Sel1"):
+					parent = obj
+					break
+		# Для других гейтов с автоматическими именами
+		else:
+			for obj in movable_objects:
+				if obj and ("@" in parent_name) and ("Sel0" in obj.scene_file_path or "Sel1" in obj.scene_file_path):
+					# Сравниваем позиции как запасной вариант
+					var saved_pos_match = false
+					# Здесь можно добавить логику сравнения позиций если нужно
+					if saved_pos_match:
+						parent = obj
+						break
+	
 	if not parent:
 		print("Parent not found: ", parent_name)
 		return null
 
+	# Ищем порт
 	var port = null
 	if port_name is String or port_name is NodePath:
 		port = parent.get_node_or_null(port_name)
 	else:
 		port = parent.get_node_or_null(str(port_name))
 	
+	# Если порт не найден стандартным способом, пытаемся найти по типу
+	if not port:
+		if port_name == "Area2D": # Общее имя для выходных портов Sel0/Sel1
+			port = parent.get_node_or_null("Output")
+		elif port_name == "InputPort": # Общее имя для входных портов
+			port = parent.get_node_or_null("Input1") or parent.get_node_or_null("InputPort")
+	
 	if not port:
 		print("Port not found: ", parent_name, "/", port_name)
-
 		print("Available children in ", parent_name, ":")
 		for child in parent.get_children():
 			print("  - ", child.name, " (Type: ", child.get_class(), ")")
@@ -468,35 +614,33 @@ func get_object_type(obj):
 		return "SEL0"
 	if obj.is_in_group("Sel1"):
 		return "SEL1"
+	if "NOTGate" in obj.scene_file_path:
+		return "NOT"
+	if "ANDGate" in obj.scene_file_path:
+		return "AND" 
+	if "ORGate" in obj.scene_file_path:
+		return "OR"
+	if "XORGate" in obj.scene_file_path:
+		return "XOR"
+	if "NANDGate" in obj.scene_file_path:
+		return "NAND"
+	if "NORGate" in obj.scene_file_path:
+		return "NOR"
+	if "XNORGate" in obj.scene_file_path:
+		return "XNOR"
+	if "ImplicationGate" in obj.scene_file_path:
+		return "IMPLICATION"
 
 	for i in range(input_blocks.size()):
 		if obj == input_blocks[i]:
-			return "INPUT_BLOCK_" + str(i)
+			return "INPUT_BLOCK_SINGLE"
 	
-	var scene_file = obj.scene_file_path
-	if "ANDGate" in scene_file:
-		return "AND"
-	elif "ORGate" in scene_file:
-		return "OR" 
-	elif "NOTGate" in scene_file:
-		return "NOT"
-	elif "XORGate" in scene_file:
-		return "XOR"
-	elif "NANDGate" in scene_file:
-		return "NAND"
-	elif "NORGate" in scene_file:
-		return "NOR"
-	elif "XNORGate" in scene_file:
-		return "XNOR"
-	elif "ImplicationGate" in scene_file:
-		return "IMPLICATION"
-
 	if has_node("OutputBlock") and obj == $OutputBlock:
 		return "OUTPUT_BLOCK"
 	
 	return "UNKNOWN"
 
-func find_port_near_position(position, max_distance = 50.0):
+func find_port_near_position(position, max_distance = 150.0):
 	var closest_port = null
 	var closest_distance = max_distance
 	
@@ -515,6 +659,7 @@ func find_port_near_position(position, max_distance = 50.0):
 			if input_port: ports.append(input_port)
 
 		else:
+			# Для Sel0/Sel1 gates
 			var input1 = obj.get_node_or_null("Input1")
 			var input2 = obj.get_node_or_null("Input2")
 			var input_port = obj.get_node_or_null("InputPort")
@@ -532,6 +677,7 @@ func find_port_near_position(position, max_distance = 50.0):
 				if distance < closest_distance:
 					closest_distance = distance
 					closest_port = port
+					print("Found nearby port: ", obj.name, ".", port.name, " at distance ", distance)
 	
 	return closest_port
 	
@@ -618,7 +764,6 @@ func _ready():
 
 	load_level_state()
 
-	# Явно обновляем логические объекты после загрузки
 	update_all_logic_objects()
 
 	auto_save_timer = Timer.new()
@@ -628,6 +773,44 @@ func _ready():
 	add_child(auto_save_timer)
 	
 	print("Three-input level ready completed successfully")
+	
+func get_wires_data():
+	var wires_data = []
+	
+	for wire in wires:
+		if wire and wire.start_port and wire.end_port and is_instance_valid(wire.start_port) and is_instance_valid(wire.end_port):
+			var start_parent = wire.start_port.get_parent()
+			var end_parent = wire.end_port.get_parent()
+			var start_port_name = wire.start_port.name
+			var end_port_name = wire.end_port.name
+			
+			# Сохраняем тип объекта вместо имени для динамически созданных объектов
+			var start_parent_type = get_object_type(start_parent)
+			var end_parent_type = get_object_type(end_parent)
+			
+			# Для динамических объектов используем тип + позицию как идентификатор
+			var start_parent_id = start_parent.name
+			if start_parent_type != "INPUT_BLOCK_SINGLE" and start_parent_type != "OUTPUT_BLOCK":
+				start_parent_id = start_parent_type + "_" + str(start_parent.position.x) + "_" + str(start_parent.position.y)
+			
+			var end_parent_id = end_parent.name
+			if end_parent_type != "INPUT_BLOCK_SINGLE" and end_parent_type != "OUTPUT_BLOCK":
+				end_parent_id = end_parent_type + "_" + str(end_parent.position.x) + "_" + str(end_parent.position.y)
+			
+			var wire_data = {
+				"start_parent_id": start_parent_id,
+				"start_port_name": start_port_name,
+				"end_parent_id": end_parent_id,
+				"end_port_name": end_port_name,
+				"start_position": [wire.start_port.global_position.x, wire.start_port.global_position.y],
+				"end_position": [wire.end_port.global_position.x, wire.end_port.global_position.y],
+				"start_parent_type": start_parent_type,
+				"end_parent_type": end_parent_type
+			}
+			wires_data.append(wire_data)
+	
+	print("Saved ", wires_data.size(), " wires")
+	return wires_data
 
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -685,12 +868,9 @@ func _input(event):
 				var local_mouse = sprite.to_local(mouse_pos)
 				var sprite_rect = sprite.get_rect()
 				if sprite_rect.has_point(local_mouse):
-					# Определяем тип гейта и обновляем счетчики
 					var scene_file = obj.scene_file_path
 					print("Removing object with scene file: ", scene_file)
-					
-					# Более точная проверка типов гейтов с правильным порядком
-					# Сначала проверяем более специфичные типы, потом общие
+
 					if scene_file.find("XORGate") != -1:
 						if has_method("remove_xor_gate"):
 							remove_xor_gate()
@@ -751,21 +931,18 @@ func _input(event):
 						
 func update_all_logic_objects():
 	all_logic_objects.clear()
-	
-	# Добавляем все input_blocks
+
 	for input_block in input_blocks:
 		if input_block and is_instance_valid(input_block) and not all_logic_objects.has(input_block):
 			all_logic_objects.append(input_block)
 	
-	# Добавляем OutputBlock если он существует
 	if has_node("OutputBlock"):
 		if not all_logic_objects.has($OutputBlock):
 			all_logic_objects.append($OutputBlock)
-	
-	# Добавляем все остальные movable_objects
+
 	for obj in movable_objects:
 		if obj and is_instance_valid(obj) and not all_logic_objects.has(obj):
-			# Пропускаем input_blocks и OutputBlock, так как они уже добавлены
+
 			if obj in input_blocks or (has_node("OutputBlock") and obj == $OutputBlock):
 				continue
 			all_logic_objects.append(obj)
@@ -796,12 +973,11 @@ func get_port_under_mouse():
 	var query = PhysicsPointQueryParameters2D.new()
 	query.position = mouse_pos
 	query.collide_with_areas = true
-	query.collision_mask = 1  # Используем только слой 1 для портов
+	query.collision_mask = 1 
 	var intersects = space_state.intersect_point(query, 1)
 	if intersects.size() > 0:
 		var collider = intersects[0].collider
 		if collider is Area2D and is_instance_valid(collider):
-			# Проверяем, что это не Area2D для подсветки (не на слое 2)
 			if collider.collision_layer != 2:
 				return collider
 	return null

@@ -432,15 +432,15 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/NOTGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"XNOR":
-			gate_scene = preload("res://scenes/gates/XNORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XNORGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/ORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/XORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
