@@ -421,21 +421,21 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/ORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/NOTGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/XORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"NAND":
-			gate_scene = preload("res://scenes/gates/NANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NANDGate.tscn")
 		"NOR":
-			gate_scene = preload("res://scenes/gates/NORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NORGate.tscn")
 		"XNOR":
-			gate_scene = preload("res://scenes/gates/XNORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XNORGate.tscn")
 		"IMPLICATION":
-			gate_scene = preload("res://scenes/gates/ImplicationGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
 		"SEL0":
 			gate_scene = preload("res://scenes/gates/Sel0.tscn")
 		"SEL1":

@@ -299,9 +299,9 @@ func create_gate_from_data(gate_data):
 		return
 	var gate_scene = null
 	match gate_type:
-		"AND": gate_scene = preload("res://scenes/gates/ANDGate.tscn")
-		"OR": gate_scene = preload("res://scenes/gates/ORGate.tscn")
-		"XOR": gate_scene = preload("res://scenes/gates/XORGate.tscn")
+		"AND": gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+		"OR": gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+		"XOR": gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"MUX4to1": gate_scene = preload("res://scenes/gates/MUX4to1.tscn")
 		"OpCode": gate_scene = preload("res://scenes/gates/OpCodeBlock.tscn")
 	if gate_scene:
@@ -442,7 +442,7 @@ func _on_add_and_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_or_button_pressed():
-	var gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
+	var gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	gate.position = Vector2(600, 500)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -450,7 +450,7 @@ func _on_add_or_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_xor_button_pressed():
-	var gate = preload("res://scenes/gates/XORGate.tscn").instantiate()
+	var gate = preload("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
 	gate.position = Vector2(600, 600)
 	add_child(gate)
 	movable_objects.append(gate)

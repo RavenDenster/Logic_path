@@ -13,7 +13,7 @@ func _on_add_and_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_xor_button_pressed():
-	var xor_gate = preload("res://scenes/gates/XORGate.tscn").instantiate()
+	var xor_gate = preload("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
 	xor_gate.position = Vector2(600, 600)
 	add_child(xor_gate)
 	movable_objects.append(xor_gate)
@@ -21,7 +21,7 @@ func _on_add_xor_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_or_button_pressed():
-	var or_gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
+	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 800)
 	add_child(or_gate)
 	movable_objects.append(or_gate)

@@ -88,7 +88,7 @@ func _on_add_or_button_pressed():
 		print("Cannot add more OR gates. Maximum limit reached: ", max_or_gates)
 		return
 	
-	var or_gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
+	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 600)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
@@ -103,7 +103,7 @@ func _on_add_not_button_pressed():
 		print("Cannot add more NOT gates. Maximum limit reached: ", max_not_gates)
 		return
 	
-	var not_gate = preload("res://scenes/gates/NOTGate.tscn").instantiate()
+	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 800)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
@@ -172,7 +172,6 @@ func remove_sel1_gate():
 		update_gate_buttons_state()
 		print("SEL1 gate removed. Current count: ", sel1_gate_count)
 
-# Добавьте методы для других типов гейтов, даже если они не используются
 func remove_xor_gate():
 	print("remove_xor_gate called on Level12 (not used)")
 
@@ -196,10 +195,8 @@ func clear_level():
 	print("Level12 cleared - AND gate count reset to 0, OR gate count reset to 0, NOT gate count reset to 0, SEL0 gate count reset to 0, SEL1 gate count reset to 0")
 
 func restore_level_state(state):
-	# Сначала очищаем уровень
 	clear_level()
-	
-	# Затем восстанавливаем состояние
+
 	if state.has("gates"):
 		print("Restoring ", state["gates"].size(), " gates")
 		for gate_data in state["gates"]:
@@ -211,7 +208,7 @@ func restore_level_state(state):
 			create_wire_from_data(wire_data)
 	
 	update_all_logic_objects()
-	recount_gates()  # Пересчитываем после восстановления
+	recount_gates()
 	update_gate_buttons_state()
 	update_all_port_colors()
 	
@@ -222,7 +219,6 @@ func create_gate_from_data(gate_data):
 	var position_array = gate_data.get("position", [0, 0])
 	var position = Vector2(position_array[0], position_array[1])
 	
-	# Проверяем ограничения для гейтов
 	if gate_type == "AND" and and_gate_count >= max_and_gates:
 		print("Cannot restore AND gate: maximum limit reached")
 		return
@@ -266,11 +262,11 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/ORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/NOTGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"SEL0":
 			gate_scene = preload("res://scenes/gates/Sel0.tscn")
 		"SEL1":
@@ -281,8 +277,7 @@ func create_gate_from_data(gate_data):
 		gate.position = position
 		add_child(gate)
 		movable_objects.append(gate)
-		
-		# Увеличиваем счетчики
+
 		if gate_type == "AND":
 			and_gate_count += 1
 		elif gate_type == "OR":

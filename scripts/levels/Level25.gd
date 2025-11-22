@@ -17,7 +17,7 @@ func _ready():
 
 func _on_add_nor_button_pressed():
 	print("Adding NOR gate")
-	var nor_gate = preload("res://scenes/gates/NORGate.tscn").instantiate()
+	var nor_gate = preload("res://scenes/gates/base_logic_el/NORGate.tscn").instantiate()
 	nor_gate.position = Vector2(600, 400)
 	add_child(nor_gate)
 	movable_objects.append(nor_gate)

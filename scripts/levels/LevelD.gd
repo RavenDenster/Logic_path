@@ -407,21 +407,21 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/ORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/NOTGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/XORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"NAND":
-			gate_scene = preload("res://scenes/gates/NANDGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NANDGate.tscn")
 		"NOR":
-			gate_scene = preload("res://scenes/gates/NORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/NORGate.tscn")
 		"XNOR":
-			gate_scene = preload("res://scenes/gates/XNORGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/XNORGate.tscn")
 		"IMPLICATION":
-			gate_scene = preload("res://scenes/gates/ImplicationGate.tscn")
+			gate_scene = preload("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
@@ -709,7 +709,7 @@ func create_wire_from_data(wire_data):
 		return false
 
 func _on_add_not_button_pressed():
-	var not_gate = preload("res://scenes/gates/NOTGate.tscn").instantiate()
+	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 400)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
@@ -725,7 +725,7 @@ func _on_add_and_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_or_button_pressed():
-	var or_gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
+	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 600)
 	add_child(or_gate)
 	movable_objects.append(or_gate)

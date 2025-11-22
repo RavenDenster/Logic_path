@@ -13,7 +13,7 @@ func _on_add_or_button_pressed():
 		print("Cannot add more OR gates. Maximum limit reached: ", max_or_gates)
 		return
 	
-	var or_gate = preload("res://scenes/gates/ORGate.tscn").instantiate()
+	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 400)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
