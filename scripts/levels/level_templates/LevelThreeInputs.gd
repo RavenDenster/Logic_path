@@ -104,11 +104,9 @@ func create_wire_from_data(wire_data):
 	
 	print("Attempting to restore wire: ", start_parent_id, ".", start_port_name, " -> ", end_parent_id, ".", end_port_name)
 
-	# Находим порты по новому идентификатору
 	var start_port = find_port_by_id(start_parent_id, start_port_name, start_parent_type)
 	var end_port = find_port_by_id(end_parent_id, end_port_name, end_parent_type)
-	
-	# Если не нашли по ID, пытаемся найти по позициям
+
 	if not start_port or not end_port:
 		var start_pos_array = wire_data.get("start_position", [0, 0])
 		var end_pos_array = wire_data.get("end_position", [0, 0])
@@ -126,7 +124,6 @@ func create_wire_from_data(wire_data):
 				print("Found end port by position: ", end_port.get_parent().name, ".", end_port.name)
 	
 	if start_port and end_port and start_port != end_port:
-		# Проверяем, не существует ли уже такое соединение
 		var wire_exists = false
 		for existing_wire in wires:
 			if existing_wire.start_port == start_port and existing_wire.end_port == end_port:
@@ -153,18 +150,15 @@ func create_wire_from_data(wire_data):
 
 func find_port_by_id(parent_id, port_name, parent_type = ""):
 	var parent = null
-	
-	# Для стандартных блоков используем имя
+
 	if parent_id == "OutputBlock" and has_node("OutputBlock"):
 		parent = $OutputBlock
 
-	# Проверяем входные блоки
 	for input_block in input_blocks:
 		if input_block and input_block.name == parent_id:
 			parent = input_block
 			break
-	
-	# Если не нашли по имени, пытаемся найти по типу + позиции
+
 	if not parent and "_" in parent_id:
 		var parts = parent_id.split("_")
 		if parts.size() >= 3:
@@ -176,14 +170,13 @@ func find_port_by_id(parent_id, port_name, parent_type = ""):
 			for obj in movable_objects:
 				if not obj or not is_instance_valid(obj):
 					continue
-					
-				# Пропускаем стандартные блоки
+
 				if obj in input_blocks or (has_node("OutputBlock") and obj == $OutputBlock):
 					continue
 					
 				var obj_type = get_object_type(obj)
 				if obj_type == gate_type:
-					# Сравниваем позиции с допуском
+
 					if obj.position.distance_to(target_position) < 10.0:
 						parent = obj
 						break
@@ -198,12 +191,11 @@ func find_port_by_id(parent_id, port_name, parent_type = ""):
 		port = parent.get_node_or_null(port_name)
 	else:
 		port = parent.get_node_or_null(str(port_name))
-	
-	# Если порт не найден стандартным способом, пытаемся найти по типу
+
 	if not port:
-		if port_name == "Area2D": # Общее имя для выходных портов Sel0/Sel1
+		if port_name == "Area2D":
 			port = parent.get_node_or_null("Output")
-		elif port_name == "InputPort": # Общее имя для входных портов
+		elif port_name == "InputPort":
 			port = parent.get_node_or_null("Input1") or parent.get_node_or_null("InputPort")
 	
 	if not port:
@@ -538,27 +530,22 @@ func create_gate_from_data(gate_data):
 
 func find_port_by_name(parent_name, port_name):
 	var parent = null
-	
-	# Сначала проверяем стандартные блоки
+
 	if parent_name == "OutputBlock" and has_node("OutputBlock"):
 		parent = $OutputBlock
 
-	# Проверяем входные блоки
 	for input_block in input_blocks:
 		if input_block and input_block.name == parent_name:
 			parent = input_block
 			break
 
-	# Если не нашли среди стандартных блоков, ищем среди movable_objects
 	if not parent:
 		for obj in movable_objects:
 			if obj and obj.name == parent_name:
 				parent = obj
 				break
-	
-	# Если родитель не найден, пытаемся найти по частичному совпадению
+
 	if not parent:
-		# Для Sel0 и Sel1 gates
 		if "Sel0" in parent_name:
 			for obj in movable_objects:
 				if obj and obj.is_in_group("Sel0"):
@@ -569,13 +556,11 @@ func find_port_by_name(parent_name, port_name):
 				if obj and obj.is_in_group("Sel1"):
 					parent = obj
 					break
-		# Для других гейтов с автоматическими именами
+
 		else:
 			for obj in movable_objects:
 				if obj and ("@" in parent_name) and ("Sel0" in obj.scene_file_path or "Sel1" in obj.scene_file_path):
-					# Сравниваем позиции как запасной вариант
 					var saved_pos_match = false
-					# Здесь можно добавить логику сравнения позиций если нужно
 					if saved_pos_match:
 						parent = obj
 						break
@@ -590,12 +575,11 @@ func find_port_by_name(parent_name, port_name):
 		port = parent.get_node_or_null(port_name)
 	else:
 		port = parent.get_node_or_null(str(port_name))
-	
-	# Если порт не найден стандартным способом, пытаемся найти по типу
+
 	if not port:
-		if port_name == "Area2D": # Общее имя для выходных портов Sel0/Sel1
+		if port_name == "Area2D":
 			port = parent.get_node_or_null("Output")
-		elif port_name == "InputPort": # Общее имя для входных портов
+		elif port_name == "InputPort":
 			port = parent.get_node_or_null("Input1") or parent.get_node_or_null("InputPort")
 	
 	if not port:
@@ -659,7 +643,6 @@ func find_port_near_position(position, max_distance = 150.0):
 			if input_port: ports.append(input_port)
 
 		else:
-			# Для Sel0/Sel1 gates
 			var input1 = obj.get_node_or_null("Input1")
 			var input2 = obj.get_node_or_null("Input2")
 			var input_port = obj.get_node_or_null("InputPort")
@@ -783,12 +766,10 @@ func get_wires_data():
 			var end_parent = wire.end_port.get_parent()
 			var start_port_name = wire.start_port.name
 			var end_port_name = wire.end_port.name
-			
-			# Сохраняем тип объекта вместо имени для динамически созданных объектов
+
 			var start_parent_type = get_object_type(start_parent)
 			var end_parent_type = get_object_type(end_parent)
-			
-			# Для динамических объектов используем тип + позицию как идентификатор
+
 			var start_parent_id = start_parent.name
 			if start_parent_type != "INPUT_BLOCK_SINGLE" and start_parent_type != "OUTPUT_BLOCK":
 				start_parent_id = start_parent_type + "_" + str(start_parent.position.x) + "_" + str(start_parent.position.y)
