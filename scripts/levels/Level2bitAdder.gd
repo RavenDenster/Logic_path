@@ -22,6 +22,10 @@ func setup_two_bit_adder_level():
 		input_block_b.values_A = level_data.input_values_b1.duplicate()
 		input_block_b.values_B = level_data.input_values_b0.duplicate()
 		
+		# Исправляем метки для подсветки на те, которые есть в TestResultsPanel2BitAdder
+		input_block_a.input_labels = ["Input A1", "Input A0"]
+		input_block_b.input_labels = ["Input B1", "Input B0"]
+		
 		movable_objects.append(input_block_a)
 		movable_objects.append(input_block_b)
 		print("InputBlockA: A1=", input_block_a.values_A, " A0=", input_block_a.values_B)
@@ -38,6 +42,11 @@ func setup_two_bit_adder_level():
 		output_s0.expected = level_data.expected_s0.duplicate()
 		output_cout.expected = level_data.expected_cout.duplicate()
 		
+		# Устанавливаем типы выходов для подсветки
+		output_s1.output_type = "S1"
+		output_s0.output_type = "S0"
+		output_cout.output_type = "COUT"
+		
 		movable_objects.append(output_s1)
 		movable_objects.append(output_s0)
 		movable_objects.append(output_cout)
@@ -49,6 +58,18 @@ func setup_two_bit_adder_level():
 	if test_results_panel:
 		print("2-Bit Adder test panel found")
 		
+		# Устанавливаем test_results_panel для всех блоков
+		if input_block_a:
+			input_block_a.test_results_panel = test_results_panel
+		if input_block_b:
+			input_block_b.test_results_panel = test_results_panel
+		if output_s1:
+			output_s1.test_results_panel = test_results_panel
+		if output_s0:
+			output_s0.test_results_panel = test_results_panel
+		if output_cout:
+			output_cout.test_results_panel = test_results_panel
+
 		await get_tree().process_frame
 		if test_results_panel.has_method("load_initial_data"):
 			test_results_panel.load_initial_data(
@@ -66,6 +87,22 @@ func setup_two_bit_adder_level():
 
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())
+
+func get_port_under_mouse():
+	var mouse_pos = get_global_mouse_position()
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsPointQueryParameters2D.new()
+	query.position = mouse_pos
+	query.collide_with_areas = true
+	query.collision_mask = 1  # Используем только слой 1 для портов
+	var intersects = space_state.intersect_point(query, 1)
+	if intersects.size() > 0:
+		var collider = intersects[0].collider
+		if collider is Area2D and is_instance_valid(collider):
+			# Проверяем, что это не Area2D для подсветки (не на слое 2)
+			if collider.collision_layer != 2:
+				return collider
+	return null
 
 func _on_test_pressed():
 	print("=== Testing 2-Bit Adder level ===")

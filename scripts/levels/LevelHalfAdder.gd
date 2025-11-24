@@ -3,6 +3,7 @@ extends "res://scripts/levels/LevelBase.gd"
 var output_block_sum
 var output_block_carry
 
+# LevelHalfAdder.gd (обновляем setup_half_adder_level)
 func setup_half_adder_level():
 	print("Setting up Half Adder level with two outputs")
 
@@ -22,6 +23,11 @@ func setup_half_adder_level():
 	if output_block_sum and output_block_carry:
 		output_block_sum.expected = level_data.expected_sum.duplicate()
 		output_block_carry.expected = level_data.expected_carry.duplicate()
+		
+		# Устанавливаем типы выходов для подсветки
+		output_block_sum.output_type = "SUM"
+		output_block_carry.output_type = "CARRY"
+		
 		movable_objects.append(output_block_sum)
 		movable_objects.append(output_block_carry)
 		print("Half Adder output blocks initialized")
@@ -31,6 +37,14 @@ func setup_half_adder_level():
 	test_results_panel = get_node_or_null("TestResultsPanelHalfAdder")
 	if test_results_panel:
 		print("Half Adder test panel found")
+
+		# Устанавливаем test_results_panel для всех блоков
+		if has_node("InputBlock"):
+			$InputBlock.test_results_panel = test_results_panel
+		if output_block_sum:
+			output_block_sum.test_results_panel = test_results_panel
+		if output_block_carry:
+			output_block_carry.test_results_panel = test_results_panel
 
 		await get_tree().process_frame
 		if test_results_panel.has_method("load_initial_data"):
@@ -47,7 +61,7 @@ func setup_half_adder_level():
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())
 	print("All logic objects: ", all_logic_objects.size())
-
+	
 func _on_test_pressed():
 	print("=== Testing Half Adder level ===")
 	reset_all_port_sprites()
@@ -726,3 +740,19 @@ func _input(event):
 						mark_level_state_dirty()
 						print("Wire removed")
 						break
+
+func get_port_under_mouse():
+	var mouse_pos = get_global_mouse_position()
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsPointQueryParameters2D.new()
+	query.position = mouse_pos
+	query.collide_with_areas = true
+	query.collision_mask = 1  # Используем только слой 1 для портов
+	var intersects = space_state.intersect_point(query, 1)
+	if intersects.size() > 0:
+		var collider = intersects[0].collider
+		if collider is Area2D and is_instance_valid(collider):
+			# Проверяем, что это не Area2D для подсветки (не на слое 2)
+			if collider.collision_layer != 2:
+				return collider
+	return null

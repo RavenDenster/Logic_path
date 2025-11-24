@@ -50,6 +50,7 @@ func _ready():
 	
 	print("Full Adder level ready completed successfully")
 
+# LevelFullAdder.gd (обновляем setup_full_adder_level)
 func setup_full_adder_level():
 	print("Setting up Full Adder level with three inputs and two outputs")
 	
@@ -64,6 +65,12 @@ func setup_full_adder_level():
 		input_block_a.values = level_data.input_values_a.duplicate()
 		input_block_b.values = level_data.input_values_b.duplicate()
 		input_block_cin.values = level_data.input_values_cin.duplicate()
+		
+		# Устанавливаем метки для подсветки
+		input_block_a.input_label = "Input A"
+		input_block_b.input_label = "Input B" 
+		input_block_cin.input_label = "Cin"
+		
 		movable_objects.append(input_block_a)
 		movable_objects.append(input_block_b)
 		movable_objects.append(input_block_cin)
@@ -78,6 +85,11 @@ func setup_full_adder_level():
 	if output_block_sum and output_block_cout:
 		output_block_sum.expected = level_data.expected_sum.duplicate()
 		output_block_cout.expected = level_data.expected_cout.duplicate()
+		
+		# Устанавливаем типы выходов для подсветки
+		output_block_sum.output_type = "SUM"
+		output_block_cout.output_type = "COUT"
+		
 		movable_objects.append(output_block_sum)
 		movable_objects.append(output_block_cout)
 		print("Full Adder output blocks initialized")
@@ -87,6 +99,18 @@ func setup_full_adder_level():
 	test_results_panel = get_node_or_null("TestResultsPanelFullAdder")
 	if test_results_panel:
 		print("Full Adder test panel found")
+
+		# Устанавливаем test_results_panel для всех блоков
+		if input_block_a:
+			input_block_a.test_results_panel = test_results_panel
+		if input_block_b:
+			input_block_b.test_results_panel = test_results_panel
+		if input_block_cin:
+			input_block_cin.test_results_panel = test_results_panel
+		if output_block_sum:
+			output_block_sum.test_results_panel = test_results_panel
+		if output_block_cout:
+			output_block_cout.test_results_panel = test_results_panel
 
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())
@@ -704,3 +728,19 @@ func _input(event):
 						mark_level_state_dirty()
 						print("Wire removed")
 						break
+
+func get_port_under_mouse():
+	var mouse_pos = get_global_mouse_position()
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsPointQueryParameters2D.new()
+	query.position = mouse_pos
+	query.collide_with_areas = true
+	query.collision_mask = 1  # Используем только слой 1 для портов
+	var intersects = space_state.intersect_point(query, 1)
+	if intersects.size() > 0:
+		var collider = intersects[0].collider
+		if collider is Area2D and is_instance_valid(collider):
+			# Проверяем, что это не Area2D для подсветки (не на слое 2)
+			if collider.collision_layer != 2:
+				return collider
+	return null
