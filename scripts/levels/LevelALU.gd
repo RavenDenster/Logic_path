@@ -48,24 +48,42 @@ func _ready():
 func setup_alu_level():
 	print("Setting up ALU level with AB inputs, dynamic OpCode input, and one output")
 	movable_objects = []
+
 	input_block_ab = get_node_or_null("InputBlockAB")
 	if input_block_ab:
 		input_block_ab.values_A = level_data.input_values_a.duplicate()
 		input_block_ab.values_B = level_data.input_values_b.duplicate()
+		
+		# Устанавливаем метки для подсветки
+		input_block_ab.input_labels = ["Input A", "Input B"]
+		
 		movable_objects.append(input_block_ab)
 		print("ALU input block AB initialized")
 	else:
 		push_error("InputBlockAB not found in ALU level!")
+
 	output_block = get_node_or_null("OutputBlock")
 	if output_block:
 		output_block.expected = level_data.expected_result.duplicate()
+		
+		# Исправляем тип выхода для подсветки (меняем RESULT на EXPECTED)
+		output_block.output_type = "EXPECTED"
+		
 		movable_objects.append(output_block)
 		print("ALU output block initialized")
 	else:
 		push_error("Output block not found in ALU level!")
+
 	test_results_panel = get_node_or_null("TestResultsPanelAlu")
 	if test_results_panel:
 		print("ALU test panel found")
+		
+		# Устанавливаем test_results_panel для всех блоков
+		if input_block_ab:
+			input_block_ab.test_results_panel = test_results_panel
+		if output_block:
+			output_block.test_results_panel = test_results_panel
+
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())
 	print("All logic objects: ", all_logic_objects.size())
@@ -472,6 +490,22 @@ func _on_add_opcode_button_pressed():
 	movable_objects.append(gate)
 	update_all_logic_objects()
 	mark_level_state_dirty()
+	
+func get_port_under_mouse():
+	var mouse_pos = get_global_mouse_position()
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsPointQueryParameters2D.new()
+	query.position = mouse_pos
+	query.collide_with_areas = true
+	query.collision_mask = 1  # Используем только слой 1 для портов
+	var intersects = space_state.intersect_point(query, 1)
+	if intersects.size() > 0:
+		var collider = intersects[0].collider
+		if collider is Area2D and is_instance_valid(collider):
+			# Проверяем, что это не Area2D для подсветки (не на слое 2)
+			if collider.collision_layer != 2:
+				return collider
+	return null
 
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:

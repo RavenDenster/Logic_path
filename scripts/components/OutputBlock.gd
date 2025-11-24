@@ -1,4 +1,4 @@
-# OutputBlock.gd
+# OutputBlock.gd (добавляем поддержку типа EXPECTED)
 extends Node2D
 
 var received_value: int = 0
@@ -6,6 +6,7 @@ var expected = []
 var main_sprite: Sprite2D
 var test_results_panel: Node
 var area: Area2D
+var output_type: String = "DEFAULT"  # "DEFAULT", "SUM", "CARRY", "COUT", "S1", "S0", "RESULT", "EXPECTED"
 
 func _ready():
 	print("OutputBlock ready! Has set_input: ", has_method("set_input"))
@@ -62,19 +63,82 @@ func _on_area_mouse_exited():
 func _highlight_desired_output():
 	if not test_results_panel:
 		# Ищем TestResultsPanel в дереве сцены
-		test_results_panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
+		test_results_panel = _find_test_results_panel()
 		if not test_results_panel:
 			return
 	
 	# Сбрасываем все подсветки
 	_reset_all_highlights()
 	
-	# Находим и подсвечиваем метку Desired Output
+	# Определяем, какую метку подсвечивать в зависимости от типа выхода
+	var label_to_highlight = "Desired Output"  # По умолчанию
+	
+	match output_type:
+		"SUM":
+			label_to_highlight = "Desired Sum"
+		"CARRY":
+			label_to_highlight = "Desired Carry"
+		"COUT":
+			label_to_highlight = "Desired Cout"
+		"S1":
+			label_to_highlight = "Desired S1"
+		"S0":
+			label_to_highlight = "Desired S0"
+		"RESULT":
+			label_to_highlight = "Desired Result"
+		"EXPECTED":
+			label_to_highlight = "Expected"  # Для ALU уровня
+	
+	# Находим и подсвечиваем соответствующую метку
 	var grid = test_results_panel.get_node("Background/GridContainer")
-	for child in grid.get_children():
-		if child is Label and child.text == "Desired Output":
-			child.modulate = Color.YELLOW
-			break
+	if grid:
+		var found = false
+		for child in grid.get_children():
+			if child is Label and child.text.strip_edges() == label_to_highlight:
+				child.modulate = Color.YELLOW
+				found = true
+				print("OutputBlock: Highlighted label: '", label_to_highlight, "'")
+				break
+		
+		if not found:
+			print("OutputBlock: Label not found: '", label_to_highlight, "'")
+			# Выведем все доступные метки для отладки
+			print("Available labels:")
+			for child in grid.get_children():
+				if child is Label:
+					print("  - '", child.text, "'")
+	else:
+		print("OutputBlock: GridContainer not found in test panel")
+
+func _find_test_results_panel():
+	# Сначала ищем панель для ALU
+	var panel = get_tree().get_root().find_child("TestResultsPanelAlu", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем панель для 2-Bit Adder
+	panel = get_tree().get_root().find_child("TestResultsPanel2BitAdder", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем панель для Full Adder
+	panel = get_tree().get_root().find_child("TestResultsPanelFullAdder", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем панель для Half Adder
+	panel = get_tree().get_root().find_child("TestResultsPanelHalfAdder", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем панель для трех входов
+	panel = get_tree().get_root().find_child("TestResultsPanel3Inputs", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем обычную панель
+	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
+	return panel
 
 func _reset_all_highlights():
 	if test_results_panel:

@@ -1,11 +1,11 @@
-# InputBlockSingle.gd
+# InputBlockSingle.gd (добавляем отладочную информацию)
 extends Node2D
 
 var values = []
 var current_test_index = 0
 var test_results_panel: Node
 var area: Area2D
-var input_label: String = ""  # Будет установлено из LevelThreeInputs
+var input_label: String = ""
 
 func _ready():
 	add_to_group("InputBlockSingle")
@@ -55,9 +55,12 @@ func _on_area_mouse_exited():
 func _highlight_input_label():
 	if not test_results_panel:
 		# Ищем TestResultsPanel в дереве сцены
-		test_results_panel = get_tree().get_root().find_child("TestResultsPanel3Inputs", true, false)
+		test_results_panel = _find_test_results_panel()
 		if not test_results_panel:
+			print("InputBlockSingle: TestResultsPanel not found for label: ", input_label)
 			return
+		else:
+			print("InputBlockSingle: Found test panel: ", test_results_panel.name)
 	
 	# Сбрасываем все подсветки
 	_reset_all_highlights()
@@ -65,10 +68,44 @@ func _highlight_input_label():
 	# Находим и подсвечиваем соответствующую метку
 	if input_label != "":
 		var grid = test_results_panel.get_node("Background/GridContainer")
-		for child in grid.get_children():
-			if child is Label and child.text == input_label:
-				child.modulate = Color.YELLOW 
-				break
+		if grid:
+			var found = false
+			for child in grid.get_children():
+				if child is Label and child.text == input_label:
+					child.modulate = Color.YELLOW
+					found = true
+					print("InputBlockSingle: Highlighted label: ", input_label)
+					break
+			
+			if not found:
+				print("InputBlockSingle: Label not found in grid: ", input_label)
+				# Выведем все доступные метки для отладки
+				print("Available labels:")
+				for child in grid.get_children():
+					if child is Label:
+						print("  - ", child.text)
+		else:
+			print("InputBlockSingle: GridContainer not found in test panel")
+
+func _find_test_results_panel():
+	# Сначала ищем панель для Full Adder
+	var panel = get_tree().get_root().find_child("TestResultsPanelFullAdder", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем панель для Half Adder
+	panel = get_tree().get_root().find_child("TestResultsPanelHalfAdder", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем панель для трех входов
+	panel = get_tree().get_root().find_child("TestResultsPanel3Inputs", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем обычную панель
+	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
+	return panel
 
 func _reset_all_highlights():
 	if test_results_panel:
