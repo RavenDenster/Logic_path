@@ -785,6 +785,7 @@ func _ready():
 	
 	print("2-Bit Adder level ready completed successfully")
 	
+# Level2bitAdder.gd (дополненный метод _input)
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
@@ -839,6 +840,50 @@ func _input(event):
 				var local_mouse = sprite.to_local(mouse_pos)
 				var sprite_rect = sprite.get_rect()
 				if sprite_rect.has_point(local_mouse):
+					# Определяем тип компонента и вызываем соответствующий метод удаления
+					var scene_file = obj.scene_file_path
+					print("Removing object with scene file: ", scene_file)
+					
+					# Проверяем типы компонентов
+					if scene_file.find("HalfAdder") != -1:
+						if has_method("remove_half_adder"):
+							remove_half_adder()
+						else:
+							print("WARNING: remove_half_adder method not found")
+					elif scene_file.find("FullAdder") != -1:
+						if has_method("remove_full_adder"):
+							remove_full_adder()
+						else:
+							print("WARNING: remove_full_adder method not found")
+					elif scene_file.find("Cout0") != -1:
+						if has_method("remove_cout0"):
+							remove_cout0()
+						else:
+							print("WARNING: remove_cout0 method not found")
+					# Базовые гейты для совместимости
+					elif scene_file.find("XORGate") != -1:
+						if has_method("remove_xor_gate"):
+							remove_xor_gate()
+						else:
+							print("WARNING: remove_xor_gate method not found")
+					elif scene_file.find("ANDGate") != -1:
+						if has_method("remove_and_gate"):
+							remove_and_gate()
+						else:
+							print("WARNING: remove_and_gate method not found")
+					elif scene_file.find("ORGate") != -1:
+						if has_method("remove_or_gate"):
+							remove_or_gate()
+						else:
+							print("WARNING: remove_or_gate method not found")
+					elif scene_file.find("NOTGate") != -1:
+						if has_method("remove_not_gate"):
+							remove_not_gate()
+						else:
+							print("WARNING: remove_not_gate method not found")
+					else:
+						print("Unknown component type: ", scene_file)
+					
 					remove_wires_connected_to_gate(obj)
 					obj.queue_free()
 					movable_objects.remove_at(i)
@@ -863,3 +908,40 @@ func _input(event):
 						mark_level_state_dirty()
 						print("Wire removed")
 						break
+
+func remove_half_adder():
+	pass
+	
+func remove_full_adder():
+	pass
+	
+func remove_cout0():
+	pass
+
+# Методы для удаления базовых гейтов (будут переопределены в дочерних классах)
+func remove_and_gate():
+	pass
+	
+func remove_xor_gate():
+	pass
+	
+func remove_or_gate():
+	pass
+	
+func remove_not_gate():
+	pass
+	
+func remove_xnor_gate():
+	pass
+	
+func remove_nand_gate():
+	pass
+
+func remove_nor_gate():
+	pass
+	
+func remove_sel0_gate():
+	pass
+	
+func remove_sel1_gate():
+	pass

@@ -1,3 +1,4 @@
+# LevelALU.gd
 extends "res://scripts/levels/LevelBase.gd"
 
 var input_block_ab
@@ -5,30 +6,30 @@ var output_block
 var opcode_block = null
 
 func _ready():
-	level_data = preload("res://data/level_18_data.tres")
 	if not level_data:
 		push_error("LevelALU: level_data is null!")
 		return
-	print("LevelALU data loaded:")
-	print(" Input A: ", level_data.input_values_a)
-	print(" Input B: ", level_data.input_values_b)
-	print(" Input Op0: ", level_data.input_values_op0)
-	print(" Input Op1: ", level_data.input_values_op1)
-	print(" Expected Result: ", level_data.expected_result)
+	
 	wires = []
 	movable_objects = []
 	all_logic_objects = []
+	
 	if has_node("TopPanel") and $TopPanel.has_method("set_level_name"):
 		$TopPanel.set_level_name(level_data.level_name)
 		$TopPanel.set_theory_text(level_data.theory_text)
+
+	setup_alu_level()
+	
 	temp_line = Line2D.new()
 	add_child(temp_line)
 	temp_line.default_color = Color("#e39e45")
 	temp_line.width = 8
 	temp_line.points = []
+	
 	_setup_top_panel_buttons()
+	
 	await get_tree().process_frame
-	setup_alu_level()
+
 	if test_results_panel and test_results_panel.has_method("load_initial_data"):
 		test_results_panel.load_initial_data(
 			level_data.input_values_a,
@@ -37,12 +38,15 @@ func _ready():
 			level_data.input_values_op1,
 			level_data.expected_result
 		)
+
 	load_level_state()
+
 	auto_save_timer = Timer.new()
 	auto_save_timer.wait_time = 2.0
 	auto_save_timer.one_shot = true
 	auto_save_timer.timeout.connect(_on_auto_save_timeout)
 	add_child(auto_save_timer)
+	
 	print("ALU level ready completed successfully")
 
 func setup_alu_level():
@@ -277,16 +281,29 @@ func get_gate_port_number(port_name: String, gate_type: String) -> int:
 
 func get_gates_data():
 	var gates_data = []
+	
 	if input_block_ab:
 		gates_data.append({"type": "INPUT_BLOCK_AB", "position": [input_block_ab.position.x, input_block_ab.position.y]})
+		print("Saving INPUT_BLOCK_AB at ", input_block_ab.position)
+	
 	if output_block:
 		gates_data.append({"type": "OUTPUT_BLOCK", "position": [output_block.position.x, output_block.position.y]})
+		print("Saving OUTPUT_BLOCK at ", output_block.position)
+	
 	for obj in movable_objects:
 		var skip = obj == input_block_ab or obj == output_block
 		if skip:
 			continue
+			
 		var gate_type = get_object_type(obj)
-		gates_data.append({"type": gate_type, "position": [obj.position.x, obj.position.y]})
+		var gate_data = {
+			"type": gate_type,
+			"position": [obj.position.x, obj.position.y]
+		}
+		gates_data.append(gate_data)
+		print("Saving gate: ", gate_type, " at ", obj.position, " (Name: ", obj.name, ", Scene: ", obj.scene_file_path, ")")
+	
+	print("Total gates to save: ", gates_data.size())
 	return gates_data
 
 func clear_level():
@@ -356,22 +373,38 @@ func get_object_type(obj):
 		return "OpCode"
 	
 	var scene_file = obj.scene_file_path
-	if scene_file == "res://scenes/gates/ANDGate.tscn": 
+	
+	# Более надежная проверка типов гейтов
+	if "ANDGate" in scene_file:
 		return "AND"
-	elif scene_file == "res://scenes/gates/ORGate.tscn": 
-		return "OR"
-	elif scene_file == "res://scenes/gates/XORGate.tscn": 
+	elif "XORGate" in scene_file:
 		return "XOR"
-	elif scene_file == "res://scenes/gates/MUX4to1.tscn": 
+	elif "ORGate" in scene_file:
+		return "OR" 
+	elif "NANDGate" in scene_file:
+		return "NAND"
+	elif "NORGate" in scene_file:
+		return "NOR"
+	elif "XNORGate" in scene_file:
+		return "XNOR"
+	elif "ImplicationGate" in scene_file:
+		return "IMPLICATION"
+	elif "MUX4to1" in scene_file:
 		return "MUX4to1"
-	elif scene_file == "res://scenes/gates/OpCodeBlock.tscn": 
+	elif "OpCodeBlock" in scene_file:
 		return "OpCode"
 	
-	if "AND" in obj.name: return "AND"
-	elif "OR" in obj.name: return "OR"  
-	elif "XOR" in obj.name: return "XOR"
-	elif "MUX" in obj.name: return "MUX4to1"
-	elif "OpCode" in obj.name: return "OpCode"
+	# Дополнительные проверки по имени (исправленные)
+	if "AND" in obj.name and "GATE" in obj.name.to_upper(): 
+		return "AND"
+	elif "OR" in obj.name and "GATE" in obj.name.to_upper(): 
+		return "OR"  
+	elif "XOR" in obj.name and "GATE" in obj.name.to_upper(): 
+		return "XOR"
+	elif "MUX" in obj.name: 
+		return "MUX4to1"
+	elif "OPCODE" in obj.name.to_upper(): 
+		return "OpCode"
 	
 	if obj == input_block_ab: 
 		return "INPUT_BLOCK_AB"
@@ -379,7 +412,7 @@ func get_object_type(obj):
 		return "OUTPUT_BLOCK"
 	
 	return "UNKNOWN"
-
+	
 func find_port_near_position(position, max_distance = 50.0):
 	var closest_port = null
 	var closest_distance = max_distance
@@ -451,8 +484,9 @@ func reset_all_port_sprites():
 				sprite.texture = preload("res://assets/point.png")
 	print("ALU level: Reset all port sprites")
 
+# Методы добавления компонентов (без ограничений в базовом классе)
 func _on_add_and_button_pressed():
-	var gate = preload("res://scenes/gates/ANDGate.tscn").instantiate()
+	var gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	gate.position = Vector2(600, 400)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -490,6 +524,41 @@ func _on_add_opcode_button_pressed():
 	movable_objects.append(gate)
 	update_all_logic_objects()
 	mark_level_state_dirty()
+
+# Методы для удаления гейтов (пустые в базовом классе)
+func remove_and_gate():
+	pass
+	
+func remove_or_gate():
+	pass
+	
+func remove_xor_gate():
+	pass
+
+func remove_mux4to1():
+	pass
+
+func remove_opcode_block():
+	pass
+
+# Методы для других типов гейтов (для совместимости)
+func remove_not_gate():
+	pass
+
+func remove_xnor_gate():
+	pass
+
+func remove_nand_gate():
+	pass
+
+func remove_nor_gate():
+	pass
+
+func remove_sel0_gate():
+	pass
+
+func remove_sel1_gate():
+	pass
 	
 func get_port_under_mouse():
 	var mouse_pos = get_global_mouse_position()
@@ -554,6 +623,28 @@ func _input(event):
 				var local_mouse = sprite.to_local(mouse_pos)
 				var sprite_rect = sprite.get_rect()
 				if sprite_rect.has_point(local_mouse):
+					# Определяем тип компонента и вызываем соответствующий метод удаления
+					var scene_file = obj.scene_file_path
+					print("Removing object with scene file: ", scene_file)
+					
+					if scene_file.find("ANDGate") != -1:
+						if has_method("remove_and_gate"):
+							remove_and_gate()
+					elif scene_file.find("ORGate") != -1:
+						if has_method("remove_or_gate"):
+							remove_or_gate()
+					elif scene_file.find("XORGate") != -1:
+						if has_method("remove_xor_gate"):
+							remove_xor_gate()
+					elif scene_file.find("MUX4to1") != -1:
+						if has_method("remove_mux4to1"):
+							remove_mux4to1()
+					elif scene_file.find("OpCodeBlock") != -1:
+						if has_method("remove_opcode_block"):
+							remove_opcode_block()
+					else:
+						print("Unknown component type: ", scene_file)
+					
 					remove_wires_connected_to_gate(obj)
 					obj.queue_free()
 					movable_objects.remove_at(i)
