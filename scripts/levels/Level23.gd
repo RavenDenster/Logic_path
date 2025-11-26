@@ -3,8 +3,8 @@ extends "res://scripts/levels/LevelDecoder.gd"
 
 var and_gate_count: int = 0
 var not_gate_count: int = 0
-var max_and_gates: int = 4
-var max_not_gates: int = 2
+var max_and_gates: int = 5
+var max_not_gates: int = 3
 
 func _ready():
 	level_data = preload("res://data/level_23_data.tres")
