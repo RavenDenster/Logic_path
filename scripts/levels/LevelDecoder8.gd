@@ -634,6 +634,10 @@ func _input(event):
 						if sprite_rect.has_point(local_mouse):
 							dragging_object = obj
 							drag_offset = obj.global_position - get_global_mouse_position()
+							
+							# Вызываем подсветку при клике на InputBlockSingle или OutputBlock
+							if obj.has_method("_on_area_mouse_entered"):
+								obj._on_area_mouse_entered()
 							break
 		else:
 			if drawing_wire and start_port and is_instance_valid(start_port):

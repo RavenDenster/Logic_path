@@ -1,4 +1,4 @@
-# InputBlockSingle.gd (добавляем отладочную информацию)
+# InputBlockSingle.gd (исправленный)
 extends Node2D
 
 var values = []
@@ -67,49 +67,69 @@ func _highlight_input_label():
 	
 	# Находим и подсвечиваем соответствующую метку
 	if input_label != "":
-		var grid = test_results_panel.get_node("Background/GridContainer")
+		var grid = _find_grid_container()
 		if grid:
 			var found = false
 			for child in grid.get_children():
-				if child is Label and child.text == input_label:
+				if child is Label and child.text.strip_edges() == input_label:
 					child.modulate = Color.YELLOW
 					found = true
-					print("InputBlockSingle: Highlighted label: ", input_label)
+					print("InputBlockSingle: Highlighted label: '", input_label, "'")
 					break
 			
 			if not found:
-				print("InputBlockSingle: Label not found in grid: ", input_label)
+				print("InputBlockSingle: Label not found in grid: '", input_label, "'")
 				# Выведем все доступные метки для отладки
 				print("Available labels:")
 				for child in grid.get_children():
 					if child is Label:
-						print("  - ", child.text)
+						print("  - '", child.text.strip_edges(), "'")
 		else:
 			print("InputBlockSingle: GridContainer not found in test panel")
 
 func _find_test_results_panel():
-	# Сначала ищем панель для Full Adder
-	var panel = get_tree().get_root().find_child("TestResultsPanelFullAdder", true, false)
+	# Сначала ищем панель для декодера
+	var panel = get_tree().get_root().find_child("TestResultsPanelDecoder8", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для Half Adder
-	panel = get_tree().get_root().find_child("TestResultsPanelHalfAdder", true, false)
-	if panel:
-		return panel
-	
-	# Если не нашли, ищем панель для трех входов
-	panel = get_tree().get_root().find_child("TestResultsPanel3Inputs", true, false)
-	if panel:
-		return panel
-	
-	# Если не нашли, ищем обычную панель
+	# Если не нашли, ищем другие возможные панели
 	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
 	return panel
 
+func _find_grid_container():
+	if not test_results_panel:
+		return null
+	
+	# Пробуем разные пути для обратной совместимости
+	var grid = test_results_panel.get_node_or_null("Background/GridContainer")
+	if grid:
+		return grid
+	
+	grid = test_results_panel.get_node_or_null("Background/VBoxContainer/GridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/VBoxContainer2/GridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/LeftColumn/LeftGridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/RightColumn/RightGridContainer")
+	if grid:
+		return grid
+	
+	return null
+
 func _reset_all_highlights():
 	if test_results_panel:
-		var grid = test_results_panel.get_node("Background/GridContainer")
-		for child in grid.get_children():
-			if child is Label:
-				child.modulate = Color.WHITE
+		var grid = _find_grid_container()
+		if grid:
+			for child in grid.get_children():
+				if child is Label:
+					child.modulate = Color.WHITE
+		else:
+			print("InputBlockSingle: GridContainer not found for reset")

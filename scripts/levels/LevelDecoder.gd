@@ -651,6 +651,59 @@ func _input(event):
 				var local_mouse = sprite.to_local(mouse_pos)
 				var sprite_rect = sprite.get_rect()
 				if sprite_rect.has_point(local_mouse):
+					# Определяем тип гейта и вызываем соответствующий метод удаления
+					var scene_file = obj.scene_file_path
+					print("Removing object with scene file: ", scene_file)
+					
+					# Более точная проверка типов гейтов
+					if scene_file.find("XORGate") != -1:
+						if has_method("remove_xor_gate"):
+							remove_xor_gate()
+						else:
+							print("WARNING: remove_xor_gate method not found")
+					elif scene_file.find("XNORGate") != -1:
+						if has_method("remove_xnor_gate"):
+							remove_xnor_gate()
+						else:
+							print("WARNING: remove_xnor_gate method not found")
+					elif scene_file.find("NANDGate") != -1:
+						if has_method("remove_nand_gate"):
+							remove_nand_gate()
+						else:
+							print("WARNING: remove_nand_gate method not found")
+					elif scene_file.find("NORGate") != -1:
+						if has_method("remove_nor_gate"):
+							remove_nor_gate()
+						else:
+							print("WARNING: remove_nor_gate method not found")
+					elif scene_file.find("Sel0") != -1:
+						if has_method("remove_sel0_gate"):
+							remove_sel0_gate()
+						else:
+							print("WARNING: remove_sel0_gate method not found")
+					elif scene_file.find("Sel1") != -1:
+						if has_method("remove_sel1_gate"):
+							remove_sel1_gate()
+						else:
+							print("WARNING: remove_sel1_gate method not found")
+					elif scene_file.find("ORGate") != -1:
+						if has_method("remove_or_gate"):
+							remove_or_gate()
+						else:
+							print("WARNING: remove_or_gate method not found")
+					elif scene_file.find("ANDGate") != -1:
+						if has_method("remove_and_gate"):
+							remove_and_gate()
+						else:
+							print("WARNING: remove_and_gate method not found")
+					elif scene_file.find("NOTGate") != -1:
+						if has_method("remove_not_gate"):
+							remove_not_gate()
+						else:
+							print("WARNING: remove_not_gate method not found")
+					else:
+						print("Unknown gate type: ", scene_file)
+					
 					remove_wires_connected_to_gate(obj)
 					obj.queue_free()
 					movable_objects.remove_at(i)
@@ -675,3 +728,31 @@ func _input(event):
 						mark_level_state_dirty()
 						print("Wire removed")
 						break
+
+# Пустые методы для удаления гейтов (будут переопределены в Level23.gd)
+func remove_and_gate():
+	pass
+	
+func remove_not_gate():
+	pass
+	
+func remove_or_gate():
+	pass
+	
+func remove_xor_gate():
+	pass
+	
+func remove_xnor_gate():
+	pass
+	
+func remove_nand_gate():
+	pass
+
+func remove_nor_gate():
+	pass
+	
+func remove_sel0_gate():
+	pass
+	
+func remove_sel1_gate():
+	pass
