@@ -1,5 +1,5 @@
 # Level18.gd
-extends "res://scripts/levels/LevelALU.gd"
+extends "res://scripts/levels/level_templates/LevelALU.gd"
 
 # Счетчики и ограничения для уровня 18
 var and_gate_count: int = 0

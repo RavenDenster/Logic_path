@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://f4hex6k80bet"]
 
-[ext_resource type="Script" uid="uid://cgvlybo6m5v5o" path="res://scripts/ui/TestResultsPanelFullAdder.gd" id="1_8cdhl"]
+[ext_resource type="Script" uid="uid://cgvlybo6m5v5o" path="res://scripts/ui/bottom_panels/BottonPanelFullAdder.gd" id="1_8cdhl"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="2_8o53c"]
 
 [node name="TestResultsPanelFullAdder" type="Control"]
