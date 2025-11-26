@@ -35,6 +35,13 @@ func _ready():
 	
 	super._ready()
 	
+		# Устанавливаем правильные метки для InputBlock2
+	var input_block = get_node_or_null("InputBlock")
+	if input_block and input_block.has_method("_highlight_input_labels"):
+		input_block.input_labels = ["Input 1", "Input 2"]
+		print("Level13: Set input labels to ['Input 1', 'Input 2']")
+	
+	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
@@ -185,6 +192,12 @@ func restore_level_state(state):
 		print("Restoring ", state["wires"].size(), " wires")
 		for wire_data in state["wires"]:
 			create_wire_from_data(wire_data)
+	
+		# Устанавливаем правильные метки для InputBlock2 после восстановления
+	var input_block = get_node_or_null("InputBlock")
+	if input_block and input_block.has_method("_highlight_input_labels"):
+		input_block.input_labels = ["Input 1", "Input 2"]
+		print("Level13: Set input labels to ['Input 1', 'Input 2'] after restore")
 	
 	update_all_logic_objects()
 	recount_gates()  # Пересчитываем после восстановления

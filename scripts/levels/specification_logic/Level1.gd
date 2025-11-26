@@ -6,6 +6,13 @@ var max_or_gates: int = 2
 func _ready():
 	level_data = preload("res://data/level_1_data.tres")
 	super._ready()
+	
+	# Устанавливаем правильные метки для InputBlock2
+	var input_block = get_node_or_null("InputBlock")
+	if input_block and input_block.has_method("_highlight_input_labels"):
+		input_block.input_labels = ["Input 1", "Input 2"]
+		print("Level1: Set input labels to ['Input 1', 'Input 2']")
+	
 	update_gate_buttons_state()
 
 func _on_add_or_button_pressed():

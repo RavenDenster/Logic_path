@@ -1,3 +1,4 @@
+# OutputBlock.gd (расширенный)
 extends Node2D
 
 var received_value: int = 0
@@ -89,8 +90,38 @@ func _highlight_desired_output():
 			labels_to_highlight = ["Desired Result", "Desired Output"]
 		"EXPECTED":
 			labels_to_highlight = ["Expected", "Desired Output"]
+		"A>B":
+			labels_to_highlight = ["Desired A>B", "Expected A>B", "Desired Output"]
+		"A<B":
+			labels_to_highlight = ["Desired A<B", "Expected A<B", "Desired Output"]
+		"A==B":
+			labels_to_highlight = ["Desired A==B", "Expected A==B", "Desired Output"]
+		"O0":
+			labels_to_highlight = ["Desired O0", "Expected O0", "Desired Output"]
+		"O1":
+			labels_to_highlight = ["Desired O1", "Expected O1", "Desired Output"]
+		"Y0":
+			labels_to_highlight = ["Desired Y0", "Expected Y0", "Desired Output"]
+		"Y1":
+			labels_to_highlight = ["Desired Y1", "Expected Y1", "Desired Output"]
+		"Y2":
+			labels_to_highlight = ["Desired Y2", "Expected Y2", "Desired Output"]
+		"Y3":
+			labels_to_highlight = ["Desired Y3", "Expected Y3", "Desired Output"]
+		"Y4":
+			labels_to_highlight = ["Desired Y4", "Expected Y4", "Desired Output"]
+		"Y5":
+			labels_to_highlight = ["Desired Y5", "Expected Y5", "Desired Output"]
+		"Y6":
+			labels_to_highlight = ["Desired Y6", "Expected Y6", "Desired Output"]
+		"Y7":
+			labels_to_highlight = ["Desired Y7", "Expected Y7", "Desired Output"]
 		_:
-			labels_to_highlight = ["Desired Output"]
+			# Общий случай для любых других выходов, начинающихся с Y
+			if output_type.begins_with("Y"):
+				labels_to_highlight = ["Desired " + output_type, "Expected " + output_type, "Desired Output"]
+			else:
+				labels_to_highlight = ["Desired Output"]
 	
 	var grid = _find_grid_container()
 	if grid:
@@ -117,7 +148,38 @@ func _highlight_desired_output():
 		print("OutputBlock: GridContainer not found in test panel")
 
 func _find_test_results_panel():
-	var panel = get_tree().get_root().find_child("TestResultsPanelAlu", true, false)
+	# Сначала ищем панель для 8-выходного декодера (для Level24)
+	var panel = get_tree().get_root().find_child("TestResultsPanelDecoder8", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для обычного декодера
+	panel = get_tree().get_root().find_child("TestResultsPanelDecoder", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для приоритетного энкодера
+	panel = get_tree().get_root().find_child("TestResultsPanelEncoderPriority", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для обычного энкодера
+	panel = get_tree().get_root().find_child("TestResultsPanelEncoder", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для 2-битного компаратора
+	panel = get_tree().get_root().find_child("TestResultsPanel2BitComparator", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для обычного компаратора
+	panel = get_tree().get_root().find_child("TestResultsPanelComparator", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем другие возможные панели
+	panel = get_tree().get_root().find_child("TestResultsPanelAlu", true, false)
 	if panel:
 		return panel
 	
@@ -137,6 +199,7 @@ func _find_test_results_panel():
 	if panel:
 		return panel
 	
+	# Если не нашли, ищем обычную панель
 	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
 	return panel
 

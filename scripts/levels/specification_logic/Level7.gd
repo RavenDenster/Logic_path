@@ -10,6 +10,14 @@ var max_not_gates: int = 2
 func _ready():
 	level_data = preload("res://data/level_7_data.tres")
 	super._ready()
+	
+		
+	# Устанавливаем правильные метки для InputBlock2
+	var input_block = get_node_or_null("InputBlock")
+	if input_block and input_block.has_method("_highlight_input_labels"):
+		input_block.input_labels = ["Input 1", "Input 2"]
+		print("Level1: Set input labels to ['Input 1', 'Input 2']")
+	
 	recount_gates()
 	update_gate_buttons_state()
 	

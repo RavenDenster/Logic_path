@@ -1,3 +1,4 @@
+# InputBlock2.gd (дополненный)
 extends Node2D
 class_name InputBlock2
 
@@ -6,7 +7,7 @@ var values_B = []
 var current_test_index = 0
 var test_results_panel: Node
 var area: Area2D
-var input_labels = ["Input 1", "Input 2"]  # По умолчанию
+var input_labels = ["Input A", "Input B"]  # По умолчанию
 
 func _ready():
 	# Добавляем Area2D только для обнаружения наведения
@@ -80,12 +81,35 @@ func _highlight_input_labels():
 		if child is Label:
 			# Обрезаем пробелы с обеих сторон для сравнения
 			var child_text = child.text.strip_edges()
+			
+			# Проверяем все варианты меток
 			for label in input_labels:
 				var stripped_label = label.strip_edges()
+				
+				# Прямое совпадение
 				if child_text == stripped_label:
 					child.modulate = Color.YELLOW
 					found_count += 1
-					print("InputBlock2: Highlighted label: '", child_text, "'")
+					print("InputBlock2: Highlighted label (exact match): '", child_text, "'")
+					break
+				
+				# Совпадение без префикса "Input " (для обратной совместимости)
+				var label_without_input = stripped_label.replace("Input ", "")
+				if child_text == label_without_input:
+					child.modulate = Color.YELLOW
+					found_count += 1
+					print("InputBlock2: Highlighted label (without 'Input' prefix): '", child_text, "'")
+					break
+				
+				# Совпадение по последней части (для A, B, I0, I1, I2, I3)
+				var label_parts = stripped_label.split(" ")
+				if label_parts.size() > 1:
+					var last_part = label_parts[-1]
+					if child_text == last_part:
+						child.modulate = Color.YELLOW
+						found_count += 1
+						print("InputBlock2: Highlighted label (last part match): '", child_text, "'")
+						break
 	
 	if found_count == 0:
 		print("InputBlock2: None of the labels found: ", input_labels)
@@ -96,22 +120,44 @@ func _highlight_input_labels():
 				print("  - '", child.text, "'")
 
 func _find_test_results_panel():
-	# Сначала ищем панель для 2-Bit Adder
-	var panel = get_tree().get_root().find_child("TestResultsPanel2BitAdder", true, false)
+	# Сначала ищем панель для декодера
+	var panel = get_tree().get_root().find_child("TestResultsPanelDecoder", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для Full Adder
+	# Затем ищем панель для приоритетного энкодера
+	panel = get_tree().get_root().find_child("TestResultsPanelEncoderPriority", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для обычного энкодера
+	panel = get_tree().get_root().find_child("TestResultsPanelEncoder", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для 2-битного компаратора
+	panel = get_tree().get_root().find_child("TestResultsPanel2BitComparator", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем панель для обычного компаратора
+	panel = get_tree().get_root().find_child("TestResultsPanelComparator", true, false)
+	if panel:
+		return panel
+	
+	# Затем ищем другие возможные панели
+	panel = get_tree().get_root().find_child("TestResultsPanel2BitAdder", true, false)
+	if panel:
+		return panel
+	
 	panel = get_tree().get_root().find_child("TestResultsPanelFullAdder", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для Half Adder
 	panel = get_tree().get_root().find_child("TestResultsPanelHalfAdder", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для трех входов
 	panel = get_tree().get_root().find_child("TestResultsPanel3Inputs", true, false)
 	if panel:
 		return panel
