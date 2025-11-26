@@ -6,7 +6,7 @@ var or_gate_count: int = 0
 var comparator_gate_count: int = 0
 var max_and_gates: int = 4
 var max_or_gates: int = 3
-var max_comparator_gates: int = 2
+var max_comparator_gates: int = 3
 
 func _ready():
 	level_data = preload("res://data/level_20_data.tres")
@@ -29,6 +29,9 @@ func _ready():
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
+	# ПЕРЕПОДКЛЮЧАЕМ КНОПКИ к нашим методам
+	_reconnect_buttons()
+	
 	# Устанавливаем заголовки для 2-битного компаратора
 	if test_results_panel and test_results_panel.has_method("set_titles"):
 		test_results_panel.set_titles("Desired A>B", "Desired A<B", "Desired A==B", "Current A>B", "Current A<B", "Current A==B")
@@ -49,6 +52,41 @@ func _ready():
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+# ДОБАВЬТЕ ЭТОТ МЕТОД ДЛЯ ПЕРЕПОДКЛЮЧЕНИЯ КНОПОК
+func _reconnect_buttons():
+	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	
+	# Получаем список всех кнопок
+	var buttons = [
+		gate_buttons_container.get_node_or_null("OneBitComparator"),
+		gate_buttons_container.get_node_or_null("AND"),
+		gate_buttons_container.get_node_or_null("OR")
+	]
+	
+	# Для каждой кнопки отключаем все соединения и подключаем к нашим методам
+	for button in buttons:
+		if button:
+			# Получаем текущие подключения
+			var connections = button.pressed.get_connections()
+			for connection in connections:
+				# Отключаем все существующие подключения
+				button.pressed.disconnect(connection.callable)
+	
+	# Теперь безопасно подключаем к нашим методам
+	var comparator_button = gate_buttons_container.get_node_or_null("OneBitComparator")
+	if comparator_button:
+		comparator_button.pressed.connect(_on_add_comparator_button_pressed)
+	
+	var and_button = gate_buttons_container.get_node_or_null("AND")
+	if and_button:
+		and_button.pressed.connect(_on_add_and_button_pressed)
+	
+	var or_button = gate_buttons_container.get_node_or_null("OR")
+	if or_button:
+		or_button.pressed.connect(_on_add_or_button_pressed)
+	
+	print("Level20: Buttons reconnected to local methods")
 
 func setup_comparator2_level():
 	super.setup_comparator2_level()
@@ -203,24 +241,15 @@ func restore_level_state(state):
 	# Сначала очищаем уровень
 	clear_level()
 	
-	# Затем восстанавливаем состояние
-	if state.has("gates"):
-		print("Restoring ", state["gates"].size(), " gates")
-		for gate_data in state["gates"]:
-			create_gate_from_data(gate_data)
+	# Затем восстанавливаем состояние используя улучшенный метод из LevelComparator2
+	super.restore_level_state(state)
 	
-	if state.has("wires"):
-		print("Restoring ", state["wires"].size(), " wires")
-		for wire_data in state["wires"]:
-			create_wire_from_data(wire_data)
-	
-	update_all_logic_objects()
-	recount_gates()  # Пересчитываем после восстановления
+	# Пересчитываем счетчики и обновляем состояние кнопок
+	recount_gates()
 	update_gate_buttons_state()
-	update_all_port_colors()
 	
-	print("Level state restored successfully. AND gates: ", and_gate_count, ", OR gates: ", or_gate_count, ", Comparator gates: ", comparator_gate_count)
-
+	print("Level20 state restored successfully. AND gates: ", and_gate_count, ", OR gates: ", or_gate_count, ", Comparator gates: ", comparator_gate_count)
+	
 func create_gate_from_data(gate_data):
 	var gate_type = gate_data.get("type", "")
 	var position_array = gate_data.get("position", [0, 0])

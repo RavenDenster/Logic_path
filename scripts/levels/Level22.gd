@@ -4,8 +4,8 @@ extends "res://scripts/levels/LevelEncoderPriority.gd"
 var or_gate_count: int = 0
 var and_gate_count: int = 0
 var not_gate_count: int = 0
-var max_or_gates: int = 4
-var max_and_gates: int = 3
+var max_or_gates: int = 3
+var max_and_gates: int = 2
 var max_not_gates: int = 2
 
 func _ready():

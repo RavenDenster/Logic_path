@@ -98,7 +98,7 @@ func setup_comparator2_level():
 	print("All logic objects: ", all_logic_objects.size())
 
 func _on_add_onebit_comparator_button_pressed():
-	print("Adding OneBitComparator gate")
+	print("LevelComparator2: Adding OneBitComparator gate (base method)")
 	var gate_scene = preload("res://scenes/gates/OneBitComparatorGate.tscn")
 	var gate = gate_scene.instantiate()
 
@@ -114,6 +114,66 @@ func _on_add_onebit_comparator_button_pressed():
 	mark_level_state_dirty()
 	
 	print("OneBitComparator gate added at position: ", gate.position, " with name: ", gate.name)
+
+func _on_add_and_button_pressed():
+	print("LevelComparator2: Adding AND gate (base method)")
+	var gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+	var gate = gate_scene.instantiate()
+	
+	var viewport_size = get_viewport_rect().size
+	gate.position = Vector2(viewport_size.x / 2, viewport_size.y / 2)
+	
+	add_child(gate)
+	movable_objects.append(gate)
+	update_all_logic_objects()
+	mark_level_state_dirty()
+
+func get_wires_data():
+	var wires_data = []
+	
+	for wire in wires:
+		if not is_wire_valid(wire):
+			continue
+			
+		var start_parent = wire.start_port.get_parent()
+		var end_parent = wire.end_port.get_parent()
+		
+		var start_parent_name = start_parent.name
+		var end_parent_name = end_parent.name
+		
+		# Сохраняем тип объектов для лучшего восстановления
+		var start_parent_type = get_object_type(start_parent)
+		var end_parent_type = get_object_type(end_parent)
+		
+		var wire_data = {
+			"start_parent_name": start_parent_name,
+			"start_port_name": wire.start_port.name,
+			"start_parent_type": start_parent_type,
+			"end_parent_name": end_parent_name,
+			"end_port_name": wire.end_port.name,
+			"end_parent_type": end_parent_type,
+			"start_position": [wire.start_port.global_position.x, wire.start_port.global_position.y],
+			"end_position": [wire.end_port.global_position.x, wire.end_port.global_position.y]
+		}
+		wires_data.append(wire_data)
+		
+		print("Saving wire: ", start_parent_name, ".", wire.start_port.name, " -> ", end_parent_name, ".", wire.end_port.name, " (Types: ", start_parent_type, " -> ", end_parent_type, ")")
+	
+	print("Saved ", wires_data.size(), " wires")
+	return wires_data
+
+func _on_add_or_button_pressed():
+	print("LevelComparator2: Adding OR gate (base method)")
+	var gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+	var gate = gate_scene.instantiate()
+	
+	var viewport_size = get_viewport_rect().size
+	gate.position = Vector2(viewport_size.x / 2, viewport_size.y / 2)
+	
+	add_child(gate)
+	movable_objects.append(gate)
+	update_all_logic_objects()
+	mark_level_state_dirty()
 
 func _on_test_pressed():
 	print("=== Testing 2-bit Comparator level ===")
@@ -379,53 +439,63 @@ func create_gate_from_data(gate_data):
 	var position = Vector2(position_array[0], position_array[1])
 	var gate_name = gate_data.get("name", "")
 	
+	print("Attempting to restore gate: ", gate_type, " at position: ", position, " with name: ", gate_name)
+	
 	match gate_type:
 		"INPUT_BLOCK_A":
 			if input_block_a: 
 				input_block_a.position = position
 				if gate_name != "":
 					input_block_a.name = gate_name
+				print("Restored InputBlockA position: ", position)
 		"INPUT_BLOCK_B":
 			if input_block_b: 
 				input_block_b.position = position
 				if gate_name != "":
 					input_block_b.name = gate_name
+				print("Restored InputBlockB position: ", position)
 		"OUTPUT_BLOCK_AGTB":
 			if output_block_agtb: 
 				output_block_agtb.position = position
 				if gate_name != "":
 					output_block_agtb.name = gate_name
+				print("Restored OutputBlockAgtb position: ", position)
 		"OUTPUT_BLOCK_ALTB":
 			if output_block_altb: 
 				output_block_altb.position = position
 				if gate_name != "":
 					output_block_altb.name = gate_name
+				print("Restored OutputBlockAltb position: ", position)
 		"OUTPUT_BLOCK_AEQB":
 			if output_block_aeqb: 
 				output_block_aeqb.position = position
 				if gate_name != "":
 					output_block_aeqb.name = gate_name
+				print("Restored OutputBlockAeqb position: ", position)
 		"OneBitComparator":
 			var gate_scene = preload("res://scenes/gates/OneBitComparatorGate.tscn")
 			var gate = gate_scene.instantiate()
 			gate.position = position
+			
 			if gate_name != "":
 				gate.name = gate_name
 				# Обновляем счетчик если нужно
 				var name_parts = gate_name.split("_")
 				if name_parts.size() > 1:
-					var num = name_parts[1].to_int()
-					if num > one_bit_comparator_counter:
-						one_bit_comparator_counter = num
+					var num_str = name_parts[name_parts.size() - 1]
+					if num_str.is_valid_int():
+						var num = num_str.to_int()
+						if num > one_bit_comparator_counter:
+							one_bit_comparator_counter = num
 			else:
 				one_bit_comparator_counter += 1
 				gate.name = "OneBitComparatorGate_" + str(one_bit_comparator_counter)
 			
 			add_child(gate)
 			movable_objects.append(gate)
-			print("Restored OneBitComparator gate: ", gate.name, " at ", position)
+			print("SUCCESS: Restored OneBitComparator gate: ", gate.name, " at ", position)
 		"AND":
-			var gate_scene = preload("res://scenes/gates/ANDGate.tscn")
+			var gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
 			var gate = gate_scene.instantiate()
 			gate.position = position
 			if gate_name != "":
@@ -443,10 +513,59 @@ func create_gate_from_data(gate_data):
 			movable_objects.append(gate)
 			print("Restored OR gate: ", gate.name, " at ", position)
 
-
-func find_port_by_name(parent_name, port_name):
+func restore_level_state(state):
+	if not state:
+		print("No state to restore")
+		return
+		
+	print("=== Starting level state restoration ===")
+	
+	# Сначала очищаем уровень
+	clear_level()
+	
+	# Затем восстанавливаем состояние
+	if state.has("gates"):
+		print("Restoring ", state["gates"].size(), " gates")
+		for gate_data in state["gates"]:
+			create_gate_from_data(gate_data)
+	else:
+		print("No gates data found in save state")
+	
+	# Обновляем логические объекты перед восстановлением проводов
+	update_all_logic_objects()
+	
+	if state.has("wires"):
+		print("Restoring ", state["wires"].size(), " wires")
+		var restored_wires_count = 0
+		var failed_wires_count = 0
+		
+		for wire_data in state["wires"]:
+			if create_wire_from_data(wire_data):
+				restored_wires_count += 1
+			else:
+				failed_wires_count += 1
+				
+		print("Wire restoration summary:")
+		print("  Successfully restored: ", restored_wires_count)
+		print("  Failed to restore: ", failed_wires_count)
+		print("  Total attempted: ", state["wires"].size())
+	else:
+		print("No wires data found in save state")
+	
+	update_all_logic_objects()
+	update_all_port_colors()
+	
+	print("Level state restoration completed")
+	print("Movable objects: ", movable_objects.size())
+	print("All logic objects: ", all_logic_objects.size())
+	print("Wires: ", wires.size())
+	
+func find_port_by_name(parent_name, port_name, parent_type = ""):
+	print("Searching for port: ", parent_name, ".", port_name, " (Type: ", parent_type, ")")
+	
 	var parent = null
-
+	
+	# Сначала проверяем основные блоки компаратора по точному имени
 	if parent_name == "InputBlockA" and input_block_a:
 		parent = input_block_a
 	elif parent_name == "InputBlockB" and input_block_b:
@@ -457,28 +576,127 @@ func find_port_by_name(parent_name, port_name):
 		parent = output_block_altb
 	elif parent_name == "OutputBlockAeqb" and output_block_aeqb:
 		parent = output_block_aeqb
-	else:
-
+	
+	# Если не нашли по точному имени, ищем среди movable_objects
+	if not parent:
 		for obj in movable_objects:
-			if obj and obj.name == parent_name:
+			if not obj or not is_instance_valid(obj):
+				continue
+				
+			# Если указан тип, проверяем его
+			if parent_type != "" and get_object_type(obj) != parent_type:
+				continue
+				
+			# Сравниваем имена с учетом возможных суффиксов
+			if obj.name == parent_name or obj.name.begins_with(parent_name):
 				parent = obj
 				break
-
-		if not parent and "OneBitComparatorGate" in parent_name:
+	
+	# Если все еще не нашли, попробуем найти по типу (если тип указан)
+	if not parent and parent_type != "":
+		# Для компараторов - ищем по порядку
+		if parent_type == "OneBitComparator":
+			var comparators = []
 			for obj in movable_objects:
-				if obj and "OneBitComparatorGate" in obj.name:
+				if get_object_type(obj) == "OneBitComparator":
+					comparators.append(obj)
+			
+			# Пытаемся определить порядок по имени
+			if "OneBitComparatorGate_1" in parent_name or "1" in parent_name:
+				parent = comparators[0] if comparators.size() > 0 else null
+			elif "OneBitComparatorGate_2" in parent_name or "2" in parent_name:
+				parent = comparators[1] if comparators.size() > 1 else null
+			elif "OneBitComparatorGate_3" in parent_name or "3" in parent_name:
+				parent = comparators[2] if comparators.size() > 2 else null
+			else:
+				# Берем первый подходящий по типу
+				parent = comparators[0] if comparators.size() > 0 else null
+		else:
+			# Для других типов берем первый подходящий
+			for obj in movable_objects:
+				if get_object_type(obj) == parent_type:
 					parent = obj
 					break
 	
 	if not parent:
-		print("Parent not found: ", parent_name)
+		print("Parent not found for: ", parent_name, " (Type: ", parent_type, ")")
 		return null
-
-	var port = parent.get_node_or_null(str(port_name))
-	if not port:
-		print("Port not found: ", port_name, " in parent: ", parent_name)
+	
+	# Теперь ищем порт на найденном родителе
+	var port = find_port_on_parent(parent, port_name)
+	
+	if port:
+		print("Found port: ", parent.name, ".", port.name)
+	else:
+		print("Port not found: ", parent_name, ".", port_name, " on ", parent.name)
 	
 	return port
+
+func find_port_on_parent(parent, port_name):
+	if not parent or not is_instance_valid(parent):
+		return null
+	
+	var port = null
+	var parent_type = get_object_type(parent)
+	
+	# Для InputBlockA и InputBlockB
+	if parent in [input_block_a, input_block_b]:
+		match port_name:
+			"OutputA": port = parent.get_node_or_null("OutputA")
+			"OutputB": port = parent.get_node_or_null("OutputB")
+	
+	# Для OutputBlockAgtb, OutputBlockAltb, OutputBlockAeqb
+	elif parent in [output_block_agtb, output_block_altb, output_block_aeqb]:
+		if port_name == "InputPort":
+			port = parent.get_node_or_null("InputPort")
+	
+	# Для OneBitComparator
+	elif parent_type == "OneBitComparator":
+		match port_name:
+			"InputA": port = parent.get_node_or_null("InputA")
+			"InputB": port = parent.get_node_or_null("InputB")
+			"OutputAgtb": port = parent.get_node_or_null("OutputAgtb")
+			"OutputAltb": port = parent.get_node_or_null("OutputAltb")
+			"OutputAeqb": port = parent.get_node_or_null("OutputAeqb")
+	
+	# Для обычных гейтов (AND, OR)
+	else:
+		match port_name:
+			"Input1": port = parent.get_node_or_null("Input1")
+			"Input2": port = parent.get_node_or_null("Input2")
+			"Output": port = parent.get_node_or_null("Output")
+	
+	return port
+
+func create_wire_from_data(wire_data):
+	var start_parent_name = wire_data.get("start_parent_name", "")
+	var start_port_name = wire_data.get("start_port_name", "")
+	var start_parent_type = wire_data.get("start_parent_type", "")
+	var end_parent_name = wire_data.get("end_parent_name", "")
+	var end_port_name = wire_data.get("end_port_name", "")
+	var end_parent_type = wire_data.get("end_parent_type", "")
+	
+	print("Attempting to restore wire: ", start_parent_name, ".", start_port_name, " (", start_parent_type, ") -> ", end_parent_name, ".", end_port_name, " (", end_parent_type, ")")
+
+	var start_port = find_port_by_name(start_parent_name, start_port_name, start_parent_type)
+	var end_port = find_port_by_name(end_parent_name, end_port_name, end_parent_type)
+	
+	if start_port and end_port and start_port != end_port:
+		var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+		wire.connect_ports(start_port, end_port)
+		add_child(wire)
+		wires.append(wire)
+		print("SUCCESS: Restored wire: ", start_parent_name, ".", start_port_name, " -> ", end_parent_name, ".", end_port_name)
+		return true
+	else:
+		print("FAILED to restore wire: ", start_parent_name, ".", start_port_name, " -> ", end_parent_name, ".", end_port_name)
+		if not start_port: 
+			print("  - Start port not found: ", start_parent_name, ".", start_port_name)
+		if not end_port: 
+			print("  - End port not found: ", end_parent_name, ".", end_port_name)
+		if start_port == end_port:
+			print("  - Start and end ports are the same")
+		return false
 
 func get_object_type(obj):
 	if obj == null:
