@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://de7i6wqvwn62e"]
 
-[ext_resource type="Script" uid="uid://woardckuvrq8" path="res://scripts/ui/TestResultsPanelHalfAdder.gd" id="1_ha3do"]
+[ext_resource type="Script" uid="uid://woardckuvrq8" path="res://scripts/ui/bottom_panels/BottonPanelHalfAdder.gd" id="1_ha3do"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="2_pij8v"]
 
 [node name="TestResultsPanelHalfAdder" type="Control"]

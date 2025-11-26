@@ -1,5 +1,5 @@
 # Level15.gd
-extends "res://scripts/levels/Level2bitAdder.gd"
+extends "res://scripts/levels/level_templates/Level2bitAdder.gd"
 
 var half_adder_count: int = 0
 var full_adder_count: int = 0

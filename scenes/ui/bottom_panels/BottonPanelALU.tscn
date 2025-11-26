@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://7i08yp8fvyqu"]
 
-[ext_resource type="Script" uid="uid://bgnkf5ce1wa28" path="res://scripts/ui/TestResultsPanelALU.gd" id="1_85rou"]
+[ext_resource type="Script" uid="uid://bgnkf5ce1wa28" path="res://scripts/ui/bottom_panels/BottonPanelALU.gd" id="1_85rou"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="2_mn4u2"]
 
 [node name="TestResultsPanelAlu" type="Control"]
