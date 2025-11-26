@@ -18,6 +18,7 @@ z_index = 4
 texture = ExtResource("2_7cvur")
 
 [node name="Input1" type="Area2D" parent="."]
+z_index = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Input1"]
 position = Vector2(-40, -20)
@@ -29,6 +30,7 @@ position = Vector2(-38, -21)
 texture = ExtResource("3_s2po7")
 
 [node name="Input2" type="Area2D" parent="."]
+z_index = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Input2"]
 position = Vector2(-39, 17)
@@ -40,6 +42,7 @@ position = Vector2(-37, 16)
 texture = ExtResource("3_s2po7")
 
 [node name="OutputSum" type="Area2D" parent="."]
+z_index = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="OutputSum"]
 position = Vector2(40, -20)
@@ -51,6 +54,7 @@ position = Vector2(41, -21)
 texture = ExtResource("3_s2po7")
 
 [node name="OutputCarry" type="Area2D" parent="."]
+z_index = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="OutputCarry"]
 position = Vector2(40, 17)

@@ -7,6 +7,19 @@ var max_and_gates: int = 2
 var max_xor_gates: int = 2
 var max_not_gates: int = 2
 
+func setup_half_adder_level():
+	super.setup_half_adder_level()
+	
+	# Переопределяем типы выходов для полувычитателя
+	if output_block_sum:
+		output_block_sum.output_type = "DIFFERENCE"
+	if output_block_carry:
+		output_block_carry.output_type = "BORROW"
+	
+	# Устанавливаем заголовки для полувычитателя
+	if test_results_panel and test_results_panel.has_method("set_titles"):
+		test_results_panel.set_titles("Desired DIFFERENCE", "Desired BORROW", "Current DIFFERENCE", "Current BORROW")
+
 func _ready():
 	level_data = preload("res://data/level_16_data.tres")
 
@@ -21,6 +34,16 @@ func _ready():
 	print("  Expected Borrow: ", level_data.expected_carry)
 	
 	super._ready()
+	
+	# Ждем полной инициализации test_results_panel
+	await get_tree().process_frame
+	
+	# Устанавливаем заголовки для полувычитателя
+	if test_results_panel and test_results_panel.has_method("set_titles"):
+		# Ждем еще немного чтобы убедиться что панель готова
+		await get_tree().process_frame
+		test_results_panel.set_titles("Desired DIFFERENCE", "Desired BORROW", "Current DIFFERENCE", "Current BORROW")
+	
 	recount_gates()
 	update_gate_buttons_state()
 

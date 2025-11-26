@@ -19,6 +19,16 @@ func _ready():
 	print("  Expected Carry: ", level_data.expected_carry)
 	
 	super._ready()
+	
+	# Ждем полной инициализации test_results_panel
+	await get_tree().process_frame
+	
+	# Устанавливаем заголовки для полусумматора
+	if test_results_panel and test_results_panel.has_method("set_titles"):
+		# Ждем еще немного чтобы убедиться что панель готова
+		await get_tree().process_frame
+		test_results_panel.set_titles("Desired SUM", "Desired CARRY", "Current SUM", "Current CARRY")
+	
 	recount_gates()
 	update_gate_buttons_state()
 

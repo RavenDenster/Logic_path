@@ -1,4 +1,3 @@
-# InputBlock2.gd (обновляем функцию _highlight_input_labels для обработки пробелов)
 extends Node2D
 class_name InputBlock2
 
@@ -69,30 +68,32 @@ func _highlight_input_labels():
 	# Сбрасываем все подсветки
 	_reset_all_highlights()
 	
-	# Находим и подсвечиваем заданные метки (с обработкой пробелов)
-	var grid = test_results_panel.get_node("Background/GridContainer")
-	if grid:
-		var found_count = 0
+	# Находим GridContainer (обратная совместимость)
+	var grid = _find_grid_container()
+	if not grid:
+		print("InputBlock2: GridContainer not found")
+		return
+	
+	# Подсвечиваем заданные метки
+	var found_count = 0
+	for child in grid.get_children():
+		if child is Label:
+			# Обрезаем пробелы с обеих сторон для сравнения
+			var child_text = child.text.strip_edges()
+			for label in input_labels:
+				var stripped_label = label.strip_edges()
+				if child_text == stripped_label:
+					child.modulate = Color.YELLOW
+					found_count += 1
+					print("InputBlock2: Highlighted label: '", child_text, "'")
+	
+	if found_count == 0:
+		print("InputBlock2: None of the labels found: ", input_labels)
+		# Выведем все доступные метки для отладки
+		print("Available labels:")
 		for child in grid.get_children():
 			if child is Label:
-				# Обрезаем пробелы с обеих сторон для сравнения
-				var child_text = child.text.strip_edges()
-				for label in input_labels:
-					var stripped_label = label.strip_edges()
-					if child_text == stripped_label:
-						child.modulate = Color.YELLOW
-						found_count += 1
-						print("InputBlock2: Highlighted label: '", child_text, "'")
-		
-		if found_count == 0:
-			print("InputBlock2: None of the labels found: ", input_labels)
-			# Выведем все доступные метки для отладки (с кавычками для видимости пробелов)
-			print("Available labels:")
-			for child in grid.get_children():
-				if child is Label:
-					print("  - '", child.text, "'")
-	else:
-		print("InputBlock2: GridContainer not found in test panel")
+				print("  - '", child.text, "'")
 
 func _find_test_results_panel():
 	# Сначала ищем панель для 2-Bit Adder
@@ -119,9 +120,40 @@ func _find_test_results_panel():
 	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
 	return panel
 
+# Новая функция для поиска GridContainer с обратной совместимостью
+func _find_grid_container():
+	if not test_results_panel:
+		return null
+	
+	# Пробуем разные пути для обратной совместимости
+	var grid = test_results_panel.get_node_or_null("Background/GridContainer")
+	if grid:
+		return grid
+	
+	grid = test_results_panel.get_node_or_null("Background/VBoxContainer/GridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/VBoxContainer2/GridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/LeftColumn/LeftGridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/RightColumn/RightGridContainer")
+	if grid:
+		return grid
+	
+	return null
+
 func _reset_all_highlights():
 	if test_results_panel:
-		var grid = test_results_panel.get_node("Background/GridContainer")
-		for child in grid.get_children():
-			if child is Label:
-				child.modulate = Color.WHITE
+		var grid = _find_grid_container()
+		if grid:
+			for child in grid.get_children():
+				if child is Label:
+					child.modulate = Color.WHITE
+		else:
+			print("InputBlock2: GridContainer not found for reset")

@@ -25,9 +25,26 @@ func _ready():
 	print("  Expected Bout: ", level_data.expected_cout)
 	
 	super._ready()
+	
+	# Ждем полной инициализации test_results_panel
+	await get_tree().process_frame
+	
+	# Устанавливаем заголовки для полного вычитателя
+	if test_results_panel and test_results_panel.has_method("set_titles"):
+		test_results_panel.set_titles("Desired DIFFERENCE", "Desired BOUT", "Current DIFFERENCE", "Current BOUT")
+	
 	recount_gates()
 	update_gate_buttons_state()
 
+func setup_full_adder_level():
+	super.setup_full_adder_level()
+	
+	# Переопределяем типы выходов для полного вычитателя
+	if output_block_sum:
+		output_block_sum.output_type = "DIFFERENCE"
+	if output_block_cout:
+		output_block_cout.output_type = "BOUT"
+		
 func recount_gates():
 	and_gate_count = 0
 	xor_gate_count = 0

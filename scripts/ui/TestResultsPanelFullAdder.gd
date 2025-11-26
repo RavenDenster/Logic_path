@@ -8,6 +8,12 @@ var desired_cout_textures = []
 var current_sum_textures = []
 var current_cout_textures = []
 
+# Добавляем переменные для Label
+var desired_sum_label: Label
+var desired_cout_label: Label
+var current_sum_label: Label
+var current_cout_label: Label
+
 func _ready():
 	await get_tree().process_frame
 	initialize_textures()
@@ -23,6 +29,20 @@ func initialize_textures():
 		print("ERROR: GridContainer has only ", grid_container.get_child_count(), " children, expected 63")
 		return
 
+	# Получаем ссылки на заголовки
+	desired_sum_label = grid_container.get_child(27) as Label  # "Desired Sum"
+	desired_cout_label = grid_container.get_child(36) as Label  # "Desired Cout"
+	current_sum_label = grid_container.get_child(45) as Label  # "Current Sum"
+	current_cout_label = grid_container.get_child(54) as Label  # "Current Cout"
+
+	# Проверяем, что нашли все Label
+	print("FullAdder Label search results:")
+	print("  Desired Sum: ", desired_sum_label != null)
+	print("  Desired Cout: ", desired_cout_label != null)
+	print("  Current Sum: ", current_sum_label != null)
+	print("  Current Cout: ", current_cout_label != null)
+
+	# Остальной код инициализации текстур остается без изменений
 	input_a_textures = []
 	input_b_textures = []
 	input_cin_textures = []
@@ -81,6 +101,36 @@ func initialize_textures():
 		  desired_cout_textures.size(), " desired cout, ",
 		  current_sum_textures.size(), " current sum, ",
 		  current_cout_textures.size(), " current cout textures")
+
+# Добавляем метод для изменения заголовков
+func set_titles(desired_sum_text: String, desired_cout_text: String, current_sum_text: String, current_cout_text: String):
+	print("Setting FullAdder titles: ", desired_sum_text, ", ", desired_cout_text)
+	
+	if desired_sum_label and is_instance_valid(desired_sum_label):
+		print("Changing Desired Sum from '", desired_sum_label.text, "' to '", desired_sum_text, "'")
+		desired_sum_label.text = desired_sum_text
+	else:
+		print("ERROR: desired_sum_label is invalid")
+	
+	if desired_cout_label and is_instance_valid(desired_cout_label):
+		print("Changing Desired Cout from '", desired_cout_label.text, "' to '", desired_cout_text, "'")
+		desired_cout_label.text = desired_cout_text
+	else:
+		print("ERROR: desired_cout_label is invalid")
+	
+	if current_sum_label and is_instance_valid(current_sum_label):
+		print("Changing Current Sum from '", current_sum_label.text, "' to '", current_sum_text, "'")
+		current_sum_label.text = current_sum_text
+	else:
+		print("ERROR: current_sum_label is invalid")
+	
+	if current_cout_label and is_instance_valid(current_cout_label):
+		print("Changing Current Cout from '", current_cout_label.text, "' to '", current_cout_text, "'")
+		current_cout_label.text = current_cout_text
+	else:
+		print("ERROR: current_cout_label is invalid")
+	
+	print("TestResultsPanelFullAdder: Titles updated")
 
 func load_initial_data(inputs_a, inputs_b, inputs_cin, expected_sum, expected_cout):
 	if input_a_textures.is_empty() or input_b_textures.is_empty() or input_cin_textures.is_empty():

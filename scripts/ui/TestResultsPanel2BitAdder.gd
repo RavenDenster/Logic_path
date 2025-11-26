@@ -24,20 +24,18 @@ func get_texture_rect_internal(grid_container, total_children, columns, row, col
 	return null
 
 func initialize_textures():
-	if not has_node("Background/GridContainer"):
-		print("ERROR: Background/GridContainer not found!")
+	# Левый GridContainer (7 строк) - Inputs & Expected
+	var left_grid_container = get_node_or_null("Background/VBoxContainer/GridContainer")
+	if not left_grid_container:
+		print("ERROR: Left GridContainer not found!")
 		return
 
-	var grid_container = $Background/GridContainer
-	var total_children = grid_container.get_child_count()
-	
-	print("GridContainer has ", total_children, " children")
+	var left_total_children = left_grid_container.get_child_count()
+	print("Left GridContainer has ", left_total_children, " children")
 
-	var rows = 10
-	var columns = 17
-	var test_cases = 16 
-	
-	print("Using 10 rows and 16 test cases for 2-Bit Adder")
+	var left_rows = 7
+	var left_columns = 17
+	var test_cases = 16
 
 	input_a1_textures = []
 	input_a0_textures = []
@@ -46,142 +44,123 @@ func initialize_textures():
 	desired_s1_textures = []
 	desired_s0_textures = []
 	desired_cout_textures = []
+
+	# Заполняем левый GridContainer (7 строк)
+	for i in range(test_cases):
+		var tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 0, i + 1)
+		if tex: input_a1_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 1, i + 1)
+		if tex: input_a0_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 2, i + 1)
+		if tex: input_b1_textures.append(tex)
+		
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 3, i + 1)
+		if tex: input_b0_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 4, i + 1)
+		if tex: desired_s1_textures.append(tex)
+		
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 5, i + 1)
+		if tex: desired_s0_textures.append(tex)
+		
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 6, i + 1)
+		if tex: desired_cout_textures.append(tex)
+
+	# Правый GridContainer (3 строки) - Current Outputs
+	var right_grid_container = get_node_or_null("Background/VBoxContainer2/GridContainer")
+	if not right_grid_container:
+		print("ERROR: Right GridContainer (VBoxContainer2) not found!")
+		# Попробуем найти в старом расположении
+		right_grid_container = get_node_or_null("Background/HBoxContainer/RightColumn/RightGridContainer")
+		if not right_grid_container:
+			print("ERROR: No Right GridContainer found at all!")
+			return
+
+	var right_total_children = right_grid_container.get_child_count()
+	print("Right GridContainer has ", right_total_children, " children")
+
+	var right_rows = 3
+	var right_columns = 17
+
 	current_s1_textures = []
 	current_s0_textures = []
 	current_cout_textures = []
 
+	# Заполняем правый GridContainer (3 строки)
 	for i in range(test_cases):
-		var tex = get_texture_rect_internal(grid_container, total_children, columns, 0, i + 1)
-		if tex: input_a1_textures.append(tex)
-
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 1, i + 1)
-		if tex: input_a0_textures.append(tex)
-
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 2, i + 1)
-		if tex: input_b1_textures.append(tex)
-		
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 3, i + 1)
-		if tex: input_b0_textures.append(tex)
-
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 4, i + 1)
-		if tex: desired_s1_textures.append(tex)
-		
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 5, i + 1)
-		if tex: desired_s0_textures.append(tex)
-		
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 6, i + 1)
-		if tex: desired_cout_textures.append(tex)
-		
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 7, i + 1)
+		var tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 0, i + 1)
 		if tex: current_s1_textures.append(tex)
 		
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 8, i + 1)
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 1, i + 1)
 		if tex: current_s0_textures.append(tex)
 		
-		tex = get_texture_rect_internal(grid_container, total_children, columns, 9, i + 1)
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 2, i + 1)
 		if tex: current_cout_textures.append(tex)
 	
-	print("TestResultsPanel2BitAdder: Successfully initialized with ", 
-		  input_a1_textures.size(), " test cases")
+	print("TestResultsPanel2BitAdder: Successfully initialized with")
+	print("  Input A1: ", input_a1_textures.size())
+	print("  Input A0: ", input_a0_textures.size())
+	print("  Input B1: ", input_b1_textures.size())
+	print("  Input B0: ", input_b0_textures.size())
+	print("  Expected S1: ", desired_s1_textures.size())
+	print("  Expected S0: ", desired_s0_textures.size())
+	print("  Expected Cout: ", desired_cout_textures.size())
+	print("  Current S1: ", current_s1_textures.size())
+	print("  Current S0: ", current_s0_textures.size())
+	print("  Current Cout: ", current_cout_textures.size())
 
 func load_initial_data(inputs_a1, inputs_a0, inputs_b1, inputs_b0, expected_s1, expected_s0, expected_cout):
 	if input_a1_textures.is_empty():
 		print("ERROR: Textures arrays are not initialized!")
-		return
+		initialize_textures()
+		if input_a1_textures.is_empty():
+			return
 	
-	var test_cases = input_a1_textures.size()
+	var test_cases = min(16, input_a1_textures.size())
 	print("Loading initial data for ", test_cases, " test cases")
 	
-	var actual_test_cases = min(test_cases, 16)
+	# Левый столбец - входы и ожидаемые выходы
+	for i in range(test_cases):
+		update_texture(input_a1_textures[i], inputs_a1[i] if i < inputs_a1.size() else 0)
+		update_texture(input_a0_textures[i], inputs_a0[i] if i < inputs_a0.size() else 0)
+		update_texture(input_b1_textures[i], inputs_b1[i] if i < inputs_b1.size() else 0)
+		update_texture(input_b0_textures[i], inputs_b0[i] if i < inputs_b0.size() else 0)
+		update_texture(desired_s1_textures[i], expected_s1[i] if i < expected_s1.size() else 0)
+		update_texture(desired_s0_textures[i], expected_s0[i] if i < expected_s0.size() else 0)
+		update_texture(desired_cout_textures[i], expected_cout[i] if i < expected_cout.size() else 0)
 	
-	for i in range(actual_test_cases):
-		if i < input_a1_textures.size() and i < inputs_a1.size():
-			if inputs_a1[i] == 1:
-				input_a1_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				input_a1_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < input_a0_textures.size() and i < inputs_a0.size():
-			if inputs_a0[i] == 1:
-				input_a0_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				input_a0_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < input_b1_textures.size() and i < inputs_b1.size():
-			if inputs_b1[i] == 1:
-				input_b1_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				input_b1_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < input_b0_textures.size() and i < inputs_b0.size():
-			if inputs_b0[i] == 1:
-				input_b0_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				input_b0_textures[i].texture = preload("res://assets/point.png")
+	# Правый столбец - текущие выходы (сбрасываем)
+	for i in range(test_cases):
+		update_texture(current_s1_textures[i] if i < current_s1_textures.size() else null, 0)
+		update_texture(current_s0_textures[i] if i < current_s0_textures.size() else null, 0)
+		update_texture(current_cout_textures[i] if i < current_cout_textures.size() else null, 0)
 	
-	for i in range(actual_test_cases):
-		if i < desired_s1_textures.size() and i < expected_s1.size():
-			if expected_s1[i] == 1:
-				desired_s1_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				desired_s1_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < desired_s0_textures.size() and i < expected_s0.size():
-			if expected_s0[i] == 1:
-				desired_s0_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				desired_s0_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < desired_cout_textures.size() and i < expected_cout.size():
-			if expected_cout[i] == 1:
-				desired_cout_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				desired_cout_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < current_s1_textures.size():
-			current_s1_textures[i].texture = preload("res://assets/point.png")
-		if i < current_s0_textures.size():
-			current_s0_textures[i].texture = preload("res://assets/point.png")
-		if i < current_cout_textures.size():
-			current_cout_textures[i].texture = preload("res://assets/point.png")
-	
-	print("TestResultsPanel2BitAdder: Initial data loaded for ", actual_test_cases, " test cases")
+	print("TestResultsPanel2BitAdder: Initial data loaded for ", test_cases, " test cases")
 
 func update_current_outputs(actual_s1, actual_s0, actual_cout):
 	if current_s1_textures.is_empty():
 		print("ERROR: Current textures arrays are not initialized!")
-		return
+		initialize_textures()
+		if current_s1_textures.is_empty():
+			print("CRITICAL: Still cannot initialize current textures!")
+			return
 
-	var test_cases = current_s1_textures.size()
+	var test_cases = min(16, current_s1_textures.size())
 	print("Updating current outputs for ", test_cases, " test cases")
 
-	var actual_test_cases = min(test_cases, 16)
-
-	for i in range(actual_test_cases):
-		if i < current_s1_textures.size() and i < actual_s1.size():
-			if actual_s1[i] == 1:
-				current_s1_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				current_s1_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < current_s0_textures.size() and i < actual_s0.size():
-			if actual_s0[i] == 1:
-				current_s0_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				current_s0_textures[i].texture = preload("res://assets/point.png")
-
-	for i in range(actual_test_cases):
-		if i < current_cout_textures.size() and i < actual_cout.size():
-			if actual_cout[i] == 1:
-				current_cout_textures[i].texture = preload("res://assets/pointGreen.png")
-			else:
-				current_cout_textures[i].texture = preload("res://assets/point.png")
+	# Обновляем только правый столбец (текущие выходы)
+	for i in range(test_cases):
+		update_texture(current_s1_textures[i], actual_s1[i] if i < actual_s1.size() else 0)
+		update_texture(current_s0_textures[i], actual_s0[i] if i < actual_s0.size() else 0)
+		update_texture(current_cout_textures[i], actual_cout[i] if i < actual_cout.size() else 0)
 	
-	print("TestResultsPanel2BitAdder: Current outputs updated for ", actual_test_cases, " test cases")
+	print("TestResultsPanel2BitAdder: Current outputs updated for ", test_cases, " test cases")
+
+func update_texture(texture_rect, value):
+	if texture_rect and is_instance_valid(texture_rect):
+		if value == 1:
+			texture_rect.texture = preload("res://assets/pointGreen.png")
+		else:
+			texture_rect.texture = preload("res://assets/point.png")
