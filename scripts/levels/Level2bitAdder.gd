@@ -14,6 +14,7 @@ func setup_two_bit_adder_level():
 	input_block_a = get_node_or_null("InputBlockA")
 	input_block_b = get_node_or_null("InputBlockB")
 	
+	
 	if input_block_a and input_block_b:
 		print("Both InputBlock2 found")
 
@@ -84,6 +85,20 @@ func setup_two_bit_adder_level():
 			print("2-Bit Adder test panel initialized")
 	else:
 		print("WARNING: TestResultsPanel2BitAdder not found")
+	
+	if test_results_panel and test_results_panel.has_method("load_initial_data"):
+		# Даем время на инициализацию
+		await get_tree().create_timer(0.1).timeout
+		test_results_panel.load_initial_data(
+			level_data.input_values_a1,
+			level_data.input_values_a0,
+			level_data.input_values_b1,
+			level_data.input_values_b0,
+			level_data.expected_s1,
+			level_data.expected_s0,
+			level_data.expected_cout
+		)
+		print("2-Bit Adder test panel initialized")
 
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())

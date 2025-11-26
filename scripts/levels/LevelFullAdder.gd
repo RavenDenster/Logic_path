@@ -590,7 +590,7 @@ func find_port_near_position(position, max_distance = 50.0):
 
 func reset_all_port_sprites():
 	if input_block_a:
-		var output_port = input_block_a.get_node_or_null("Output")
+		var output_port = input_block_a.get_node_or_null("output")
 		if output_port and is_instance_valid(output_port):
 			var sprite = output_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
@@ -808,7 +808,7 @@ func remove_or_gate():
 
 func remove_not_gate():
 	pass
-
+	
 func get_port_under_mouse():
 	var mouse_pos = get_global_mouse_position()
 	var space_state = get_world_2d().direct_space_state

@@ -1,4 +1,3 @@
-# OutputBlock.gd (добавляем поддержку типа EXPECTED)
 extends Node2D
 
 var received_value: int = 0
@@ -6,7 +5,7 @@ var expected = []
 var main_sprite: Sprite2D
 var test_results_panel: Node
 var area: Area2D
-var output_type: String = "DEFAULT"  # "DEFAULT", "SUM", "CARRY", "COUT", "S1", "S0", "RESULT", "EXPECTED"
+var output_type: String = "DEFAULT"
 
 func _ready():
 	print("OutputBlock ready! Has set_input: ", has_method("set_input"))
@@ -29,8 +28,8 @@ func _ready():
 	
 	# Настраиваем Area2D так, чтобы он обнаруживал мышь, но не мешал основной логике
 	area.input_pickable = true
-	area.collision_layer = 2  # Используем отдельный слой для обнаружения наведения
-	area.collision_mask = 0   # Не обнаруживаем другие объекты
+	area.collision_layer = 2
+	area.collision_mask = 0
 	
 	# Подключаем сигналы Area2D
 	area.mouse_entered.connect(_on_area_mouse_entered)
@@ -53,96 +52,128 @@ func set_default_style():
 		main_sprite.texture = preload("res://assets/output.png")
 
 func _on_area_mouse_entered():
-	# Запускаем подсветку при наведении
 	_highlight_desired_output()
 
 func _on_area_mouse_exited():
-	# Сбрасываем подсветку при уходе мыши
 	_reset_all_highlights()
 
 func _highlight_desired_output():
 	if not test_results_panel:
-		# Ищем TestResultsPanel в дереве сцены
 		test_results_panel = _find_test_results_panel()
 		if not test_results_panel:
 			return
 	
-	# Сбрасываем все подсветки
 	_reset_all_highlights()
 	
-	# Определяем, какую метку подсвечивать в зависимости от типа выхода
-	var label_to_highlight = "Desired Output"  # По умолчанию
+	# Определяем, какие заголовки искать в зависимости от типа вывода
+	var labels_to_highlight = []
 	
 	match output_type:
 		"SUM":
-			label_to_highlight = "Desired Sum"
+			labels_to_highlight = ["Desired SUM", "Desired Sum", "Desired Output"]
 		"CARRY":
-			label_to_highlight = "Desired Carry"
+			labels_to_highlight = ["Desired CARRY", "Desired Carry", "Desired Output"]
+		"DIFFERENCE":
+			labels_to_highlight = ["Desired DIFFERENCE", "Desired Difference", "Desired Output"]
+		"BORROW":
+			labels_to_highlight = ["Desired BORROW", "Desired Borrow", "Desired Output"]
+		"BOUT":
+			labels_to_highlight = ["Desired BOUT", "Desired Bout", "Desired Output"]
 		"COUT":
-			label_to_highlight = "Desired Cout"
+			labels_to_highlight = ["Desired Cout", "Desired Output"]
 		"S1":
-			label_to_highlight = "Desired S1"
+			labels_to_highlight = ["Desired S1", "Desired Output"]
 		"S0":
-			label_to_highlight = "Desired S0"
+			labels_to_highlight = ["Desired S0", "Desired Output"]
 		"RESULT":
-			label_to_highlight = "Desired Result"
+			labels_to_highlight = ["Desired Result", "Desired Output"]
 		"EXPECTED":
-			label_to_highlight = "Expected"  # Для ALU уровня
+			labels_to_highlight = ["Expected", "Desired Output"]
+		_:
+			labels_to_highlight = ["Desired Output"]
 	
-	# Находим и подсвечиваем соответствующую метку
-	var grid = test_results_panel.get_node("Background/GridContainer")
+	var grid = _find_grid_container()
 	if grid:
 		var found = false
-		for child in grid.get_children():
-			if child is Label and child.text.strip_edges() == label_to_highlight:
-				child.modulate = Color.YELLOW
-				found = true
-				print("OutputBlock: Highlighted label: '", label_to_highlight, "'")
+		# Ищем по всем возможным вариантам названий
+		for label_text in labels_to_highlight:
+			for child in grid.get_children():
+				if child is Label and child.text.strip_edges() == label_text:
+					child.modulate = Color.YELLOW
+					found = true
+					print("OutputBlock: Highlighted label: '", label_text, "'")
+					break
+			if found:
 				break
 		
 		if not found:
-			print("OutputBlock: Label not found: '", label_to_highlight, "'")
-			# Выведем все доступные метки для отладки
-			print("Available labels:")
+			print("OutputBlock: None of these labels found: ", labels_to_highlight)
+			# Для отладки выведем все доступные Label
+			print("Available labels in grid:")
 			for child in grid.get_children():
 				if child is Label:
-					print("  - '", child.text, "'")
+					print("  - '", child.text.strip_edges(), "'")
 	else:
 		print("OutputBlock: GridContainer not found in test panel")
 
 func _find_test_results_panel():
-	# Сначала ищем панель для ALU
 	var panel = get_tree().get_root().find_child("TestResultsPanelAlu", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для 2-Bit Adder
 	panel = get_tree().get_root().find_child("TestResultsPanel2BitAdder", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для Full Adder
 	panel = get_tree().get_root().find_child("TestResultsPanelFullAdder", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для Half Adder
 	panel = get_tree().get_root().find_child("TestResultsPanelHalfAdder", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем панель для трех входов
 	panel = get_tree().get_root().find_child("TestResultsPanel3Inputs", true, false)
 	if panel:
 		return panel
 	
-	# Если не нашли, ищем обычную панель
 	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
 	return panel
 
+# Новая функция для поиска GridContainer с обратной совместимостью
+func _find_grid_container():
+	if not test_results_panel:
+		return null
+	
+	# Пробуем разные пути для обратной совместимости
+	var grid = test_results_panel.get_node_or_null("Background/GridContainer")
+	if grid:
+		return grid
+	
+	grid = test_results_panel.get_node_or_null("Background/VBoxContainer/GridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/VBoxContainer2/GridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/LeftColumn/LeftGridContainer")
+	if grid:
+		return grid
+		
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/RightColumn/RightGridContainer")
+	if grid:
+		return grid
+	
+	return null
+
 func _reset_all_highlights():
 	if test_results_panel:
-		var grid = test_results_panel.get_node("Background/GridContainer")
-		for child in grid.get_children():
-			if child is Label:
-				child.modulate = Color.WHITE
+		var grid = _find_grid_container()
+		if grid:
+			for child in grid.get_children():
+				if child is Label:
+					child.modulate = Color.WHITE
+		else:
+			print("OutputBlock: GridContainer not found for reset")

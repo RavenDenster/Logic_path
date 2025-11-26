@@ -23,6 +23,11 @@ func _ready():
 	print("  Expected Cout: ", level_data.expected_cout)
 	
 	super._ready()
+	
+	# Явно устанавливаем заголовки для полного сумматора (опционально)
+	if test_results_panel and test_results_panel.has_method("set_titles"):
+		test_results_panel.set_titles("Desired SUM", "Desired COUT", "Current SUM", "Current COUT")
+	
 	recount_gates()
 	update_gate_buttons_state()
 

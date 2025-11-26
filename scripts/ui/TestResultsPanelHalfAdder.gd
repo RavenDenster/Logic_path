@@ -9,6 +9,11 @@ var current_carry_textures = []
 
 var initialized = false
 
+var desired_sum_label: Label
+var desired_carry_label: Label
+var current_sum_label: Label
+var current_carry_label: Label
+
 func _ready():
 	await get_tree().process_frame
 	initialize_textures()
@@ -25,6 +30,50 @@ func initialize_textures():
 		print("ERROR: GridContainer has only ", grid_container.get_child_count(), " children, expected at least 36")
 		return
 
+	# Ищем Label по их начальному тексту (исправляем регистр)
+	desired_sum_label = null
+	desired_carry_label = null
+	current_sum_label = null
+	current_carry_label = null
+
+	for i in range(grid_container.get_child_count()):
+		var child = grid_container.get_child(i)
+		if child is Label:
+			if child.text == "Desired Sum":
+				desired_sum_label = child
+				print("Found Desired Sum at index ", i)
+			elif child.text == "Desired Carry":
+				desired_carry_label = child
+				print("Found Desired Carry at index ", i)
+			elif child.text == "Current Sum":
+				current_sum_label = child
+				print("Found Current Sum at index ", i)
+			elif child.text == "Current Carry":
+				current_carry_label = child
+				print("Found Current Carry at index ", i)
+
+	# Если не нашли по тексту, используем индексы как запасной вариант
+	if not desired_sum_label and grid_container.get_child_count() > 12:
+		desired_sum_label = grid_container.get_child(12) as Label
+		print("Using fallback index for Desired Sum")
+	if not desired_carry_label and grid_container.get_child_count() > 18:
+		desired_carry_label = grid_container.get_child(18) as Label
+		print("Using fallback index for Desired Carry")
+	if not current_sum_label and grid_container.get_child_count() > 24:
+		current_sum_label = grid_container.get_child(24) as Label
+		print("Using fallback index for Current Sum")
+	if not current_carry_label and grid_container.get_child_count() > 30:
+		current_carry_label = grid_container.get_child(30) as Label
+		print("Using fallback index for Current Carry")
+
+	# Проверяем, что нашли все Label
+	print("Label search results:")
+	print("  Desired Sum: ", desired_sum_label != null)
+	print("  Desired Carry: ", desired_carry_label != null)
+	print("  Current Sum: ", current_sum_label != null)
+	print("  Current Carry: ", current_carry_label != null)
+
+	# Остальной код инициализации текстур остается без изменений
 	input1_textures.clear()
 	input2_textures.clear()
 	desired_sum_textures.clear()
@@ -63,6 +112,41 @@ func initialize_textures():
 			current_carry_textures.append(child)
 	
 	print("TestResultsPanelHalfAdder: Successfully initialized")
+
+# Улучшенный метод set_titles
+func set_titles(desired_sum_text: String, desired_carry_text: String, current_sum_text: String, current_carry_text: String):
+	print("Setting titles: ", desired_sum_text, ", ", desired_carry_text)
+	
+	# Ждем инициализации если нужно
+	if not initialized:
+		print("TestResultsPanelHalfAdder not initialized yet, waiting...")
+		await get_tree().process_frame
+	
+	if desired_sum_label and is_instance_valid(desired_sum_label):
+		print("Changing Desired Sum from '", desired_sum_label.text, "' to '", desired_sum_text, "'")
+		desired_sum_label.text = desired_sum_text
+	else:
+		print("ERROR: desired_sum_label is invalid")
+	
+	if desired_carry_label and is_instance_valid(desired_carry_label):
+		print("Changing Desired Carry from '", desired_carry_label.text, "' to '", desired_carry_text, "'")
+		desired_carry_label.text = desired_carry_text
+	else:
+		print("ERROR: desired_carry_label is invalid")
+	
+	if current_sum_label and is_instance_valid(current_sum_label):
+		print("Changing Current Sum from '", current_sum_label.text, "' to '", current_sum_text, "'")
+		current_sum_label.text = current_sum_text
+	else:
+		print("ERROR: current_sum_label is invalid")
+	
+	if current_carry_label and is_instance_valid(current_carry_label):
+		print("Changing Current Carry from '", current_carry_label.text, "' to '", current_carry_text, "'")
+		current_carry_label.text = current_carry_text
+	else:
+		print("ERROR: current_carry_label is invalid")
+	
+	print("TestResultsPanelHalfAdder: Titles updated")
 
 func load_initial_data(inputs_a, inputs_b, expected_sum, expected_carry):
 	if not initialized:

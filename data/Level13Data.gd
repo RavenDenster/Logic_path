@@ -7,6 +7,7 @@ class_name Level13Data
 @export var input_values_b: Array[int] = [0,1,0,1]
 @export var expected_sum: Array[int] = [0,1,1,0]
 @export var expected_carry: Array[int] = [0,0,0,1]
+@export var gate_limits: Dictionary = {"AND": 2, "XOR": 2} 
 @export_multiline var theory_text: String = """
 [b]Уровень 13: Полусумматор (Half Adder)[/b]
 

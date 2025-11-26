@@ -57,7 +57,7 @@ func setup_alu_level():
 	if input_block_ab:
 		input_block_ab.values_A = level_data.input_values_a.duplicate()
 		input_block_ab.values_B = level_data.input_values_b.duplicate()
-		
+		input_block_ab.z_index = 1 
 		# Устанавливаем метки для подсветки
 		input_block_ab.input_labels = ["Input A", "Input B"]
 		
@@ -69,7 +69,7 @@ func setup_alu_level():
 	output_block = get_node_or_null("OutputBlock")
 	if output_block:
 		output_block.expected = level_data.expected_result.duplicate()
-		
+		output_block.z_index = 1
 		# Исправляем тип выхода для подсветки (меняем RESULT на EXPECTED)
 		output_block.output_type = "EXPECTED"
 		
@@ -283,12 +283,20 @@ func get_gates_data():
 	var gates_data = []
 	
 	if input_block_ab:
-		gates_data.append({"type": "INPUT_BLOCK_AB", "position": [input_block_ab.position.x, input_block_ab.position.y]})
-		print("Saving INPUT_BLOCK_AB at ", input_block_ab.position)
+		gates_data.append({
+			"type": "INPUT_BLOCK_AB", 
+			"position": [input_block_ab.position.x, input_block_ab.position.y],
+			"z_index": input_block_ab.z_index  # Добавьте эту строку
+		})
+		print("Saving INPUT_BLOCK_AB at ", input_block_ab.position, " z_index: ", input_block_ab.z_index)
 	
 	if output_block:
-		gates_data.append({"type": "OUTPUT_BLOCK", "position": [output_block.position.x, output_block.position.y]})
-		print("Saving OUTPUT_BLOCK at ", output_block.position)
+		gates_data.append({
+			"type": "OUTPUT_BLOCK", 
+			"position": [output_block.position.x, output_block.position.y],
+			"z_index": output_block.z_index  # И эту
+		})
+		print("Saving OUTPUT_BLOCK at ", output_block.position, " z_index: ", output_block.z_index)
 	
 	for obj in movable_objects:
 		var skip = obj == input_block_ab or obj == output_block
@@ -298,10 +306,11 @@ func get_gates_data():
 		var gate_type = get_object_type(obj)
 		var gate_data = {
 			"type": gate_type,
-			"position": [obj.position.x, obj.position.y]
+			"position": [obj.position.x, obj.position.y],
+			"z_index": obj.z_index  # И эту
 		}
 		gates_data.append(gate_data)
-		print("Saving gate: ", gate_type, " at ", obj.position, " (Name: ", obj.name, ", Scene: ", obj.scene_file_path, ")")
+		print("Saving gate: ", gate_type, " at ", obj.position, " z_index: ", obj.z_index)
 	
 	print("Total gates to save: ", gates_data.size())
 	return gates_data
@@ -326,12 +335,17 @@ func clear_level():
 func create_gate_from_data(gate_data):
 	var gate_type = gate_data.get("type", "")
 	var position = Vector2(gate_data.get("position", [0, 0])[0], gate_data.get("position", [0, 0])[1])
+	var z_index = gate_data.get("z_index", 1)  # Добавьте эту строку
+	
 	if gate_type == "INPUT_BLOCK_AB" and input_block_ab:
 		input_block_ab.position = position
+		input_block_ab.z_index = z_index  # И эту
 		return
 	elif gate_type == "OUTPUT_BLOCK" and output_block:
 		output_block.position = position
+		output_block.z_index = z_index  # И эту
 		return
+		
 	var gate_scene = null
 	match gate_type:
 		"AND": gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
@@ -339,31 +353,177 @@ func create_gate_from_data(gate_data):
 		"XOR": gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"MUX4to1": gate_scene = preload("res://scenes/gates/MUX4to1.tscn")
 		"OpCode": gate_scene = preload("res://scenes/gates/OpCodeBlock.tscn")
+		
 	if gate_scene:
 		var gate = gate_scene.instantiate()
 		gate.position = position
+		gate.z_index = z_index  # И эту
 		add_child(gate)
 		movable_objects.append(gate)
-		print("Restored gate: ", gate_type, " at ", position)
+		print("Restored gate: ", gate_type, " at ", position, " with z_index ", z_index)
 		
 		if gate.has_method("reset_inputs"):
 			gate.reset_inputs()
 
-func find_port_by_name(parent_name, port_name):
+func find_port_by_name(parent_name, port_name, parent_type = ""):
+	print("Searching for port: ", parent_name, ".", port_name, " (Type: ", parent_type, ")")
+	
 	var parent = null
+	
+	# Сначала проверяем основные блоки ALU по точному имени
 	if parent_name == "InputBlockAB" and input_block_ab:
 		parent = input_block_ab
 	elif parent_name == "OutputBlock" and output_block:
 		parent = output_block
+	
+	# Если не нашли по точному имени, ищем среди movable_objects по имени и типу
 	if not parent:
 		for obj in movable_objects:
-			if obj and obj.name == parent_name:
+			if not obj or not is_instance_valid(obj):
+				continue
+				
+			# Если указан тип, проверяем его
+			if parent_type != "" and get_object_type(obj) != parent_type:
+				continue
+				
+			# Сравниваем имена с учетом возможных суффиксов
+			if obj.name == parent_name or obj.name.begins_with(parent_name):
 				parent = obj
 				break
+	
+	# Если все еще не нашли, попробуем найти по типу (если тип указан)
+	if not parent and parent_type != "":
+		for obj in movable_objects:
+			if get_object_type(obj) == parent_type:
+				parent = obj
+				break
+	
 	if not parent:
+		print("Parent not found for: ", parent_name, " (Type: ", parent_type, ")")
 		return null
-	var port = parent.get_node_or_null(str(port_name))
+	
+	# Теперь ищем порт на найденном родителе
+	var port = find_port_on_parent(parent, port_name)
+	
+	if port:
+		print("Found port: ", parent.name, ".", port.name)
+	else:
+		print("Port not found: ", parent_name, ".", port_name, " on ", parent.name)
+	
 	return port
+func find_port_on_parent(parent, port_name):
+	if not parent or not is_instance_valid(parent):
+		return null
+	
+	var port = null
+	var parent_type = get_object_type(parent)
+	
+	# Для InputBlockAB
+	if parent == input_block_ab:
+		match port_name:
+			"OutputA": port = parent.get_node_or_null("OutputA")
+			"OutputB": port = parent.get_node_or_null("OutputB")
+	
+	# Для OutputBlock
+	elif parent == output_block:
+		if port_name == "InputPort":
+			port = parent.get_node_or_null("InputPort")
+	
+	# Для MUX4to1
+	elif parent_type == "MUX4to1":
+		match port_name:
+			"Input0": port = parent.get_node_or_null("Input0")
+			"Input1": port = parent.get_node_or_null("Input1")
+			"Input2": port = parent.get_node_or_null("Input2")
+			"Input3": port = parent.get_node_or_null("Input3")
+			"Sel0": port = parent.get_node_or_null("Sel0")
+			"Sel1": port = parent.get_node_or_null("Sel1")
+			"Output": port = parent.get_node_or_null("Output")
+	
+	# Для OpCodeBlock
+	elif parent_type == "OpCode":
+		match port_name:
+			"Op0": port = parent.get_node_or_null("Op0")
+			"Op1": port = parent.get_node_or_null("Op1")
+	
+	# Для XOR гейтов (особая обработка)
+	elif parent_type == "XOR":
+		match port_name:
+			"Input1": port = parent.get_node_or_null("Input1")
+			"Input2": port = parent.get_node_or_null("Input2")
+			"Output": port = parent.get_node_or_null("Output")
+	
+	# Для обычных гейтов (AND, OR)
+	else:
+		match port_name:
+			"Input1": port = parent.get_node_or_null("Input1")
+			"Input2": port = parent.get_node_or_null("Input2")
+			"Output": port = parent.get_node_or_null("Output")
+	
+	return port
+
+func create_wire_from_data(wire_data):
+	var start_parent_name = wire_data.get("start_parent_name", "")
+	var start_port_name = wire_data.get("start_port_name", "")
+	var start_parent_type = wire_data.get("start_parent_type", "")
+	var end_parent_name = wire_data.get("end_parent_name", "")
+	var end_port_name = wire_data.get("end_port_name", "")
+	var end_parent_type = wire_data.get("end_parent_type", "")
+	
+	print("Attempting to restore wire: ", start_parent_name, ".", start_port_name, " (", start_parent_type, ") -> ", end_parent_name, ".", end_port_name, " (", end_parent_type, ")")
+
+	var start_port = find_port_by_name(start_parent_name, start_port_name, start_parent_type)
+	var end_port = find_port_by_name(end_parent_name, end_port_name, end_parent_type)
+	
+	if start_port and end_port and start_port != end_port:
+		var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+		wire.connect_ports(start_port, end_port)
+		wire.z_index = 0
+		add_child(wire)
+		wires.append(wire)
+		print("SUCCESS: Restored wire: ", start_parent_name, ".", start_port_name, " -> ", end_parent_name, ".", end_port_name)
+		return true
+	else:
+		print("FAILED to restore wire: ", start_parent_name, ".", start_port_name, " -> ", end_parent_name, ".", end_port_name)
+		if not start_port: 
+			print("  - Start port not found: ", start_parent_name, ".", start_port_name)
+		if not end_port: 
+			print("  - End port not found: ", end_parent_name, ".", end_port_name)
+		if start_port == end_port:
+			print("  - Start and end ports are the same")
+		return false
+
+func get_wires_data():
+	var wires_data = []
+	
+	for wire in wires:
+		if not is_wire_valid(wire):
+			continue
+			
+		var start_parent = wire.start_port.get_parent()
+		var end_parent = wire.end_port.get_parent()
+		
+		var start_parent_name = start_parent.name
+		var end_parent_name = end_parent.name
+		
+		# Сохраняем тип объектов для лучшего восстановления
+		var start_parent_type = get_object_type(start_parent)
+		var end_parent_type = get_object_type(end_parent)
+		
+		var wire_data = {
+			"start_parent_name": start_parent_name,
+			"start_port_name": wire.start_port.name,
+			"start_parent_type": start_parent_type,
+			"end_parent_name": end_parent_name,
+			"end_port_name": wire.end_port.name,
+			"end_parent_type": end_parent_type
+		}
+		wires_data.append(wire_data)
+		
+		print("Saving wire: ", start_parent_name, ".", wire.start_port.name, " -> ", end_parent_name, ".", wire.end_port.name, " (Types: ", start_parent_type, " -> ", end_parent_type, ")")
+	
+	print("Saved ", wires_data.size(), " wires")
+	return wires_data
 
 func get_object_type(obj):
 	if obj == null:
@@ -512,6 +672,7 @@ func _on_add_xor_button_pressed():
 func _on_add_mux4to1_button_pressed():
 	var gate = preload("res://scenes/gates/MUX4to1.tscn").instantiate()
 	gate.position = Vector2(600, 700)
+	gate.z_index = 1  # Добавьте эту строку
 	add_child(gate)
 	movable_objects.append(gate)
 	update_all_logic_objects()
@@ -520,6 +681,7 @@ func _on_add_mux4to1_button_pressed():
 func _on_add_opcode_button_pressed():
 	var gate = preload("res://scenes/gates/OpCodeBlock.tscn").instantiate()
 	gate.position = Vector2(600, 800)
+	gate.z_index = 1  # Добавьте эту строку
 	add_child(gate)
 	movable_objects.append(gate)
 	update_all_logic_objects()
@@ -601,6 +763,7 @@ func _input(event):
 				if end_port and is_instance_valid(end_port) and end_port != start_port:
 					var wire = preload("res://scenes/components/Wire.tscn").instantiate()
 					wire.connect_ports(start_port, end_port)
+					wire.z_index = 0
 					add_child(wire)
 					wires.append(wire)
 					update_all_port_colors()
@@ -630,12 +793,12 @@ func _input(event):
 					if scene_file.find("ANDGate") != -1:
 						if has_method("remove_and_gate"):
 							remove_and_gate()
-					elif scene_file.find("ORGate") != -1:
-						if has_method("remove_or_gate"):
-							remove_or_gate()
 					elif scene_file.find("XORGate") != -1:
 						if has_method("remove_xor_gate"):
 							remove_xor_gate()
+					elif scene_file.find("ORGate") != -1:
+						if has_method("remove_or_gate"):
+							remove_or_gate()
 					elif scene_file.find("MUX4to1") != -1:
 						if has_method("remove_mux4to1"):
 							remove_mux4to1()
