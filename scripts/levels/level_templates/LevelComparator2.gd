@@ -68,6 +68,10 @@ func setup_comparator2_level():
 		input_block_b.values_A = level_data.input_values_b1.duplicate()
 		input_block_b.values_B = level_data.input_values_b0.duplicate()
 		
+		# Устанавливаем метки для подсветки
+		input_block_a.input_labels = ["Input A1", "Input A0"]
+		input_block_b.input_labels = ["Input B1", "Input B0"]
+		
 		movable_objects.append(input_block_a)
 		movable_objects.append(input_block_b)
 		print("2-bit Comparator input blocks initialized")
@@ -82,6 +86,12 @@ func setup_comparator2_level():
 		output_block_agtb.expected = level_data.expected_agtb.duplicate()
 		output_block_altb.expected = level_data.expected_altb.duplicate()
 		output_block_aeqb.expected = level_data.expected_aeqb.duplicate()
+		
+		# Устанавливаем типы выходов для подсветки
+		output_block_agtb.output_type = "A>B"
+		output_block_altb.output_type = "A<B"
+		output_block_aeqb.output_type = "A==B"
+		
 		movable_objects.append(output_block_agtb)
 		movable_objects.append(output_block_altb)
 		movable_objects.append(output_block_aeqb)
@@ -92,6 +102,34 @@ func setup_comparator2_level():
 	test_results_panel = get_node_or_null("TestResultsPanel2BitComparator")
 	if test_results_panel:
 		print("2-bit Comparator test panel found")
+		
+		# Устанавливаем test_results_panel для всех блоков
+		if input_block_a:
+			input_block_a.test_results_panel = test_results_panel
+		if input_block_b:
+			input_block_b.test_results_panel = test_results_panel
+		if output_block_agtb:
+			output_block_agtb.test_results_panel = test_results_panel
+		if output_block_altb:
+			output_block_altb.test_results_panel = test_results_panel
+		if output_block_aeqb:
+			output_block_aeqb.test_results_panel = test_results_panel
+
+		# Даем время на инициализацию
+		await get_tree().create_timer(0.2).timeout
+		if test_results_panel.has_method("load_initial_data"):
+			test_results_panel.load_initial_data(
+				level_data.input_values_a1,
+				level_data.input_values_a0,
+				level_data.input_values_b1,
+				level_data.input_values_b0,
+				level_data.expected_agtb,
+				level_data.expected_altb,
+				level_data.expected_aeqb
+			)
+			print("2-bit Comparator test panel initialized")
+	else:
+		print("WARNING: TestResultsPanel2BitComparator not found")
 
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())

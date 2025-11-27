@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ddxdukpdqubld"]
 
-[ext_resource type="Script" uid="uid://cro6h4mk701br" path="res://scripts/ui/TestResultsPanelEncoderPriority.gd" id="1_5ve1w"]
+[ext_resource type="Script" uid="uid://cro6h4mk701br" path="res://scripts/ui/bottom_panels/BottonPanelEncoderPriority.gd" id="1_5ve1w"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="2_38m2y"]
 
 [node name="TestResultsPanelEncoderPriority" type="Control"]

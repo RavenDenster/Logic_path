@@ -1,5 +1,5 @@
 # Level20.gd
-extends "res://scripts/levels/LevelComparator2.gd"
+extends "res://scripts/levels/level_templates/LevelComparator2.gd"
 
 var and_gate_count: int = 0
 var or_gate_count: int = 0

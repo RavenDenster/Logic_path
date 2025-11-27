@@ -171,24 +171,30 @@ func _find_grid_container():
 	if not test_results_panel:
 		return null
 	
-	# Пробуем разные пути для обратной совместимости
-	var grid = test_results_panel.get_node_or_null("Background/GridContainer")
+	# НОВАЯ СТРУКТУРА: сначала ищем левую панель (Inputs & Expected)
+	var grid = test_results_panel.get_node_or_null("Background/HBoxContainer/GridContainer")
 	if grid:
 		return grid
 	
+	# Затем ищем правую панель (Current Outputs)
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer2/GridContainer")
+	if grid:
+		return grid
+	
+	# Старые пути для обратной совместимости
+	grid = test_results_panel.get_node_or_null("Background/GridContainer")
+	if grid:
+		return grid
+	
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/LeftColumn/LeftGridContainer")
+	if grid:
+		return grid
+		
 	grid = test_results_panel.get_node_or_null("Background/VBoxContainer/GridContainer")
 	if grid:
 		return grid
 		
 	grid = test_results_panel.get_node_or_null("Background/VBoxContainer2/GridContainer")
-	if grid:
-		return grid
-		
-	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/LeftColumn/LeftGridContainer")
-	if grid:
-		return grid
-		
-	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/RightColumn/RightGridContainer")
 	if grid:
 		return grid
 	

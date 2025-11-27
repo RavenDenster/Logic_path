@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://ca64yhh7uciqp"]
 
 [ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="1_of7af"]
-[ext_resource type="Script" uid="uid://djtb4rku3xqb" path="res://scripts/levels/Level22.gd" id="1_u71wl"]
+[ext_resource type="Script" uid="uid://djtb4rku3xqb" path="res://scripts/levels/specification_logic/Level22.gd" id="1_u71wl"]
 [ext_resource type="PackedScene" uid="uid://5cahp04cxmr" path="res://scenes/components/InputBlock2.tscn" id="2_u71wl"]
 [ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="3_ybed8"]
 [ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="4_saso4"]
-[ext_resource type="PackedScene" uid="uid://ddxdukpdqubld" path="res://scenes/ui/TestResultsPanelEncoderPriority.tscn" id="5_m3s61"]
+[ext_resource type="PackedScene" uid="uid://ddxdukpdqubld" path="res://scenes/ui/bottom_panels/BottonPanelEncoderPriority.tscn" id="5_m3s61"]
 
 [node name="Level22" type="Node2D"]
 script = ExtResource("1_u71wl")
