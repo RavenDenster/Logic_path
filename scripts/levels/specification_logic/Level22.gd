@@ -1,5 +1,5 @@
-# Level21.gd
-extends "res://scripts/levels/LevelEncoder.gd"
+# Level22.gd
+extends "res://scripts/levels/level_templates/LevelEncoderPriority.gd"
 
 var or_gate_count: int = 0
 var and_gate_count: int = 0
@@ -9,13 +9,13 @@ var max_and_gates: int = 2
 var max_not_gates: int = 2
 
 func _ready():
-	level_data = preload("res://data/level_21_data.tres")
+	level_data = preload("res://data/level_22_data.tres")
 	super._ready()
 	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
-	# Устанавливаем заголовки для энкодера
+	# Устанавливаем заголовки для приоритетного энкодера
 	if test_results_panel and test_results_panel.has_method("set_titles"):
 		test_results_panel.set_titles("Desired O0", "Desired O1", "Current O0", "Current O1")
 	
@@ -28,16 +28,16 @@ func _ready():
 	# Устанавливаем правильные метки для InputBlock2 (с префиксом "Input ")
 	if input_block_i0_i1:
 		input_block_i0_i1.input_labels = ["Input I0", "Input I1"]
-		print("Level21: Set input labels for I0I1 to ['Input I0', 'Input I1']")
+		print("Level22: Set input labels for I0I1 to ['Input I0', 'Input I1']")
 	if input_block_i2_i3:
 		input_block_i2_i3.input_labels = ["Input I2", "Input I3"]
-		print("Level21: Set input labels for I2I3 to ['Input I2', 'Input I3']")
+		print("Level22: Set input labels for I2I3 to ['Input I2', 'Input I3']")
 	
 	recount_gates()
 	update_gate_buttons_state()
 
-func setup_encoder_level():
-	super.setup_encoder_level()
+func setup_encoder_priority_level():
+	super.setup_encoder_priority_level()
 	
 	# Устанавливаем правильные метки для входных блоков (с префиксом "Input ")
 	if input_block_i0_i1:
@@ -155,22 +155,22 @@ func remove_not_gate():
 
 # Добавьте методы для других типов гейтов, даже если они не используются
 func remove_xor_gate():
-	print("remove_xor_gate called on Level21 (not used)")
+	print("remove_xor_gate called on Level22 (not used)")
 
 func remove_xnor_gate():
-	print("remove_xnor_gate called on Level21 (not used)")
+	print("remove_xnor_gate called on Level22 (not used)")
 
 func remove_nand_gate():
-	print("remove_nand_gate called on Level21 (not used)")
+	print("remove_nand_gate called on Level22 (not used)")
 
 func remove_nor_gate():
-	print("remove_nor_gate called on Level21 (not used)")
+	print("remove_nor_gate called on Level22 (not used)")
 
 func remove_sel0_gate():
-	print("remove_sel0_gate called on Level21 (not used)")
+	print("remove_sel0_gate called on Level22 (not used)")
 
 func remove_sel1_gate():
-	print("remove_sel1_gate called on Level21 (not used)")
+	print("remove_sel1_gate called on Level22 (not used)")
 
 func clear_level():
 	super.clear_level()
@@ -178,7 +178,7 @@ func clear_level():
 	and_gate_count = 0
 	not_gate_count = 0
 	update_gate_buttons_state()
-	print("Level21 cleared - all gate counts reset to 0")
+	print("Level22 cleared - all gate counts reset to 0")
 
 func restore_level_state(state):
 	# Сначала очищаем уровень
@@ -224,7 +224,7 @@ func create_gate_from_data(gate_data):
 		print("Cannot restore NOT gate: maximum limit reached")
 		return
 	
-	# Проверяем специальные блоки Encoder
+	# Проверяем специальные блоки Priority Encoder
 	if gate_type == "INPUT_BLOCK_I0I1" and input_block_i0_i1:
 		input_block_i0_i1.position = position
 		print("Restored InputBlockI0I1 position: ", position)

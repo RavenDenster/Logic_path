@@ -1,63 +1,47 @@
-# Level23.gd
-extends "res://scripts/levels/LevelDecoder.gd"
+# Level24.gd
+extends "res://scripts/levels/level_templates/LevelDecoder8.gd"
 
 var and_gate_count: int = 0
 var not_gate_count: int = 0
-var max_and_gates: int = 5
-var max_not_gates: int = 3
+var max_and_gates: int = 15
+var max_not_gates: int = 4
 
 func _ready():
-	level_data = preload("res://data/level_23_data.tres")
+	level_data = preload("res://data/level_24_data.tres")
+
+	if not level_data:
+		push_error("Level24: level_data is null!")
+		return
+	
+	print("Level24 data loaded:")
+	print("  Input A: ", level_data.input_values_a)
+	print("  Input B: ", level_data.input_values_b)
+	print("  Input C: ", level_data.input_values_c)
+	
 	super._ready()
+	
+	# Устанавливаем метки для входных блоков
+	if input_block_a:
+		input_block_a.input_label = "Input A"
+	if input_block_b:
+		input_block_b.input_label = "Input B"
+	if input_block_c:
+		input_block_c.input_label = "Input C"
+	
+	# Устанавливаем типы выходных блоков
+	for i in range(output_blocks.size()):
+		if output_blocks[i]:
+			output_blocks[i].output_type = "Y" + str(i)
 	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
-	# Устанавливаем заголовки для декодера
-	if test_results_panel and test_results_panel.has_method("set_titles"):
-		test_results_panel.set_titles("Desired Y0", "Desired Y1", "Desired Y2", "Desired Y3", "Current Y0", "Current Y1", "Current Y2", "Current Y3")
-	
-	# Устанавливаем типы выходов для подсветки
-	if output_blocks.size() >= 4:
-		if output_blocks[0]:
-			output_blocks[0].output_type = "Y0"
-		if output_blocks[1]:
-			output_blocks[1].output_type = "Y1"
-		if output_blocks[2]:
-			output_blocks[2].output_type = "Y2"
-		if output_blocks[3]:
-			output_blocks[3].output_type = "Y3"
-	
-	# Устанавливаем правильные метки для InputBlock2
-	if input_block:
-		input_block.input_labels = ["Input A", "Input B"]
-		print("Level23: Set input labels to ['Input A', 'Input B']")
-	
 	recount_gates()
 	update_gate_buttons_state()
-
-func setup_decoder_level():
-	super.setup_decoder_level()
-	
-	# Устанавливаем правильные метки для входного блока
-	if input_block:
-		input_block.input_labels = ["Input A", "Input B"]
-		
-	# Устанавливаем типы выходов для выходных блоков
-	if output_blocks.size() >= 4:
-		if output_blocks[0]:
-			output_blocks[0].output_type = "Y0"
-		if output_blocks[1]:
-			output_blocks[1].output_type = "Y1"
-		if output_blocks[2]:
-			output_blocks[2].output_type = "Y2"
-		if output_blocks[3]:
-			output_blocks[3].output_type = "Y3"
 
 func recount_gates():
 	and_gate_count = 0
 	not_gate_count = 0
-	
 	for obj in movable_objects:
 		if obj and is_instance_valid(obj):
 			var scene_file = obj.scene_file_path
@@ -65,7 +49,6 @@ func recount_gates():
 				and_gate_count += 1
 			elif scene_file.find("NOTGate") != -1:
 				not_gate_count += 1
-	
 	print("Recounted gates - AND: ", and_gate_count, ", NOT: ", not_gate_count)
 
 func _on_add_and_button_pressed():
@@ -73,7 +56,6 @@ func _on_add_and_button_pressed():
 		print("Cannot add more AND gates. Maximum limit reached: ", max_and_gates)
 		return
 	
-	print("Adding AND gate")
 	var and_gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 400)
 	add_child(and_gate)
@@ -89,7 +71,6 @@ func _on_add_not_button_pressed():
 		print("Cannot add more NOT gates. Maximum limit reached: ", max_not_gates)
 		return
 	
-	print("Adding NOT gate")
 	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 500)
 	add_child(not_gate)
@@ -126,34 +107,12 @@ func remove_not_gate():
 		update_gate_buttons_state()
 		print("NOT gate removed. Current count: ", not_gate_count)
 
-# Добавьте методы для других типов гейтов, даже если они не используются
-func remove_or_gate():
-	print("remove_or_gate called on Level23 (not used)")
-
-func remove_xor_gate():
-	print("remove_xor_gate called on Level23 (not used)")
-
-func remove_xnor_gate():
-	print("remove_xnor_gate called on Level23 (not used)")
-
-func remove_nand_gate():
-	print("remove_nand_gate called on Level23 (not used)")
-
-func remove_nor_gate():
-	print("remove_nor_gate called on Level23 (not used)")
-
-func remove_sel0_gate():
-	print("remove_sel0_gate called on Level23 (not used)")
-
-func remove_sel1_gate():
-	print("remove_sel1_gate called on Level23 (not used)")
-
 func clear_level():
 	super.clear_level()
 	and_gate_count = 0
 	not_gate_count = 0
 	update_gate_buttons_state()
-	print("Level23 cleared - all gate counts reset to 0")
+	print("Level24 cleared - all gate counts reset to 0")
 
 func restore_level_state(state):
 	# Сначала очищаем уровень
@@ -169,10 +128,6 @@ func restore_level_state(state):
 		print("Restoring ", state["wires"].size(), " wires")
 		for wire_data in state["wires"]:
 			create_wire_from_data(wire_data)
-	
-	# Устанавливаем правильные метки для InputBlock2 после восстановления
-	if input_block:
-		input_block.input_labels = ["Input A", "Input B"]
 	
 	update_all_logic_objects()
 	recount_gates()  # Пересчитываем после восстановления
@@ -195,9 +150,17 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки Decoder
-	if gate_type == "INPUT_BLOCK" and input_block:
-		input_block.position = position
-		print("Restored InputBlock position: ", position)
+	if gate_type == "INPUT_BLOCK_A" and input_block_a:
+		input_block_a.position = position
+		print("Restored InputBlockA position: ", position)
+		return
+	elif gate_type == "INPUT_BLOCK_B" and input_block_b:
+		input_block_b.position = position
+		print("Restored InputBlockB position: ", position)
+		return
+	elif gate_type == "INPUT_BLOCK_C" and input_block_c:
+		input_block_c.position = position
+		print("Restored InputBlockC position: ", position)
 		return
 	elif gate_type.begins_with("OUTPUT_BLOCK_Y") and output_blocks:
 		var index_str = gate_type.replace("OUTPUT_BLOCK_Y", "")
@@ -228,3 +191,25 @@ func create_gate_from_data(gate_data):
 			not_gate_count += 1
 			
 		print("Restored gate: ", gate_type, " at ", position)
+
+# Добавьте методы для других типов гейтов, даже если они не используются
+func remove_xor_gate():
+	print("remove_xor_gate called on Level24 (not used)")
+
+func remove_xnor_gate():
+	print("remove_xnor_gate called on Level24 (not used)")
+
+func remove_nand_gate():
+	print("remove_nand_gate called on Level24 (not used)")
+
+func remove_nor_gate():
+	print("remove_nor_gate called on Level24 (not used)")
+
+func remove_sel0_gate():
+	print("remove_sel0_gate called on Level24 (not used)")
+
+func remove_sel1_gate():
+	print("remove_sel1_gate called on Level24 (not used)")
+
+func remove_or_gate():
+	print("remove_or_gate called on Level24 (not used)")
