@@ -1,6 +1,8 @@
 extends Control
 
 @onready var confirmation_dialog = get_node_or_null("ConfirmationDialog")
+var f_press_count = 0
+var cheat_active = false
 
 func _ready():
 	var play_campaign_btn = get_node_or_null("VBoxContainer/PlayCampaignButton")
@@ -20,6 +22,85 @@ func _ready():
 	if confirmation_dialog:
 		confirmation_dialog.dialog_text = "Are you sure you want to reset all progress? This cannot be undone."
 		confirmation_dialog.confirmed.connect(_on_confirmation_confirmed)
+	
+	
+
+func _input(event):
+	# Обработка чит-кода по нажатию F
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_F:
+			var save_system = get_node_or_null("/root/SaveSystem")
+			
+			# Проверяем, прошел ли игрок хотя бы 1 уровень
+			var has_completed_levels = false
+			if save_system:
+				has_completed_levels = save_system.get_completed_levels().size() > 0
+			
+			# Если нет пройденных уровней и чит не активирован, игнорируем нажатия
+			if not has_completed_levels and not cheat_active:
+				f_press_count = 0  # Сбрасываем счетчик
+				return
+			
+			# Если чит уже активирован, игнорируем нажатия
+			if cheat_active:
+				return
+			
+			f_press_count += 1
+			print("F pressed: ", f_press_count, " times")
+			
+			# Активируем чит после 15 нажатий
+			if f_press_count >= 15:
+				activate_cheat()
+
+func activate_cheat():
+	cheat_active = true
+	print("Cheat activated! All levels unlocked.")
+	
+	var save_system = get_node_or_null("/root/SaveSystem")
+	if save_system:
+		# Отмечаем все уровни как открытые (но не пройденные)
+		unlock_all_levels(save_system)
+		
+		print("All levels have been unlocked!")
+		
+		# Показываем серое сообщение об активации чеата
+		show_cheat_message("All levels unlocked!", Color.GRAY)
+	else:
+		push_error("SaveSystem not found!")
+
+func unlock_all_levels(save_system):
+	# Создаем массив всех номеров уровней
+	var all_levels = []
+	for i in range(1, 31):
+		all_levels.append(i)
+	
+	# Используем новый метод unlock_levels в SaveSystem
+	if save_system.has_method("unlock_levels"):
+		save_system.unlock_levels(all_levels)
+	else:
+		# Если метода нет, используем старый способ, но обязательно сохраняем
+		if not save_system.game_data.has("unlocked_levels"):
+			save_system.game_data["unlocked_levels"] = []
+		
+		for level_num in all_levels:
+			if not level_num in save_system.game_data["unlocked_levels"]:
+				save_system.game_data["unlocked_levels"].append(level_num)
+		
+		save_system.save_game()
+
+func show_cheat_message(text, color = Color.GRAY):
+	# Создаем временное сообщение в левом верхнем углу
+	var message = Label.new()
+	message.text = text
+	message.add_theme_color_override("font_color", color)
+	message.add_theme_font_size_override("font_size", 24)
+	message.position = Vector2(20, 20)  # Левый верхний угол
+	add_child(message)
+	
+	# Удаляем сообщение через 3 секунды
+	await get_tree().create_timer(3.0).timeout
+	if is_instance_valid(message):
+		message.queue_free()
 
 func _on_play_campaign_pressed():
 	var save_system = get_node_or_null("/root/SaveSystem")
@@ -60,8 +141,11 @@ func reset_game_progress():
 	if save_system:
 		save_system.reset_progress()
 		print("All progress has been reset")
+		# Деактивируем чит при сбросе прогресса
+		if cheat_active:
+			cheat_active = false
+			f_press_count = 0
 		if get_tree().current_scene.name == "LevelMap":
 			get_tree().reload_current_scene()
 	else:
 		push_error("SaveSystem not found!")
-	

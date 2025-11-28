@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://tqsi2lkbhawq"]
+[gd_scene load_steps=7 format=3 uid="uid://cojikcrm4b5x1"]
 
 [ext_resource type="Script" uid="uid://b2sea1hgxjxju" path="res://scripts/gates/base_logic_el/ANDGate.gd" id="1_42fua"]
 [ext_resource type="Texture2D" uid="uid://dxwjbidwotfn7" path="res://assets/and.png" id="1_wunn6"]
