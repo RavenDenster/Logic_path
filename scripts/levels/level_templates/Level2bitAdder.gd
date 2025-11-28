@@ -213,6 +213,7 @@ func _on_test_pressed():
 		if not level_completed_this_session:
 			save_level_progress()
 			level_completed_this_session = true
+		handle_test_success()
 		print("Level completed successfully!")
 	else:
 		if output_s1:
@@ -222,6 +223,7 @@ func _on_test_pressed():
 		if output_cout:
 			output_cout.set_default_style()
 		level_completed_this_session = false
+		handle_test_failure() 
 		print("Level not completed - outputs don't match")
 	
 	update_all_port_colors()
@@ -797,6 +799,14 @@ func _ready():
 	auto_save_timer.one_shot = true
 	auto_save_timer.timeout.connect(_on_auto_save_timeout)
 	add_child(auto_save_timer)
+	
+	var level_number = get_level_number()
+	if level_number > 0:
+		var save_system = get_node_or_null("/root/SaveSystem")
+		if save_system:
+			failed_attempts_count = save_system.get_failed_attempts(level_number)
+			hints_enabled = (failed_attempts_count >= 10)
+			print("Failed attempts for level ", level_number, ": ", failed_attempts_count, ", hints enabled: ", hints_enabled)
 	
 	print("2-Bit Adder level ready completed successfully")
 	

@@ -11,6 +11,9 @@ var is_three_input_level = false
 var dragging_object = null
 var drag_offset = Vector2.ZERO
 
+var failed_attempts_count: int = 0
+var hints_enabled: bool = false
+
 var level_data: Resource
 
 var test_results_panel = null
@@ -51,6 +54,160 @@ func _ready():
 	# Этот метод должен быть переопределен в дочерних классах
 	push_error("_ready not implemented in child class for level type!")
 
+func handle_test_failure():
+	var level_number = get_level_number()
+	if level_number > 0:
+		var save_system = get_node_or_null("/root/SaveSystem")
+		if save_system:
+			save_system.increment_failed_attempts(level_number)
+			failed_attempts_count = save_system.get_failed_attempts(level_number)
+			hints_enabled = (failed_attempts_count >= 5)
+			
+			if hints_enabled and failed_attempts_count == 5:
+				print("Hints activated for level ", level_number)
+				# Обновляем текст теории с подсказкой
+				_update_theory_with_hint()
+
+func handle_test_success():
+	var level_number = get_level_number()
+	if level_number > 0:
+		var save_system = get_node_or_null("/root/SaveSystem")
+		if save_system:
+			save_system.reset_failed_attempts(level_number)
+			failed_attempts_count = 0
+			hints_enabled = false
+
+func _update_theory_with_hint():
+	var level_number = get_level_number()
+	var hint_text = _get_hint_for_level(level_number)
+	
+	if hint_text != "" and has_node("TopPanel"):
+		var original_text = level_data.theory_text
+		var theory_with_hint = original_text + "\n\n" + hint_text
+		$TopPanel.set_theory_text(theory_with_hint)
+		print("Theory updated with hint for level ", level_number)
+
+func _get_hint_for_level(level_number: int) -> String:
+	match level_number:
+		1: # OR Gate
+			return "[b]Подсказка:[/b] Для построения OR вам понадобится просто один элемент OR."
+		2: # AND Gate  
+			return "[b]Подсказка:[/b] Для построения AND вам понадобится просто один элемент AND."
+		3: # NOT Gate
+			return "[b]Подсказка:[/b] Y = NOT(A AND B)"
+		4: # XOR Gate
+			return "[b]Подсказка:[/b] Y = NOT(A OR B)"
+		5: # NAND Gate
+			return "[b]Подсказка:[/b] Y = (A AND NOT B) OR (NOT A AND B)"
+		6: # NOR Gate
+			return "[b]Подсказка:[/b] A → B = NOT A OR B"
+		7: # XNOR Gate
+			return "[b]Подсказка:[/b] Вы можете реализовать XNOR двумя способами: как инвертированный XOR (NOT(XOR)) или напрямую по формуле (A AND B) OR (NOT A AND NOT B)."
+		8: # Implication
+			return "[b]Подсказка:[/b] Вам понадобятся 3 элемента AND для проверки всех возможных пар (A,B), (A,C), (B,C) и 1 элемент OR для объединения результатов."
+		9: # Half Adder
+			return "[b]Подсказка:[/b] Создайте два элемента XOR и соедините их последовательно: первый обрабатывает A и B, второй обрабатывает результат первого XOR и вход C."
+		10: # Full Adder
+			return "[b]Подсказка:[/b] Схема состоит из двух частей: (A AND B) выбирает B когда A=1, а (NOT A AND C) выбирает C когда A=0. Объедините результаты с помощью OR."
+		11: # 4-to-1 MUX
+			return "[b]Подсказка:[/b] Для построеСоздайте две независимые схемы:
+					1. Первая обнаруживает комбинацию 000: NOT A AND NOT B AND NOT C
+					2. Вторая обнаруживает комбинацию 101: A AND NOT B AND C
+					3. Объедините результаты через OR"
+		12: # ALU Operation
+			return "[b]Подсказка:[/b] Создайте три независимых пути:
+					1. Путь для Data0: Data0 AND NOT Sel1 AND NOT Sel0
+					2. Путь для Data1: Data1 AND NOT Sel1 AND Sel0  
+					3. Путь для Data2: Data2 AND Sel1 AND NOT Sel0
+					4. Объедините все три пути через OR-элемент"
+		13: # 1-bit Comparator
+			return "[b]Подсказка:[/b] Схема состоит из двух независимых частей:
+					1. Для вычисления Sum используйте элемент XOR
+					2. Для вычисления Carry используйте элемент AND
+					3. Подключите оба входа A и B к обоим элементам."
+		14:
+			return "[b]Подсказка:[/b] Схема состоит из двух основных частей:
+					1. Для вычисления Sum используйте два элемента XOR (A XOR B XOR Cin)
+					2. Для вычисления Cout используйте комбинацию AND и OR элементов
+					3. Первый AND вычисляет A AND B, второй AND вычисляет Cin AND (A XOR B)
+					4. Объедините результаты двух AND элементов через OR элемент"
+		15:
+			return "[b]Подсказка:[/b] Схема состоит из двух основных компонентов:
+					1. Полусумматор для младших битов A0 и B0 → получаем S0 и Cout0
+					2. Полный сумматор для старших битов A1, B1 и переноса Cout0 → получаем S1 и Cout
+					3. Соедините выход переноса полусумматора со входом переноса полного сумматора"
+		16:
+			return "[b]Подсказка:[/b] Схема состоит из двух независимых частей:
+					1. Для вычисления Difference используйте элемент XOR
+					2. Для вычисления Borrow используйте комбинацию NOT и AND: NOT A AND B
+					3. Подключите оба входа A и B к соответствующим элементам"
+		17:
+			return "[b]Подсказка:[/b] Схема состоит из двух основных частей:
+					1. Для вычисления Difference используйте два элемента XOR (A XOR B XOR Bin)
+					2. Для вычисления Bout используйте комбинацию NOT, AND и OR элементов
+					3. Первый AND: NOT A AND B
+					4. Второй AND: NOT A AND Bin  
+					5. Третий AND: B AND Bin
+					6. Объедините результаты трех AND элементов через OR элемент"
+		18:
+			return "[b]Подсказка:[/b] Схема состоит из трех основных частей:
+					1. Вычислите три операции параллельно: A AND B, A OR B, A XOR B
+					2. Используйте мультиплексор 4→1 для выбора нужной операции:
+					   - Вход 0: AND результат
+					   - Вход 1: OR результат  
+					   - Вход 2: XOR результат
+					   - Вход 3: 0 (постоянный ноль)
+					3. Управляйте мультиплексором с помощью кода операции OpCode"
+		19:
+			return "[b]Подсказка:[/b] Схема состоит из трех независимых частей:
+					1. Для A>B: A AND NOT B
+					2. Для A<B: NOT A AND B
+					3. Для A==B: A XNOR B
+					Используйте элементы NOT для инвертирования входов и AND/XNOR для комбинации сигналов."
+		20:
+			return "[b]Подсказка:[/b] Схема состоит из следующих компонентов:
+					1. Два 1-битных компаратора:
+					   - Первый для A1 и B1 (старшие биты)
+					   - Второй для A0 и B0 (младшие биты)
+
+					2. Для A>B: (A1>B1) OR (A1==B1 AND A0>B0)
+
+					3. Для A<B: (A1<B1) OR (A1==B1 AND A0<B0)
+
+					4. Для A==B: (A1==B1) AND (A0==B0)
+
+					Используйте элементы AND и OR для объединения результатов сравнения."
+		21:
+			return "[b]Подсказка:[/b] Схема состоит из двух элементов OR:
+					1. Первый OR объединяет входы I2 и I3 → выход O1 (старший бит)
+					2. Второй OR объединяет входы I1 и I3 → выход O0 (младший бит)"
+		22:
+			return "[b]Подсказка:[/b] Схема состоит из двух частей:
+					1. Для O1: I3 OR I2 (старший бит активируется при I3 или I2)
+					2. Для O0: I3 OR (I1 AND NOT I2) 
+					   - I1 активирует младший бит только если I2 неактивен
+					   - I3 всегда активирует младший бит"
+		23:
+			return "[b]Подсказка:[/b] Схема состоит из четырех независимых частей:
+					1. Y0: NOT A AND NOT B
+					2. Y1: NOT A AND B
+					3. Y2: A AND NOT B
+					4. Y3: A AND B"
+		24:
+			return "[b]Подсказка:[/b] Схема состоит из восьми независимых частей:
+					1. Создайте инвертированные версии сигналов A, B, C с помощью элементов NOT
+					2. Для каждого выхода Y0-Y7 используйте трехвходовый AND элемент с соответствующей комбинацией:
+					   - Y0: NOT A, NOT B, NOT C
+					   - Y1: NOT A, NOT B, C
+					   - Y2: NOT A, B, NOT C
+					   - Y3: NOT A, B, C
+					   - Y4: A, NOT B, NOT C
+					   - Y5: A, NOT B, C
+					   - Y6: A, B, NOT C
+					   - Y7: A, B, C"
+		_:
+			return ""
+		
 func setup_two_input_level(): pass
 
 func setup_three_input_level(): pass

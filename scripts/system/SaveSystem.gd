@@ -114,6 +114,31 @@ func is_level_unlocked(level_number):
 		return true
 	
 	return false
+	
+func increment_failed_attempts(level_number: int) -> void:
+	if not game_data.has("failed_attempts"):
+		game_data["failed_attempts"] = {}
+	
+	var level_str = str(level_number)
+	var current_attempts = game_data["failed_attempts"].get(level_str, 0)
+	game_data["failed_attempts"][level_str] = current_attempts + 1
+	save_game()
+	print("Failed attempts for level ", level_number, ": ", current_attempts + 1)
+
+func reset_failed_attempts(level_number: int) -> void:
+	if not game_data.has("failed_attempts"):
+		return
+	
+	var level_str = str(level_number)
+	if game_data["failed_attempts"].has(level_str):
+		game_data["failed_attempts"][level_str] = 0
+		save_game()
+		print("Reset failed attempts for level ", level_number)
+
+func get_failed_attempts(level_number: int) -> int:
+	if not game_data.has("failed_attempts"):
+		return 0
+	return game_data["failed_attempts"].get(str(level_number), 0)
 
 func complete_level(level_number):
 	var level_int = int(level_number)
