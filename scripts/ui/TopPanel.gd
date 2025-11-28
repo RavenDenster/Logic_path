@@ -90,12 +90,14 @@ func _check_theory_button_animation():
 		var save_system = get_node_or_null("/root/SaveSystem")
 		if save_system:
 			var theory_viewed = save_system.is_theory_viewed(current_level_number)
-			if theory_viewed:
-				print("Theory already viewed for level ", current_level_number)
-				return
-
-			print("Starting glow animation for level ", current_level_number)
-			_start_glow_animation()
+			var failed_attempts = save_system.get_failed_attempts(current_level_number)
+			
+			# Анимируем кнопку если теория не просмотрена ИЛИ есть подсказки
+			if not theory_viewed or failed_attempts >= 5:
+				print("Starting glow animation for level ", current_level_number)
+				_start_glow_animation()
+			else:
+				_stop_glow_animation()
 		else:
 			print("SaveSystem not found")
 	else:
