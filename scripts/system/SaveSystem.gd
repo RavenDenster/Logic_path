@@ -12,7 +12,8 @@ var game_data = {
 
 func _ready():
 	load_game()
-	print("SaveSystem ready. Completed levels: ", game_data["completed_levels"], " Last played: ", game_data["last_played_level"])
+	print("SaveSystem ready. Completed levels: ", game_data["completed_levels"], " Last played: ", game_data["last_played_level"], " Unlocked levels: ", game_data.get("unlocked_levels", []))
+
 
 func save_game():
 	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
@@ -22,13 +23,21 @@ func save_game():
 			int_completed_levels.append(int(level))
 		game_data["completed_levels"] = int_completed_levels
 		
+		# Также преобразуем unlocked_levels в int
+		if game_data.has("unlocked_levels"):
+			var int_unlocked_levels = []
+			for level in game_data["unlocked_levels"]:
+				int_unlocked_levels.append(int(level))
+			game_data["unlocked_levels"] = int_unlocked_levels
+		
 		var json_string = JSON.stringify(game_data)
 		file.store_string(json_string)
 		file.close()
-		print("Game saved successfully. Completed levels: ", game_data["completed_levels"], " Last played: ", game_data["last_played_level"])
+		print("Game saved successfully. Completed levels: ", game_data["completed_levels"], " Last played: ", game_data["last_played_level"], " Unlocked levels: ", game_data.get("unlocked_levels", []))
 	else:
 		var error = FileAccess.get_open_error()
 		push_error("Failed to save game! Error: ", error)
+
 
 func load_game():
 	if FileAccess.file_exists(SAVE_FILE_PATH):
@@ -45,6 +54,10 @@ func load_game():
 					game_data["level_states"] = {}
 				if not game_data.has("last_played_level"):
 					game_data["last_played_level"] = 1
+				if not game_data.has("unlocked_levels"):  # Добавляем инициализацию unlocked_levels
+					game_data["unlocked_levels"] = []
+				if not game_data.has("theory_viewed"):
+					game_data["theory_viewed"] = {}
 				
 				var int_completed_levels = []
 				for level in game_data["completed_levels"]:
@@ -52,7 +65,13 @@ func load_game():
 				game_data["completed_levels"] = int_completed_levels
 				game_data["last_played_level"] = int(game_data["last_played_level"])
 				
-				print("Game loaded successfully. Completed levels: ", game_data["completed_levels"], " Last played: ", game_data["last_played_level"])
+				# Также преобразуем unlocked_levels в int
+				var int_unlocked_levels = []
+				for level in game_data["unlocked_levels"]:
+					int_unlocked_levels.append(int(level))
+				game_data["unlocked_levels"] = int_unlocked_levels
+				
+				print("Game loaded successfully. Completed levels: ", game_data["completed_levels"], " Last played: ", game_data["last_played_level"], " Unlocked levels: ", game_data["unlocked_levels"])
 			else:
 				push_error("JSON Parse Error: ", json.get_error_message())
 				reset_progress()
@@ -67,6 +86,7 @@ func load_game():
 func reset_progress():
 	game_data = {
 		"completed_levels": [],
+		"unlocked_levels": [],  # Сбрасываем и unlocked_levels
 		"level_states": {},
 		"player_name": "Player",
 		"last_played_level": 1,
@@ -74,6 +94,26 @@ func reset_progress():
 	}
 	save_game()
 	print("Game progress reset")
+
+func unlock_levels(level_numbers):
+	for level_num in level_numbers:
+		if not level_num in game_data["unlocked_levels"]:
+			game_data["unlocked_levels"].append(int(level_num))
+	save_game()
+	print("Levels unlocked via cheat: ", level_numbers)
+
+func is_level_unlocked(level_number):
+	var level_int = int(level_number)
+	
+	# Если уровень пройден, он автоматически считается открытым
+	if is_level_completed(level_int):
+		return true
+	
+	# Проверяем, есть ли уровень в списке открытых
+	if game_data.has("unlocked_levels") and level_int in game_data["unlocked_levels"]:
+		return true
+	
+	return false
 
 func complete_level(level_number):
 	var level_int = int(level_number)
