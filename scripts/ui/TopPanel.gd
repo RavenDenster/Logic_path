@@ -26,7 +26,7 @@ func _ready():
 	hover_style.border_width_bottom = 2
 	hover_style.border_color = Color.GOLD
 
-	var theory_window_scene = preload("res://scenes/ui/TheoryWindow.tscn")
+	var theory_window_scene = load("res://scenes/ui/TheoryWindow.tscn")
 	if theory_window_scene:
 		theory_window_instance = theory_window_scene.instantiate()
 		get_tree().root.add_child(theory_window_instance)

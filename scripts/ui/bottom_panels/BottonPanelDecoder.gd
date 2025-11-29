@@ -126,60 +126,60 @@ func load_initial_data(inputs_a, inputs_b, expected_y0, expected_y1, expected_y2
 	for i in range(4):
 		if i < input_a_textures.size() and input_a_textures[i] is TextureRect:
 			if inputs_a[i] == 1:
-				input_a_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_a_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_a_textures[i].texture = preload("res://assets/point.png")
+				input_a_textures[i].texture = load("res://assets/point.png")
 
 	# Input B
 	for i in range(4):
 		if i < input_b_textures.size() and input_b_textures[i] is TextureRect:
 			if inputs_b[i] == 1:
-				input_b_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_b_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_b_textures[i].texture = preload("res://assets/point.png")
+				input_b_textures[i].texture = load("res://assets/point.png")
 	
 	# Desired Y0
 	for i in range(4):
 		if i < desired_y0_textures.size() and desired_y0_textures[i] is TextureRect:
 			if expected_y0[i] == 1:
-				desired_y0_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_y0_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_y0_textures[i].texture = preload("res://assets/point.png")
+				desired_y0_textures[i].texture = load("res://assets/point.png")
 
 	# Desired Y1
 	for i in range(4):
 		if i < desired_y1_textures.size() and desired_y1_textures[i] is TextureRect:
 			if expected_y1[i] == 1:
-				desired_y1_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_y1_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_y1_textures[i].texture = preload("res://assets/point.png")
+				desired_y1_textures[i].texture = load("res://assets/point.png")
 
 	# Desired Y2
 	for i in range(4):
 		if i < desired_y2_textures.size() and desired_y2_textures[i] is TextureRect:
 			if expected_y2[i] == 1:
-				desired_y2_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_y2_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_y2_textures[i].texture = preload("res://assets/point.png")
+				desired_y2_textures[i].texture = load("res://assets/point.png")
 
 	# Desired Y3
 	for i in range(4):
 		if i < desired_y3_textures.size() and desired_y3_textures[i] is TextureRect:
 			if expected_y3[i] == 1:
-				desired_y3_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_y3_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_y3_textures[i].texture = preload("res://assets/point.png")
+				desired_y3_textures[i].texture = load("res://assets/point.png")
 
 	# ПРАВАЯ ЧАСТЬ: Current outputs (очищаем) - 4 строки
 	for i in range(4):
 		if i < current_y0_textures.size() and current_y0_textures[i] is TextureRect:
-			current_y0_textures[i].texture = preload("res://assets/point.png")
+			current_y0_textures[i].texture = load("res://assets/point.png")
 		if i < current_y1_textures.size() and current_y1_textures[i] is TextureRect:
-			current_y1_textures[i].texture = preload("res://assets/point.png")
+			current_y1_textures[i].texture = load("res://assets/point.png")
 		if i < current_y2_textures.size() and current_y2_textures[i] is TextureRect:
-			current_y2_textures[i].texture = preload("res://assets/point.png")
+			current_y2_textures[i].texture = load("res://assets/point.png")
 		if i < current_y3_textures.size() and current_y3_textures[i] is TextureRect:
-			current_y3_textures[i].texture = preload("res://assets/point.png")
+			current_y3_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelDecoder: Initial data loaded with 6+4 structure")
 
@@ -194,32 +194,32 @@ func update_current_outputs(actual_y0, actual_y1, actual_y2, actual_y3):
 	for i in range(4):
 		if i < current_y0_textures.size() and current_y0_textures[i] is TextureRect:
 			if actual_y0[i] == 1:
-				current_y0_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_y0_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_y0_textures[i].texture = preload("res://assets/point.png")
+				current_y0_textures[i].texture = load("res://assets/point.png")
 
 	# Current Y1
 	for i in range(4):
 		if i < current_y1_textures.size() and current_y1_textures[i] is TextureRect:
 			if actual_y1[i] == 1:
-				current_y1_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_y1_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_y1_textures[i].texture = preload("res://assets/point.png")
+				current_y1_textures[i].texture = load("res://assets/point.png")
 
 	# Current Y2
 	for i in range(4):
 		if i < current_y2_textures.size() and current_y2_textures[i] is TextureRect:
 			if actual_y2[i] == 1:
-				current_y2_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_y2_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_y2_textures[i].texture = preload("res://assets/point.png")
+				current_y2_textures[i].texture = load("res://assets/point.png")
 
 	# Current Y3
 	for i in range(4):
 		if i < current_y3_textures.size() and current_y3_textures[i] is TextureRect:
 			if actual_y3[i] == 1:
-				current_y3_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_y3_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_y3_textures[i].texture = preload("res://assets/point.png")
+				current_y3_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelDecoder: Current outputs updated in right panel (4 rows)")

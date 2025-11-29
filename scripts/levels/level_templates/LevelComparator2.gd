@@ -145,7 +145,7 @@ func setup_comparator2_level():
 
 func _on_add_onebit_comparator_button_pressed():
 	print("LevelComparator2: Adding OneBitComparator gate (base method)")
-	var gate_scene = preload("res://scenes/gates/OneBitComparatorGate.tscn")
+	var gate_scene = load("res://scenes/gates/OneBitComparatorGate.tscn")
 	var gate = gate_scene.instantiate()
 
 	one_bit_comparator_counter += 1
@@ -163,7 +163,7 @@ func _on_add_onebit_comparator_button_pressed():
 
 func _on_add_and_button_pressed():
 	print("LevelComparator2: Adding AND gate (base method)")
-	var gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+	var gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 	var gate = gate_scene.instantiate()
 	
 	var viewport_size = get_viewport_rect().size
@@ -210,7 +210,7 @@ func get_wires_data():
 
 func _on_add_or_button_pressed():
 	print("LevelComparator2: Adding OR gate (base method)")
-	var gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+	var gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
 	var gate = gate_scene.instantiate()
 	
 	var viewport_size = get_viewport_rect().size
@@ -521,7 +521,7 @@ func create_gate_from_data(gate_data):
 					output_block_aeqb.name = gate_name
 				print("Restored OutputBlockAeqb position: ", position)
 		"OneBitComparator":
-			var gate_scene = preload("res://scenes/gates/OneBitComparatorGate.tscn")
+			var gate_scene = load("res://scenes/gates/OneBitComparatorGate.tscn")
 			var gate = gate_scene.instantiate()
 			gate.position = position
 			
@@ -543,7 +543,7 @@ func create_gate_from_data(gate_data):
 			movable_objects.append(gate)
 			print("SUCCESS: Restored OneBitComparator gate: ", gate.name, " at ", position)
 		"AND":
-			var gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+			var gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 			var gate = gate_scene.instantiate()
 			gate.position = position
 			if gate_name != "":
@@ -552,7 +552,7 @@ func create_gate_from_data(gate_data):
 			movable_objects.append(gate)
 			print("Restored AND gate: ", gate.name, " at ", position)
 		"OR":
-			var gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+			var gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
 			var gate = gate_scene.instantiate()
 			gate.position = position
 			if gate_name != "":
@@ -730,7 +730,7 @@ func create_wire_from_data(wire_data):
 	var end_port = find_port_by_name(end_parent_name, end_port_name, end_parent_type)
 	
 	if start_port and end_port and start_port != end_port:
-		var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+		var wire = load("res://scenes/components/Wire.tscn").instantiate()
 		wire.connect_ports(start_port, end_port)
 		add_child(wire)
 		wires.append(wire)
@@ -825,27 +825,27 @@ func reset_all_port_sprites():
 				if port:
 					var sprite = port.get_node_or_null("Sprite2D")
 					if sprite:
-						sprite.texture = preload("res://assets/point.png")
+						sprite.texture = load("res://assets/point.png")
 		elif obj in [output_block_agtb, output_block_altb, output_block_aeqb]:
 			var input_port = obj.get_node_or_null("InputPort")
 			if input_port:
 				var sprite = input_port.get_node_or_null("Sprite2D")
 				if sprite:
-					sprite.texture = preload("res://assets/point.png")
+					sprite.texture = load("res://assets/point.png")
 		elif get_object_type(obj) == "OneBitComparator":
 			for port_name in ["InputA", "InputB", "OutputAgtb", "OutputAltb", "OutputAeqb"]:
 				var port = obj.get_node_or_null(port_name)
 				if port:
 					var sprite = port.get_node_or_null("Sprite2D")
 					if sprite:
-						sprite.texture = preload("res://assets/point.png")
+						sprite.texture = load("res://assets/point.png")
 		else:
 			for port_name in ["Input1", "Input2", "InputPort", "Output"]:
 				var port = obj.get_node_or_null(port_name)
 				if port:
 					var sprite = port.get_node_or_null("Sprite2D")
 					if sprite:
-						sprite.texture = preload("res://assets/point.png")
+						sprite.texture = load("res://assets/point.png")
 	
 	print("2-bit Comparator level: Reset all port sprites")
 
@@ -889,7 +889,7 @@ func _input(event):
 			if drawing_wire and start_port and is_instance_valid(start_port):
 				var end_port = get_port_under_mouse()
 				if end_port and is_instance_valid(end_port) and end_port != start_port:
-					var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+					var wire = load("res://scenes/components/Wire.tscn").instantiate()
 					wire.connect_ports(start_port, end_port)
 					add_child(wire)
 					wires.append(wire)

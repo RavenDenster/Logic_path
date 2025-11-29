@@ -175,6 +175,6 @@ func update_current_outputs(actual_agtb, actual_altb, actual_aeqb):
 func update_texture(texture_rect, value):
 	if texture_rect and is_instance_valid(texture_rect):
 		if value == 1:
-			texture_rect.texture = preload("res://assets/pointGreen.png")
+			texture_rect.texture = load("res://assets/pointGreen.png")
 		else:
-			texture_rect.texture = preload("res://assets/point.png")
+			texture_rect.texture = load("res://assets/point.png")

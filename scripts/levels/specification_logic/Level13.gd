@@ -7,7 +7,7 @@ var max_and_gates: int = 2
 var max_xor_gates: int = 2
 
 func _ready():
-	level_data = preload("res://data/level_13_data.tres")
+	level_data = load("res://data/level_13_data.tres")
 
 	if not level_data:
 		push_error("Level13: level_data is null!")
@@ -56,7 +56,7 @@ func _on_add_and_button_pressed():
 		print("Cannot add more AND gates. Maximum limit reached: ", max_and_gates)
 		return
 	
-	var and_gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
+	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 400)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
@@ -71,7 +71,7 @@ func _on_add_xor_button_pressed():
 		print("Cannot add more XOR gates. Maximum limit reached: ", max_xor_gates)
 		return
 	
-	var xor_gate = preload("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
+	var xor_gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
 	xor_gate.position = Vector2(600, 600)
 	add_child(xor_gate)
 	movable_objects.append(xor_gate)
@@ -194,9 +194,9 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()

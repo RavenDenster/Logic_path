@@ -9,7 +9,7 @@ var max_full_adders: int = 2
 var max_cout0: int = 2
 
 func _ready():
-	level_data = preload("res://data/level_15_data.tres")
+	level_data = load("res://data/level_15_data.tres")
 
 	if not level_data:
 		push_error("Level15: level_data is null!")
@@ -48,7 +48,7 @@ func _on_add_half_adder_button_pressed():
 		print("Cannot add more Half Adders. Maximum limit reached: ", max_half_adders)
 		return
 	
-	var half_adder = preload("res://scenes/gates/HalfAdder.tscn").instantiate()
+	var half_adder = load("res://scenes/gates/HalfAdder.tscn").instantiate()
 	half_adder.position = Vector2(600, 400)
 	add_child(half_adder)
 	movable_objects.append(half_adder)
@@ -63,7 +63,7 @@ func _on_add_full_adder_button_pressed():
 		print("Cannot add more Full Adders. Maximum limit reached: ", max_full_adders)
 		return
 	
-	var full_adder = preload("res://scenes/gates/FullAdder.tscn").instantiate()
+	var full_adder = load("res://scenes/gates/FullAdder.tscn").instantiate()
 	full_adder.position = Vector2(600, 600)
 	add_child(full_adder)
 	movable_objects.append(full_adder)
@@ -78,7 +78,7 @@ func _on_add_cout0_button_pressed():
 		print("Cannot add more Cout0. Maximum limit reached: ", max_cout0)
 		return
 	
-	var cout0 = preload("res://scenes/gates/Cout0.tscn").instantiate()
+	var cout0 = load("res://scenes/gates/Cout0.tscn").instantiate()
 	cout0.position = Vector2(600, 800)
 	add_child(cout0)
 	movable_objects.append(cout0)
@@ -225,11 +225,11 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"HALF_ADDER":
-			gate_scene = preload("res://scenes/gates/HalfAdder.tscn")
+			gate_scene = load("res://scenes/gates/HalfAdder.tscn")
 		"FULL_ADDER":
-			gate_scene = preload("res://scenes/gates/FullAdder.tscn")
+			gate_scene = load("res://scenes/gates/FullAdder.tscn")
 		"COUT0":
-			gate_scene = preload("res://scenes/gates/Cout0.tscn")
+			gate_scene = load("res://scenes/gates/Cout0.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()

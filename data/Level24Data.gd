@@ -2,7 +2,7 @@
 extends Resource
 class_name Level24Data
 
-@export var level_name: String = "Level 24: 3→8 Decoder"
+@export var level_name: String = "Level 24: 3->8 Decoder"
 @export var available_gates: Array[String] = ["AND", "NOT"]
 @export var input_values_a: Array[int] = [0,0,0,0,1,1,1,1]
 @export var input_values_b: Array[int] = [0,0,1,1,0,0,1,1]

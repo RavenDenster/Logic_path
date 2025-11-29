@@ -109,42 +109,42 @@ func load_initial_data(inputs_clk, expected_q0, expected_q1):
 	for i in range(min(6, input_clk_textures.size())):
 		if i < inputs_clk.size() and input_clk_textures[i] is TextureRect:
 			if inputs_clk[i] == 1:
-				input_clk_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_clk_textures[i].texture = load("res://assets/pointGreen.png")
 				print("Set CLK[", i, "] to GREEN")
 			else:
-				input_clk_textures[i].texture = preload("res://assets/point.png")
+				input_clk_textures[i].texture = load("res://assets/point.png")
 				print("Set CLK[", i, "] to RED")
 
 	# Desired Q0
 	for i in range(min(6, desired_q0_textures.size())):
 		if i < expected_q0.size() and desired_q0_textures[i] is TextureRect:
 			if expected_q0[i] == 1:
-				desired_q0_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_q0_textures[i].texture = load("res://assets/pointGreen.png")
 				print("Set Desired Q0[", i, "] to GREEN")
 			else:
-				desired_q0_textures[i].texture = preload("res://assets/point.png")
+				desired_q0_textures[i].texture = load("res://assets/point.png")
 				print("Set Desired Q0[", i, "] to RED")
 
 	# Desired Q1
 	for i in range(min(6, desired_q1_textures.size())):
 		if i < expected_q1.size() and desired_q1_textures[i] is TextureRect:
 			if expected_q1[i] == 1:
-				desired_q1_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_q1_textures[i].texture = load("res://assets/pointGreen.png")
 				print("Set Desired Q1[", i, "] to GREEN")
 			else:
-				desired_q1_textures[i].texture = preload("res://assets/point.png")
+				desired_q1_textures[i].texture = load("res://assets/point.png")
 				print("Set Desired Q1[", i, "] to RED")
 
 	# Current Q0 (очищаем)
 	for i in range(min(6, current_q0_textures.size())):
 		if current_q0_textures[i] is TextureRect:
-			current_q0_textures[i].texture = preload("res://assets/point.png")
+			current_q0_textures[i].texture = load("res://assets/point.png")
 			print("Reset Current Q0[", i, "] to RED")
 
 	# Current Q1 (очищаем)
 	for i in range(min(6, current_q1_textures.size())):
 		if current_q1_textures[i] is TextureRect:
-			current_q1_textures[i].texture = preload("res://assets/point.png")
+			current_q1_textures[i].texture = load("res://assets/point.png")
 			print("Reset Current Q1[", i, "] to RED")
 	
 	print("TestResultsPanelBitCounter: Initial data loaded")
@@ -162,20 +162,20 @@ func update_current_outputs(actual_q0, actual_q1):
 	for i in range(min(6, current_q0_textures.size())):
 		if i < actual_q0.size() and current_q0_textures[i] is TextureRect:
 			if actual_q0[i] == 1:
-				current_q0_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_q0_textures[i].texture = load("res://assets/pointGreen.png")
 				print("Set Current Q0[", i, "] to GREEN")
 			else:
-				current_q0_textures[i].texture = preload("res://assets/point.png")
+				current_q0_textures[i].texture = load("res://assets/point.png")
 				print("Set Current Q0[", i, "] to RED")
 
 	# Current Q1
 	for i in range(min(6, current_q1_textures.size())):
 		if i < actual_q1.size() and current_q1_textures[i] is TextureRect:
 			if actual_q1[i] == 1:
-				current_q1_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_q1_textures[i].texture = load("res://assets/pointGreen.png")
 				print("Set Current Q1[", i, "] to GREEN")
 			else:
-				current_q1_textures[i].texture = preload("res://assets/point.png")
+				current_q1_textures[i].texture = load("res://assets/point.png")
 				print("Set Current Q1[", i, "] to RED")
 	
 	print("TestResultsPanelBitCounter: Current outputs updated")

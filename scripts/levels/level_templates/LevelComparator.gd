@@ -6,7 +6,7 @@ var output_block_altb  # A < B
 var output_block_aeqb  # A == B
 
 func _ready():
-	level_data = preload("res://data/level_19_data.tres")  # ДОБАВЬТЕ ЭТУ СТРОЧКУ!
+	level_data = load("res://data/level_19_data.tres")  # ДОБАВЬТЕ ЭТУ СТРОЧКУ!
 	
 	if not level_data:
 		push_error("Level data not set!")
@@ -442,15 +442,15 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"XNOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XNORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XNORGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
@@ -559,28 +559,28 @@ func reset_all_port_sprites():
 			if port:
 				var sprite = port.get_node_or_null("Sprite2D")
 				if sprite:
-					sprite.texture = preload("res://assets/point.png")
+					sprite.texture = load("res://assets/point.png")
 
 	if output_block_agtb:
 		var input_port = output_block_agtb.get_node_or_null("InputPort")
 		if input_port:
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite:
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	if output_block_altb:
 		var input_port = output_block_altb.get_node_or_null("InputPort")
 		if input_port:
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite:
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 				
 	if output_block_aeqb:
 		var input_port = output_block_aeqb.get_node_or_null("InputPort")
 		if input_port:
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite:
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	for obj in movable_objects:
 		if not obj or not is_instance_valid(obj):
@@ -602,7 +602,7 @@ func reset_all_port_sprites():
 		for port in ports:
 			var sprite = port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 	
 	print("Comparator level: Reset all port sprites")
 
@@ -645,7 +645,7 @@ func _input(event):
 			if drawing_wire and start_port and is_instance_valid(start_port):
 				var end_port = get_port_under_mouse()
 				if end_port and is_instance_valid(end_port) and end_port != start_port:
-					var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+					var wire = load("res://scenes/components/Wire.tscn").instantiate()
 					wire.connect_ports(start_port, end_port)
 					add_child(wire)
 					wires.append(wire)

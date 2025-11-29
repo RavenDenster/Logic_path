@@ -81,43 +81,43 @@ func load_initial_data(input_data, input_clk, expected_q0, expected_q1, expected
 	# Input Data
 	for i in range(5):
 		if i < input_data_textures.size() and input_data_textures[i] is TextureRect:
-			input_data_textures[i].texture = preload("res://assets/pointGreen.png") if input_data[i] == 1 else preload("res://assets/point.png")
+			input_data_textures[i].texture = load("res://assets/pointGreen.png") if input_data[i] == 1 else load("res://assets/point.png")
 
 	# Input CLK
 	for i in range(5):
 		if i < input_clk_textures.size() and input_clk_textures[i] is TextureRect:
-			input_clk_textures[i].texture = preload("res://assets/pointGreen.png") if input_clk[i] == 1 else preload("res://assets/point.png")
+			input_clk_textures[i].texture = load("res://assets/pointGreen.png") if input_clk[i] == 1 else load("res://assets/point.png")
 	
 	# Expected Q0
 	for i in range(5):
 		if i < expected_q0_textures.size() and expected_q0_textures[i] is TextureRect:
-			expected_q0_textures[i].texture = preload("res://assets/pointGreen.png") if expected_q0[i] == 1 else preload("res://assets/point.png")
+			expected_q0_textures[i].texture = load("res://assets/pointGreen.png") if expected_q0[i] == 1 else load("res://assets/point.png")
 
 	# Expected Q1
 	for i in range(5):
 		if i < expected_q1_textures.size() and expected_q1_textures[i] is TextureRect:
-			expected_q1_textures[i].texture = preload("res://assets/pointGreen.png") if expected_q1[i] == 1 else preload("res://assets/point.png")
+			expected_q1_textures[i].texture = load("res://assets/pointGreen.png") if expected_q1[i] == 1 else load("res://assets/point.png")
 
 	# Expected Q2
 	for i in range(5):
 		if i < expected_q2_textures.size() and expected_q2_textures[i] is TextureRect:
-			expected_q2_textures[i].texture = preload("res://assets/pointGreen.png") if expected_q2[i] == 1 else preload("res://assets/point.png")
+			expected_q2_textures[i].texture = load("res://assets/pointGreen.png") if expected_q2[i] == 1 else load("res://assets/point.png")
 
 	# Expected Q3
 	for i in range(5):
 		if i < expected_q3_textures.size() and expected_q3_textures[i] is TextureRect:
-			expected_q3_textures[i].texture = preload("res://assets/pointGreen.png") if expected_q3[i] == 1 else preload("res://assets/point.png")
+			expected_q3_textures[i].texture = load("res://assets/pointGreen.png") if expected_q3[i] == 1 else load("res://assets/point.png")
 
 	# Current Q0-Q3 (очищаем)
 	for i in range(5):
 		if i < current_q0_textures.size() and current_q0_textures[i] is TextureRect:
-			current_q0_textures[i].texture = preload("res://assets/point.png")
+			current_q0_textures[i].texture = load("res://assets/point.png")
 		if i < current_q1_textures.size() and current_q1_textures[i] is TextureRect:
-			current_q1_textures[i].texture = preload("res://assets/point.png")
+			current_q1_textures[i].texture = load("res://assets/point.png")
 		if i < current_q2_textures.size() and current_q2_textures[i] is TextureRect:
-			current_q2_textures[i].texture = preload("res://assets/point.png")
+			current_q2_textures[i].texture = load("res://assets/point.png")
 		if i < current_q3_textures.size() and current_q3_textures[i] is TextureRect:
-			current_q3_textures[i].texture = preload("res://assets/point.png")
+			current_q3_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelShiftRegister: Initial data loaded")
 
@@ -129,21 +129,21 @@ func update_current_outputs(actual_q0, actual_q1, actual_q2, actual_q3):
 	# Current Q0
 	for i in range(5):
 		if i < current_q0_textures.size() and current_q0_textures[i] is TextureRect:
-			current_q0_textures[i].texture = preload("res://assets/pointGreen.png") if actual_q0[i] == 1 else preload("res://assets/point.png")
+			current_q0_textures[i].texture = load("res://assets/pointGreen.png") if actual_q0[i] == 1 else load("res://assets/point.png")
 
 	# Current Q1
 	for i in range(5):
 		if i < current_q1_textures.size() and current_q1_textures[i] is TextureRect:
-			current_q1_textures[i].texture = preload("res://assets/pointGreen.png") if actual_q1[i] == 1 else preload("res://assets/point.png")
+			current_q1_textures[i].texture = load("res://assets/pointGreen.png") if actual_q1[i] == 1 else load("res://assets/point.png")
 
 	# Current Q2
 	for i in range(5):
 		if i < current_q2_textures.size() and current_q2_textures[i] is TextureRect:
-			current_q2_textures[i].texture = preload("res://assets/pointGreen.png") if actual_q2[i] == 1 else preload("res://assets/point.png")
+			current_q2_textures[i].texture = load("res://assets/pointGreen.png") if actual_q2[i] == 1 else load("res://assets/point.png")
 
 	# Current Q3
 	for i in range(5):
 		if i < current_q3_textures.size() and current_q3_textures[i] is TextureRect:
-			current_q3_textures[i].texture = preload("res://assets/pointGreen.png") if actual_q3[i] == 1 else preload("res://assets/point.png")
+			current_q3_textures[i].texture = load("res://assets/pointGreen.png") if actual_q3[i] == 1 else load("res://assets/point.png")
 	
 	print("TestResultsPanelShiftRegister: Current outputs updated")

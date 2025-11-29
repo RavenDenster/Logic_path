@@ -2,14 +2,14 @@
 extends "res://scripts/levels/LevelBitCounter.gd"
 
 func _ready():
-	level_data = preload("res://data/level_29_data.tres")
+	level_data = load("res://data/level_29_data.tres")
 	
 	# Явно вызываем родительский _ready
 	super._ready()
 
 func _on_add_tflipflop_button_pressed():
 	print("Level29: Adding T-FlipFlop gate")
-	var gate_scene = preload("res://scenes/gates/TFlipFlopGate.tscn")
+	var gate_scene = load("res://scenes/gates/TFlipFlopGate.tscn")
 	var gate = gate_scene.instantiate()
 	
 	# Позиция рядом с курсором или в центре экрана

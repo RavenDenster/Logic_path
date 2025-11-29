@@ -85,48 +85,48 @@ func load_initial_data(inputs_r, inputs_s, expected_q, expected_not_q):
 		var texture_rect = input_r_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
 			if i < inputs_r.size() and inputs_r[i] == 1:
-				texture_rect.texture = preload("res://assets/pointGreen.png")
+				texture_rect.texture = load("res://assets/pointGreen.png")
 			else:
-				texture_rect.texture = preload("res://assets/point.png")
+				texture_rect.texture = load("res://assets/point.png")
 
 	# Загружаем входные данные S
 	for i in range(min(8, input_s_textures.size())):
 		var texture_rect = input_s_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
 			if i < inputs_s.size() and inputs_s[i] == 1:
-				texture_rect.texture = preload("res://assets/pointGreen.png")
+				texture_rect.texture = load("res://assets/pointGreen.png")
 			else:
-				texture_rect.texture = preload("res://assets/point.png")
+				texture_rect.texture = load("res://assets/point.png")
 
 	# Загружаем ожидаемые значения Q
 	for i in range(min(8, desired_q_textures.size())):
 		var texture_rect = desired_q_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
 			if i < expected_q.size() and expected_q[i] == 1:
-				texture_rect.texture = preload("res://assets/pointGreen.png")
+				texture_rect.texture = load("res://assets/pointGreen.png")
 			else:
-				texture_rect.texture = preload("res://assets/point.png")
+				texture_rect.texture = load("res://assets/point.png")
 
 	# Загружаем ожидаемые значения !Q
 	for i in range(min(8, desired_not_q_textures.size())):
 		var texture_rect = desired_not_q_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
 			if i < expected_not_q.size() and expected_not_q[i] == 1:
-				texture_rect.texture = preload("res://assets/pointGreen.png")
+				texture_rect.texture = load("res://assets/pointGreen.png")
 			else:
-				texture_rect.texture = preload("res://assets/point.png")
+				texture_rect.texture = load("res://assets/point.png")
 
 	# Очищаем текущие значения Q
 	for i in range(min(8, current_q_textures.size())):
 		var texture_rect = current_q_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
-			texture_rect.texture = preload("res://assets/point.png")
+			texture_rect.texture = load("res://assets/point.png")
 
 	# Очищаем текущие значения !Q
 	for i in range(min(8, current_not_q_textures.size())):
 		var texture_rect = current_not_q_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
-			texture_rect.texture = preload("res://assets/point.png")
+			texture_rect.texture = load("res://assets/point.png")
 
 	print("TestResultsPanelRS: Initial data loaded successfully")
 
@@ -136,17 +136,17 @@ func update_current_outputs(actual_q, actual_not_q):
 		var texture_rect = current_q_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
 			if i < actual_q.size() and actual_q[i] == 1:
-				texture_rect.texture = preload("res://assets/pointGreen.png")
+				texture_rect.texture = load("res://assets/pointGreen.png")
 			else:
-				texture_rect.texture = preload("res://assets/point.png")
+				texture_rect.texture = load("res://assets/point.png")
 
 	# Обновляем текущие значения !Q
 	for i in range(min(8, current_not_q_textures.size())):
 		var texture_rect = current_not_q_textures[i]
 		if texture_rect and is_instance_valid(texture_rect):
 			if i < actual_not_q.size() and actual_not_q[i] == 1:
-				texture_rect.texture = preload("res://assets/pointGreen.png")
+				texture_rect.texture = load("res://assets/pointGreen.png")
 			else:
-				texture_rect.texture = preload("res://assets/point.png")
+				texture_rect.texture = load("res://assets/point.png")
 
 	print("TestResultsPanelRS: Current outputs updated")

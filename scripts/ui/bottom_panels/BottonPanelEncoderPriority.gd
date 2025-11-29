@@ -101,59 +101,59 @@ func load_initial_data(inputs_i0, inputs_i1, inputs_i2, inputs_i3, expected_o0, 
 	for i in range(16):
 		if i < input_i0_textures.size() and input_i0_textures[i] is TextureRect:
 			if inputs_i0[i] == 1:
-				input_i0_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_i0_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_i0_textures[i].texture = preload("res://assets/point.png")
+				input_i0_textures[i].texture = load("res://assets/point.png")
 
 	# Input I1
 	for i in range(16):
 		if i < input_i1_textures.size() and input_i1_textures[i] is TextureRect:
 			if inputs_i1[i] == 1:
-				input_i1_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_i1_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_i1_textures[i].texture = preload("res://assets/point.png")
+				input_i1_textures[i].texture = load("res://assets/point.png")
 
 	# Input I2
 	for i in range(16):
 		if i < input_i2_textures.size() and input_i2_textures[i] is TextureRect:
 			if inputs_i2[i] == 1:
-				input_i2_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_i2_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_i2_textures[i].texture = preload("res://assets/point.png")
+				input_i2_textures[i].texture = load("res://assets/point.png")
 
 	# Input I3
 	for i in range(16):
 		if i < input_i3_textures.size() and input_i3_textures[i] is TextureRect:
 			if inputs_i3[i] == 1:
-				input_i3_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_i3_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_i3_textures[i].texture = preload("res://assets/point.png")
+				input_i3_textures[i].texture = load("res://assets/point.png")
 	
 	# Desired O0
 	for i in range(16):
 		if i < desired_o0_textures.size() and desired_o0_textures[i] is TextureRect:
 			if expected_o0[i] == 1:
-				desired_o0_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_o0_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_o0_textures[i].texture = preload("res://assets/point.png")
+				desired_o0_textures[i].texture = load("res://assets/point.png")
 
 	# Desired O1
 	for i in range(16):
 		if i < desired_o1_textures.size() and desired_o1_textures[i] is TextureRect:
 			if expected_o1[i] == 1:
-				desired_o1_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_o1_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_o1_textures[i].texture = preload("res://assets/point.png")
+				desired_o1_textures[i].texture = load("res://assets/point.png")
 
 	# Current O0 (очищаем)
 	for i in range(16):
 		if i < current_o0_textures.size() and current_o0_textures[i] is TextureRect:
-			current_o0_textures[i].texture = preload("res://assets/point.png")
+			current_o0_textures[i].texture = load("res://assets/point.png")
 
 	# Current O1 (очищаем)
 	for i in range(16):
 		if i < current_o1_textures.size() and current_o1_textures[i] is TextureRect:
-			current_o1_textures[i].texture = preload("res://assets/point.png")
+			current_o1_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelEncoderPriority: Initial data loaded")
 
@@ -166,16 +166,16 @@ func update_current_outputs(actual_o0, actual_o1):
 	for i in range(16):
 		if i < current_o0_textures.size() and current_o0_textures[i] is TextureRect:
 			if actual_o0[i] == 1:
-				current_o0_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_o0_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_o0_textures[i].texture = preload("res://assets/point.png")
+				current_o0_textures[i].texture = load("res://assets/point.png")
 
 	# Current O1
 	for i in range(16):
 		if i < current_o1_textures.size() and current_o1_textures[i] is TextureRect:
 			if actual_o1[i] == 1:
-				current_o1_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_o1_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_o1_textures[i].texture = preload("res://assets/point.png")
+				current_o1_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelEncoderPriority: Current outputs updated")

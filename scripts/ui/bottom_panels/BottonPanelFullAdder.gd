@@ -141,51 +141,51 @@ func load_initial_data(inputs_a, inputs_b, inputs_cin, expected_sum, expected_co
 	for i in range(8):
 		if i < input_a_textures.size() and input_a_textures[i] is TextureRect:
 			if inputs_a[i] == 1:
-				input_a_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_a_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_a_textures[i].texture = preload("res://assets/point.png")
+				input_a_textures[i].texture = load("res://assets/point.png")
 
 	# Input B
 	for i in range(8):
 		if i < input_b_textures.size() and input_b_textures[i] is TextureRect:
 			if inputs_b[i] == 1:
-				input_b_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_b_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_b_textures[i].texture = preload("res://assets/point.png")
+				input_b_textures[i].texture = load("res://assets/point.png")
 
 	# Cin
 	for i in range(8):
 		if i < input_cin_textures.size() and input_cin_textures[i] is TextureRect:
 			if inputs_cin[i] == 1:
-				input_cin_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_cin_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_cin_textures[i].texture = preload("res://assets/point.png")
+				input_cin_textures[i].texture = load("res://assets/point.png")
 	
 	# Desired Sum
 	for i in range(8):
 		if i < desired_sum_textures.size() and desired_sum_textures[i] is TextureRect:
 			if expected_sum[i] == 1:
-				desired_sum_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_sum_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_sum_textures[i].texture = preload("res://assets/point.png")
+				desired_sum_textures[i].texture = load("res://assets/point.png")
 
 	# Desired Cout
 	for i in range(8):
 		if i < desired_cout_textures.size() and desired_cout_textures[i] is TextureRect:
 			if expected_cout[i] == 1:
-				desired_cout_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_cout_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_cout_textures[i].texture = preload("res://assets/point.png")
+				desired_cout_textures[i].texture = load("res://assets/point.png")
 
 	# Current Sum (очищаем)
 	for i in range(8):
 		if i < current_sum_textures.size() and current_sum_textures[i] is TextureRect:
-			current_sum_textures[i].texture = preload("res://assets/point.png")
+			current_sum_textures[i].texture = load("res://assets/point.png")
 
 	# Current Cout (очищаем)
 	for i in range(8):
 		if i < current_cout_textures.size() and current_cout_textures[i] is TextureRect:
-			current_cout_textures[i].texture = preload("res://assets/point.png")
+			current_cout_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelFullAdder: Initial data loaded")
 
@@ -198,16 +198,16 @@ func update_current_outputs(actual_sum, actual_cout):
 	for i in range(8):
 		if i < current_sum_textures.size() and current_sum_textures[i] is TextureRect:
 			if actual_sum[i] == 1:
-				current_sum_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_sum_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_sum_textures[i].texture = preload("res://assets/point.png")
+				current_sum_textures[i].texture = load("res://assets/point.png")
 
 	# Current Cout
 	for i in range(8):
 		if i < current_cout_textures.size() and current_cout_textures[i] is TextureRect:
 			if actual_cout[i] == 1:
-				current_cout_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_cout_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_cout_textures[i].texture = preload("res://assets/point.png")
+				current_cout_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelFullAdder: Current outputs updated")
