@@ -14,7 +14,7 @@ var max_mux4to1: int = 1
 var max_opcode_blocks: int = 1
 
 func _ready():
-	level_data = preload("res://data/level_18_data.tres")
+	level_data = load("res://data/level_18_data.tres")
 	if not level_data:
 		push_error("Level18: level_data is null!")
 		return
@@ -91,7 +91,7 @@ func _on_add_and_button_pressed():
 		print("Cannot add more AND gates. Maximum limit reached: ", max_and_gates)
 		return
 	
-	var gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
+	var gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	gate.position = Vector2(600, 400)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -106,7 +106,7 @@ func _on_add_or_button_pressed():
 		print("Cannot add more OR gates. Maximum limit reached: ", max_or_gates)
 		return
 	
-	var gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
+	var gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	gate.position = Vector2(600, 500)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -121,7 +121,7 @@ func _on_add_xor_button_pressed():
 		print("Cannot add more XOR gates. Maximum limit reached: ", max_xor_gates)
 		return
 	
-	var xor_gate = preload("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
+	var xor_gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
 	xor_gate.position = Vector2(600, 600)
 	xor_gate.name = "XORGate_" + str(randi() % 10000)  # Уникальное имя
 	add_child(xor_gate)
@@ -137,7 +137,7 @@ func _on_add_mux4to1_button_pressed():
 		print("Cannot add more MUX4to1. Maximum limit reached: ", max_mux4to1)
 		return
 	
-	var gate = preload("res://scenes/gates/MUX4to1.tscn").instantiate()
+	var gate = load("res://scenes/gates/MUX4to1.tscn").instantiate()
 	gate.position = Vector2(600, 700)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -152,7 +152,7 @@ func _on_add_opcode_button_pressed():
 		print("Cannot add more OpCode blocks. Maximum limit reached: ", max_opcode_blocks)
 		return
 	
-	var gate = preload("res://scenes/gates/OpCodeBlock.tscn").instantiate()
+	var gate = load("res://scenes/gates/OpCodeBlock.tscn").instantiate()
 	gate.position = Vector2(600, 800)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -293,19 +293,19 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND": 
-			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 			gate_name = "ANDGate"
 		"OR": 
-			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
 			gate_name = "ORGate"
 		"XOR": 
-			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
 			gate_name = "XORGate"
 		"MUX4to1": 
-			gate_scene = preload("res://scenes/gates/MUX4to1.tscn")
+			gate_scene = load("res://scenes/gates/MUX4to1.tscn")
 			gate_name = "MUX4to1"
 		"OpCode": 
-			gate_scene = preload("res://scenes/gates/OpCodeBlock.tscn")
+			gate_scene = load("res://scenes/gates/OpCodeBlock.tscn")
 			gate_name = "OpCodeBlock"
 	
 	if gate_scene:

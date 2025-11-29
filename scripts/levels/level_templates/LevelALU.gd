@@ -358,11 +358,11 @@ func create_gate_from_data(gate_data):
 		
 	var gate_scene = null
 	match gate_type:
-		"AND": gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
-		"OR": gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
-		"XOR": gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
-		"MUX4to1": gate_scene = preload("res://scenes/gates/MUX4to1.tscn")
-		"OpCode": gate_scene = preload("res://scenes/gates/OpCodeBlock.tscn")
+		"AND": gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
+		"OR": gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
+		"XOR": gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
+		"MUX4to1": gate_scene = load("res://scenes/gates/MUX4to1.tscn")
+		"OpCode": gate_scene = load("res://scenes/gates/OpCodeBlock.tscn")
 		
 	if gate_scene:
 		var gate = gate_scene.instantiate()
@@ -486,7 +486,7 @@ func create_wire_from_data(wire_data):
 	var end_port = find_port_by_name(end_parent_name, end_port_name, end_parent_type)
 	
 	if start_port and end_port and start_port != end_port:
-		var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+		var wire = load("res://scenes/components/Wire.tscn").instantiate()
 		wire.connect_ports(start_port, end_port)
 		wire.z_index = 0
 		add_child(wire)
@@ -631,13 +631,13 @@ func reset_all_port_sprites():
 			if port:
 				var sprite = port.get_node_or_null("Sprite2D")
 				if sprite:
-					sprite.texture = preload("res://assets/point.png")
+					sprite.texture = load("res://assets/point.png")
 	if output_block:
 		var port = output_block.get_node_or_null("InputPort")
 		if port:
 			var sprite = port.get_node_or_null("Sprite2D")
 			if sprite:
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 	for obj in movable_objects:
 		if not obj or not is_instance_valid(obj):
 			continue
@@ -651,12 +651,12 @@ func reset_all_port_sprites():
 		for port in ports:
 			var sprite = port.get_node_or_null("Sprite2D")
 			if sprite:
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 	print("ALU level: Reset all port sprites")
 
 # Методы добавления компонентов (без ограничений в базовом классе)
 func _on_add_and_button_pressed():
-	var gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
+	var gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	gate.position = Vector2(600, 400)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -664,7 +664,7 @@ func _on_add_and_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_or_button_pressed():
-	var gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
+	var gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	gate.position = Vector2(600, 500)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -672,7 +672,7 @@ func _on_add_or_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_xor_button_pressed():
-	var gate = preload("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
+	var gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
 	gate.position = Vector2(600, 600)
 	add_child(gate)
 	movable_objects.append(gate)
@@ -680,7 +680,7 @@ func _on_add_xor_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_mux4to1_button_pressed():
-	var gate = preload("res://scenes/gates/MUX4to1.tscn").instantiate()
+	var gate = load("res://scenes/gates/MUX4to1.tscn").instantiate()
 	gate.position = Vector2(600, 700)
 	gate.z_index = 1  # Добавьте эту строку
 	add_child(gate)
@@ -689,7 +689,7 @@ func _on_add_mux4to1_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_opcode_button_pressed():
-	var gate = preload("res://scenes/gates/OpCodeBlock.tscn").instantiate()
+	var gate = load("res://scenes/gates/OpCodeBlock.tscn").instantiate()
 	gate.position = Vector2(600, 800)
 	gate.z_index = 1  # Добавьте эту строку
 	add_child(gate)
@@ -771,7 +771,7 @@ func _input(event):
 			if drawing_wire and start_port and is_instance_valid(start_port):
 				var end_port = get_port_under_mouse()
 				if end_port and is_instance_valid(end_port) and end_port != start_port:
-					var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+					var wire = load("res://scenes/components/Wire.tscn").instantiate()
 					wire.connect_ports(start_port, end_port)
 					wire.z_index = 0
 					add_child(wire)

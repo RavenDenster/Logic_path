@@ -57,21 +57,21 @@ func load_initial_data(inputs_a, inputs_b, expected_outputs):
 
 	for i in range(4):
 		if inputs_a[i] == 1:
-			input1_textures[i].texture = preload("res://assets/pointGreen.png")
+			input1_textures[i].texture = load("res://assets/pointGreen.png")
 		else:
-			input1_textures[i].texture = preload("res://assets/point.png")
+			input1_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(4):
 		if inputs_b[i] == 1:
-			input2_textures[i].texture = preload("res://assets/pointGreen.png")
+			input2_textures[i].texture = load("res://assets/pointGreen.png")
 		else:
-			input2_textures[i].texture = preload("res://assets/point.png")
+			input2_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(4):
 		if expected_outputs[i] == 1:
-			desired_textures[i].texture = preload("res://assets/pointGreen.png")
+			desired_textures[i].texture = load("res://assets/pointGreen.png")
 		else:
-			desired_textures[i].texture = preload("res://assets/point.png")
+			desired_textures[i].texture = load("res://assets/point.png")
 
 	print("TestResultsPanel: Initial data loaded")
 
@@ -81,9 +81,9 @@ func update_results(inputs_a, inputs_b, expected_outputs, actual_outputs):
 
 	for i in range(4):
 		if actual_outputs[i] == 1:
-			current_textures[i].texture = preload("res://assets/pointGreen.png")
+			current_textures[i].texture = load("res://assets/pointGreen.png")
 		else:
-			current_textures[i].texture = preload("res://assets/point.png")
+			current_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanel: Results updated with current outputs")
 
@@ -94,8 +94,8 @@ func update_current_outputs(actual_outputs):
 		return
 	for i in range(4):
 		if actual_outputs[i] == 1:
-			current_textures[i].texture = preload("res://assets/pointGreen.png")
+			current_textures[i].texture = load("res://assets/pointGreen.png")
 		else:
-			current_textures[i].texture = preload("res://assets/point.png")
+			current_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanel: Current outputs updated")

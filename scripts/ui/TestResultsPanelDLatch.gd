@@ -65,30 +65,30 @@ func load_initial_data(inputs_d, inputs_enable, expected_q):
 	for i in range(8):
 		if i < input_d_textures.size() and input_d_textures[i] is TextureRect:
 			if inputs_d[i] == 1:
-				input_d_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_d_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_d_textures[i].texture = preload("res://assets/point.png")
+				input_d_textures[i].texture = load("res://assets/point.png")
 
 	# Input Enable
 	for i in range(8):
 		if i < input_enable_textures.size() and input_enable_textures[i] is TextureRect:
 			if inputs_enable[i] == 1:
-				input_enable_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_enable_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_enable_textures[i].texture = preload("res://assets/point.png")
+				input_enable_textures[i].texture = load("res://assets/point.png")
 	
 	# Desired Q
 	for i in range(8):
 		if i < desired_q_textures.size() and desired_q_textures[i] is TextureRect:
 			if expected_q[i] == 1:
-				desired_q_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_q_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_q_textures[i].texture = preload("res://assets/point.png")
+				desired_q_textures[i].texture = load("res://assets/point.png")
 
 	# Current Q (очищаем)
 	for i in range(8):
 		if i < current_q_textures.size() and current_q_textures[i] is TextureRect:
-			current_q_textures[i].texture = preload("res://assets/point.png")
+			current_q_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelDLatch: Initial data loaded")
 
@@ -101,8 +101,8 @@ func update_current_outputs(actual_q):
 	for i in range(8):
 		if i < current_q_textures.size() and current_q_textures[i] is TextureRect:
 			if actual_q[i] == 1:
-				current_q_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_q_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_q_textures[i].texture = preload("res://assets/point.png")
+				current_q_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelDLatch: Current outputs updated")

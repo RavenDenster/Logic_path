@@ -204,25 +204,25 @@ func load_initial_data(inputs_a, inputs_b, inputs_c, expected_y0, expected_y1, e
 	for i in range(8):
 		if i < input_a_textures.size():
 			if inputs_a[i] == 1:
-				input_a_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_a_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_a_textures[i].texture = preload("res://assets/point.png")
+				input_a_textures[i].texture = load("res://assets/point.png")
 	
 	# Input B
 	for i in range(8):
 		if i < input_b_textures.size():
 			if inputs_b[i] == 1:
-				input_b_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_b_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_b_textures[i].texture = preload("res://assets/point.png")
+				input_b_textures[i].texture = load("res://assets/point.png")
 	
 	# Input C
 	for i in range(8):
 		if i < input_c_textures.size():
 			if inputs_c[i] == 1:
-				input_c_textures[i].texture = preload("res://assets/pointGreen.png")
+				input_c_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input_c_textures[i].texture = preload("res://assets/point.png")
+				input_c_textures[i].texture = load("res://assets/point.png")
 	
 	# Desired outputs Y0-Y7
 	load_desired_outputs(desired_y0_textures, expected_y0)
@@ -243,29 +243,29 @@ func load_desired_outputs(texture_array, expected_values):
 	for i in range(8):
 		if i < texture_array.size() and texture_array[i] is TextureRect:
 			if expected_values[i] == 1:
-				texture_array[i].texture = preload("res://assets/pointGreen.png")
+				texture_array[i].texture = load("res://assets/pointGreen.png")
 			else:
-				texture_array[i].texture = preload("res://assets/point.png")
+				texture_array[i].texture = load("res://assets/point.png")
 
 func clear_current_outputs():
 	# Очищаем все текущие выходы (ставим серые точки)
 	for i in range(8):
 		if i < current_y0_textures.size():
-			current_y0_textures[i].texture = preload("res://assets/point.png")
+			current_y0_textures[i].texture = load("res://assets/point.png")
 		if i < current_y1_textures.size():
-			current_y1_textures[i].texture = preload("res://assets/point.png")
+			current_y1_textures[i].texture = load("res://assets/point.png")
 		if i < current_y2_textures.size():
-			current_y2_textures[i].texture = preload("res://assets/point.png")
+			current_y2_textures[i].texture = load("res://assets/point.png")
 		if i < current_y3_textures.size():
-			current_y3_textures[i].texture = preload("res://assets/point.png")
+			current_y3_textures[i].texture = load("res://assets/point.png")
 		if i < current_y4_textures.size():
-			current_y4_textures[i].texture = preload("res://assets/point.png")
+			current_y4_textures[i].texture = load("res://assets/point.png")
 		if i < current_y5_textures.size():
-			current_y5_textures[i].texture = preload("res://assets/point.png")
+			current_y5_textures[i].texture = load("res://assets/point.png")
 		if i < current_y6_textures.size():
-			current_y6_textures[i].texture = preload("res://assets/point.png")
+			current_y6_textures[i].texture = load("res://assets/point.png")
 		if i < current_y7_textures.size():
-			current_y7_textures[i].texture = preload("res://assets/point.png")
+			current_y7_textures[i].texture = load("res://assets/point.png")
 
 func update_current_outputs(actual_y0, actual_y1, actual_y2, actual_y3, actual_y4, actual_y5, actual_y6, actual_y7):
 	# Проверяем что массивы текущих выходов инициализированы
@@ -294,6 +294,6 @@ func update_current_output(texture_array, actual_values):
 	for i in range(8):
 		if i < texture_array.size() and texture_array[i] is TextureRect:
 			if actual_values[i] == 1:
-				texture_array[i].texture = preload("res://assets/pointGreen.png")
+				texture_array[i].texture = load("res://assets/pointGreen.png")
 			else:
-				texture_array[i].texture = preload("res://assets/point.png")
+				texture_array[i].texture = load("res://assets/point.png")

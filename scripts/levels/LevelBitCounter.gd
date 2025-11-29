@@ -437,7 +437,7 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"TFLIPFLOP":
-			gate_scene = preload("res://scenes/gates/TFlipFlopGate.tscn")
+			gate_scene = load("res://scenes/gates/TFlipFlopGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
@@ -551,21 +551,21 @@ func reset_all_port_sprites():
 		if output_port and is_instance_valid(output_port):
 			var sprite = output_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	if output_block_q0:
 		var input_port = output_block_q0.get_node_or_null("InputPort")
 		if input_port and is_instance_valid(input_port):
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	if output_block_q1:
 		var input_port = output_block_q1.get_node_or_null("InputPort")
 		if input_port and is_instance_valid(input_port):
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	for obj in movable_objects:
 		if not obj or not is_instance_valid(obj):
@@ -585,7 +585,7 @@ func reset_all_port_sprites():
 		for port in ports:
 			var sprite = port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 	
 	print("2-bit Counter level: Reset all port sprites")
 
@@ -612,7 +612,7 @@ func _input(event):
 			if drawing_wire and start_port and is_instance_valid(start_port):
 				var end_port = get_port_under_mouse()
 				if end_port and is_instance_valid(end_port) and end_port != start_port:
-					var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+					var wire = load("res://scenes/components/Wire.tscn").instantiate()
 					wire.connect_ports(start_port, end_port)
 					add_child(wire)
 					wires.append(wire)
@@ -670,7 +670,7 @@ func _input(event):
 
 func _on_add_tflipflop_button_pressed():
 	print("=== ADDING T-FLIPFLOP ===")
-	var gate_scene = preload("res://scenes/gates/TFlipFlopGate.tscn")
+	var gate_scene = load("res://scenes/gates/TFlipFlopGate.tscn")
 	var gate = gate_scene.instantiate()
 	
 	var viewport_size = get_viewport_rect().size

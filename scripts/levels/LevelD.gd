@@ -407,21 +407,21 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"NAND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NANDGate.tscn")
 		"NOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NORGate.tscn")
 		"XNOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XNORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XNORGate.tscn")
 		"IMPLICATION":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
@@ -531,21 +531,21 @@ func reset_all_port_sprites():
 		if output_port and is_instance_valid(output_port):
 			var sprite = output_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	if input_block_enable:
 		var output_port = input_block_enable.get_node_or_null("Output")
 		if output_port and is_instance_valid(output_port):
 			var sprite = output_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	if output_block_q:
 		var input_port = output_block_q.get_node_or_null("InputPort")
 		if input_port and is_instance_valid(input_port):
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	for obj in movable_objects:
 		if not obj or not is_instance_valid(obj):
@@ -567,7 +567,7 @@ func reset_all_port_sprites():
 		for port in ports:
 			var sprite = port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 	
 	print("D Latch level: Reset all port sprites")
 
@@ -594,7 +594,7 @@ func _input(event):
 			if drawing_wire and start_port and is_instance_valid(start_port):
 				var end_port = get_port_under_mouse()
 				if end_port and is_instance_valid(end_port) and end_port != start_port:
-					var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+					var wire = load("res://scenes/components/Wire.tscn").instantiate()
 					wire.connect_ports(start_port, end_port)
 					add_child(wire)
 					wires.append(wire)
@@ -692,7 +692,7 @@ func create_wire_from_data(wire_data):
 			end_port = find_port_near_position(end_pos, max_distance)
 	
 	if start_port and end_port and start_port != end_port:
-		var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+		var wire = load("res://scenes/components/Wire.tscn").instantiate()
 		wire.connect_ports(start_port, end_port)
 		add_child(wire)
 		wires.append(wire)
@@ -709,7 +709,7 @@ func create_wire_from_data(wire_data):
 		return false
 
 func _on_add_not_button_pressed():
-	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
+	var not_gate = load("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 400)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
@@ -717,7 +717,7 @@ func _on_add_not_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_and_button_pressed():
-	var and_gate = preload("res://scenes/gates/ANDGate.tscn").instantiate()
+	var and_gate = load("res://scenes/gates/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 500)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
@@ -725,7 +725,7 @@ func _on_add_and_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_or_button_pressed():
-	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
+	var or_gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 600)
 	add_child(or_gate)
 	movable_objects.append(or_gate)

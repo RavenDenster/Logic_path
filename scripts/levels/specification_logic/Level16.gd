@@ -21,7 +21,7 @@ func setup_half_adder_level():
 		test_results_panel.set_titles("Desired DIFFERENCE", "Desired BORROW", "Current DIFFERENCE", "Current BORROW")
 
 func _ready():
-	level_data = preload("res://data/level_16_data.tres")
+	level_data = load("res://data/level_16_data.tres")
 
 	if not level_data:
 		push_error("Level16: level_data is null!")
@@ -74,7 +74,7 @@ func _on_add_and_button_pressed():
 		print("Cannot add more AND gates. Maximum limit reached: ", max_and_gates)
 		return
 	
-	var and_gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
+	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 400)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
@@ -89,7 +89,7 @@ func _on_add_xor_button_pressed():
 		print("Cannot add more XOR gates. Maximum limit reached: ", max_xor_gates)
 		return
 	
-	var xor_gate = preload("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
+	var xor_gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
 	xor_gate.position = Vector2(600, 600)
 	add_child(xor_gate)
 	movable_objects.append(xor_gate)
@@ -104,7 +104,7 @@ func _on_add_not_button_pressed():
 		print("Cannot add more NOT gates. Maximum limit reached: ", max_not_gates)
 		return
 	
-	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
+	var not_gate = load("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 800)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
@@ -239,11 +239,11 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NOTGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()

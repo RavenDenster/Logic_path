@@ -24,7 +24,7 @@ func reset_inputs():
 	# Не сбрасываем output_value - это важно для памяти защелки!
 	received_value = 0
 func set_default_style():
-	$Sprite2D.texture = preload("res://assets/output.png")
+	$Sprite2D.texture = load("res://assets/output.png")
 
 func set_correct_style():
-	$Sprite2D.texture = preload("res://assets/outputGreen.png")
+	$Sprite2D.texture = load("res://assets/outputGreen.png")

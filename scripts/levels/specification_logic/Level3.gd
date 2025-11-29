@@ -6,7 +6,7 @@ var max_and_gates: int = 2
 var max_not_gates: int = 2
 
 func _ready():
-	level_data = preload("res://data/level_3_data.tres")
+	level_data = load("res://data/level_3_data.tres")
 	super._ready()
 		
 	# Устанавливаем правильные метки для InputBlock2
@@ -35,7 +35,7 @@ func _on_add_and_button_pressed():
 		print("Cannot add more AND gates. Maximum limit reached: ", max_and_gates)
 		return
 	
-	var and_gate = preload("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
+	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 300)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
@@ -50,7 +50,7 @@ func _on_add_not_button_pressed():
 		print("Cannot add more NOT gates. Maximum limit reached: ", max_not_gates)
 		return
 	
-	var not_gate = preload("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
+	var not_gate = load("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
 	not_gate.position = Vector2(600, 400)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
@@ -135,9 +135,9 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NOTGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()

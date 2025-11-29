@@ -79,34 +79,34 @@ func load_initial_data(inputs_a, inputs_b, inputs_c, expected_outputs):
 	for i in range(8):
 		if i < input1_textures.size() and input1_textures[i] is TextureRect:
 			if inputs_a[i] == 1:
-				input1_textures[i].texture = preload("res://assets/pointGreen.png")
+				input1_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input1_textures[i].texture = preload("res://assets/point.png")
+				input1_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(8):
 		if i < input2_textures.size() and input2_textures[i] is TextureRect:
 			if inputs_b[i] == 1:
-				input2_textures[i].texture = preload("res://assets/pointGreen.png")
+				input2_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input2_textures[i].texture = preload("res://assets/point.png")
+				input2_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(8):
 		if i < input3_textures.size() and input3_textures[i] is TextureRect:
 			if inputs_c[i] == 1:
-				input3_textures[i].texture = preload("res://assets/pointGreen.png")
+				input3_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input3_textures[i].texture = preload("res://assets/point.png")
+				input3_textures[i].texture = load("res://assets/point.png")
 	
 	for i in range(8):
 		if i < desired_textures.size() and desired_textures[i] is TextureRect:
 			if expected_outputs[i] == 1:
-				desired_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_textures[i].texture = preload("res://assets/point.png")
+				desired_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(8):
 		if i < current_textures.size() and current_textures[i] is TextureRect:
-			current_textures[i].texture = preload("res://assets/point.png")
+			current_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanel3Inputs: Initial data loaded")
 
@@ -119,8 +119,8 @@ func update_current_outputs(actual_outputs):
 	for i in range(8):
 		if i < current_textures.size() and current_textures[i] is TextureRect:
 			if actual_outputs[i] == 1:
-				current_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				current_textures[i].texture = preload("res://assets/point.png")
+				current_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanel3Inputs: Current outputs updated")

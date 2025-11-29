@@ -330,25 +330,25 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"AND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ANDGAte.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NOTGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NOTGate.tscn")
 		"XOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
 		"NAND":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NANDGate.tscn")
 		"NOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/NORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/NORGate.tscn")
 		"XNOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XNORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XNORGate.tscn")
 		"IMPLICATION":
-			gate_scene = preload("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
 		"SEL0":
-			gate_scene = preload("res://scenes/gates/Sel0.tscn")
+			gate_scene = load("res://scenes/gates/Sel0.tscn")
 		"SEL1":
-			gate_scene = preload("res://scenes/gates/Sel1.tscn")
+			gate_scene = load("res://scenes/gates/Sel1.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()
@@ -471,7 +471,7 @@ func reset_all_port_sprites():
 			if port and is_instance_valid(port):
 				var sprite = port.get_node_or_null("Sprite2D")
 				if sprite and is_instance_valid(sprite):
-					sprite.texture = preload("res://assets/point.png")
+					sprite.texture = load("res://assets/point.png")
 
 	if has_node("OutputBlock"):
 		var output_block = $OutputBlock
@@ -479,7 +479,7 @@ func reset_all_port_sprites():
 		if input_port and is_instance_valid(input_port):
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 
 	for obj in movable_objects:
 		if not obj or not is_instance_valid(obj):
@@ -505,7 +505,7 @@ func reset_all_port_sprites():
 		for port in ports:
 			var sprite = port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
-				sprite.texture = preload("res://assets/point.png")
+				sprite.texture = load("res://assets/point.png")
 	
 	print("Two-input level: Reset all port sprites")
 
@@ -588,7 +588,7 @@ func _input(event):
 			if drawing_wire and start_port and is_instance_valid(start_port):
 				var end_port = get_port_under_mouse()
 				if end_port and is_instance_valid(end_port) and end_port != start_port:
-					var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+					var wire = load("res://scenes/components/Wire.tscn").instantiate()
 					wire.connect_ports(start_port, end_port)
 					add_child(wire)
 					wires.append(wire)

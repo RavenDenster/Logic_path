@@ -46,11 +46,11 @@ func reset_inputs():
 
 func set_correct_style():
 	if main_sprite:
-		main_sprite.texture = preload("res://assets/outputGreen.png")
+		main_sprite.texture = load("res://assets/outputGreen.png")
 
 func set_default_style():
 	if main_sprite:
-		main_sprite.texture = preload("res://assets/output.png")
+		main_sprite.texture = load("res://assets/output.png")
 
 func _on_area_mouse_entered():
 	_highlight_desired_output()

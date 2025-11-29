@@ -28,7 +28,7 @@ func connect_ports(start, end):
 	update_wire()
 	
 	var arrow = Sprite2D.new()
-	arrow.texture = preload("res://assets/arrowGreen.png")
+	arrow.texture = load("res://assets/arrowGreen.png")
 	arrow.name = "Arrow"
 	add_child(arrow)
 	arrow.scale = Vector2(0.5, 0.5)
@@ -133,9 +133,9 @@ func disconnect_ports():
 	if start_port and is_instance_valid(start_port):
 		var start_sprite = start_port.get_node_or_null("Sprite2D")
 		if start_sprite and is_instance_valid(start_sprite):
-			start_sprite.texture = preload("res://assets/point.png")
+			start_sprite.texture = load("res://assets/point.png")
 	
 	if end_port and is_instance_valid(end_port):
 		var end_sprite = end_port.get_node_or_null("Sprite2D")
 		if end_sprite and is_instance_valid(end_sprite):
-			end_sprite.texture = preload("res://assets/point.png")
+			end_sprite.texture = load("res://assets/point.png")

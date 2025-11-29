@@ -1,7 +1,7 @@
 extends "res://scripts/levels/LevelRS.gd"
 
 func _ready():
-	level_data = preload("res://data/level_25_data.tres")
+	level_data = load("res://data/level_25_data.tres")
 
 	if not level_data:
 		push_error("Level25: level_data is null!")
@@ -17,7 +17,7 @@ func _ready():
 
 func _on_add_nor_button_pressed():
 	print("Adding NOR gate")
-	var nor_gate = preload("res://scenes/gates/base_logic_el/NORGate.tscn").instantiate()
+	var nor_gate = load("res://scenes/gates/base_logic_el/NORGate.tscn").instantiate()
 	nor_gate.position = Vector2(600, 400)
 	add_child(nor_gate)
 	movable_objects.append(nor_gate)
@@ -26,7 +26,7 @@ func _on_add_nor_button_pressed():
 
 func _on_add_rs_flip_flop_button_pressed():
 	print("Adding RS Flip-Flop")
-	var rs_flip_flop = preload("res://scenes/gates/RSFlipFlop.tscn").instantiate()
+	var rs_flip_flop = load("res://scenes/gates/RSFlipFlop.tscn").instantiate()
 	rs_flip_flop.position = Vector2(600, 400)
 	add_child(rs_flip_flop)
 	movable_objects.append(rs_flip_flop)

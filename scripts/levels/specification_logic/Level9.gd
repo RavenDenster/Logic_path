@@ -4,7 +4,7 @@ var xor_gate_count: int = 0
 var max_xor_gates: int = 2
 
 func _ready():
-	level_data = preload("res://data/level_9_data.tres")
+	level_data = load("res://data/level_9_data.tres")
 	super._ready()
 	recount_gates()
 	update_gate_buttons_state()
@@ -23,7 +23,7 @@ func _on_add_xor_button_pressed():
 		print("Cannot add more XOR gates. Maximum limit reached: ", max_xor_gates)
 		return
 	
-	var xor_gate = preload("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
+	var xor_gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
 	xor_gate.position = Vector2(600, 400)
 	add_child(xor_gate)
 	movable_objects.append(xor_gate)
@@ -119,7 +119,7 @@ func create_gate_from_data(gate_data):
 	
 	match gate_type:
 		"XOR":
-			gate_scene = preload("res://scenes/gates/base_logic_el/XORGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
 	
 	if gate_scene:
 		var gate = gate_scene.instantiate()

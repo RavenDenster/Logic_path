@@ -352,7 +352,7 @@ func create_wire_from_data(wire_data):
 			end_port = find_port_near_position(end_pos, max_distance)
 	
 	if start_port and end_port and start_port != end_port:
-		var wire = preload("res://scenes/components/Wire.tscn").instantiate()
+		var wire = load("res://scenes/components/Wire.tscn").instantiate()
 		wire.connect_ports(start_port, end_port)
 		add_child(wire)
 		wires.append(wire)
@@ -492,9 +492,9 @@ func update_all_port_colors():
 		var end_sprite = wire.end_port.get_node_or_null("Sprite2D")
 		
 		if start_sprite and is_instance_valid(start_sprite):
-			start_sprite.texture = preload("res://assets/pointGreen.png")
+			start_sprite.texture = load("res://assets/pointGreen.png")
 		if end_sprite and is_instance_valid(end_sprite):
-			end_sprite.texture = preload("res://assets/pointGreen.png")
+			end_sprite.texture = load("res://assets/pointGreen.png")
 	
 	print("Updated port colors for ", wires.size(), " wires")
 		
@@ -640,7 +640,7 @@ func _on_add_rs_flip_flop_button_pressed(): pass
 
 func _on_add_onebit_comparator_button_pressed():
 	print("Adding OneBitComparator gate")
-	var gate_scene = preload("res://scenes/gates/OneBitComparatorGate.tscn")
+	var gate_scene = load("res://scenes/gates/OneBitComparatorGate.tscn")
 	var gate = gate_scene.instantiate()
 	
 	# Позиция рядом с курсором или в центре экрана

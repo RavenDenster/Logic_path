@@ -162,36 +162,36 @@ func load_initial_data(inputs_a, inputs_b, expected_sum, expected_carry):
 	for i in range(4):
 		if i < input1_textures.size() and input1_textures[i] is TextureRect:
 			if inputs_a[i] == 1:
-				input1_textures[i].texture = preload("res://assets/pointGreen.png")
+				input1_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input1_textures[i].texture = preload("res://assets/point.png")
+				input1_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(4):
 		if i < input2_textures.size() and input2_textures[i] is TextureRect:
 			if inputs_b[i] == 1:
-				input2_textures[i].texture = preload("res://assets/pointGreen.png")
+				input2_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				input2_textures[i].texture = preload("res://assets/point.png")
+				input2_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(4):
 		if i < desired_sum_textures.size() and desired_sum_textures[i] is TextureRect:
 			if expected_sum[i] == 1:
-				desired_sum_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_sum_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_sum_textures[i].texture = preload("res://assets/point.png")
+				desired_sum_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(4):
 		if i < desired_carry_textures.size() and desired_carry_textures[i] is TextureRect:
 			if expected_carry[i] == 1:
-				desired_carry_textures[i].texture = preload("res://assets/pointGreen.png")
+				desired_carry_textures[i].texture = load("res://assets/pointGreen.png")
 			else:
-				desired_carry_textures[i].texture = preload("res://assets/point.png")
+				desired_carry_textures[i].texture = load("res://assets/point.png")
 
 	for i in range(4):
 		if i < current_sum_textures.size() and current_sum_textures[i] is TextureRect:
-			current_sum_textures[i].texture = preload("res://assets/point.png")
+			current_sum_textures[i].texture = load("res://assets/point.png")
 		if i < current_carry_textures.size() and current_carry_textures[i] is TextureRect:
-			current_carry_textures[i].texture = preload("res://assets/point.png")
+			current_carry_textures[i].texture = load("res://assets/point.png")
 	
 	print("TestResultsPanelHalfAdder: Initial data loaded")
 
@@ -215,20 +215,20 @@ func update_current_outputs(sum_outputs, carry_outputs):
 
 		if i < current_sum_textures.size() and current_sum_textures[i] is TextureRect:
 			if sum_outputs[i] == 1:
-				current_sum_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_sum_textures[i].texture = load("res://assets/pointGreen.png")
 				print("Set current_sum[", i, "] to green")
 			else:
-				current_sum_textures[i].texture = preload("res://assets/point.png")
+				current_sum_textures[i].texture = load("res://assets/point.png")
 				print("Set current_sum[", i, "] to red")
 		else:
 			print("WARNING: current_sum_textures[", i, "] is invalid")
 
 		if i < current_carry_textures.size() and current_carry_textures[i] is TextureRect:
 			if carry_outputs[i] == 1:
-				current_carry_textures[i].texture = preload("res://assets/pointGreen.png")
+				current_carry_textures[i].texture = load("res://assets/pointGreen.png")
 				print("Set current_carry[", i, "] to green")
 			else:
-				current_carry_textures[i].texture = preload("res://assets/point.png")
+				current_carry_textures[i].texture = load("res://assets/point.png")
 				print("Set current_carry[", i, "] to red")
 		else:
 			print("WARNING: current_carry_textures[", i, "] is invalid")
