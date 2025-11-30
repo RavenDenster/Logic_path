@@ -41,7 +41,7 @@ func _on_add_and_button_pressed():
 	print("AND gate added. Current count: ", and_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var and_button = gate_buttons_container.get_node_or_null("AND")
 	if and_button:
 		and_button.disabled = (and_gate_count >= max_and_gates)

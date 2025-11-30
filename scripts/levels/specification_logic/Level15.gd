@@ -89,7 +89,7 @@ func _on_add_cout0_button_pressed():
 	print("Cout0 added. Current count: ", cout0_count)
 
 func update_component_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var half_adder_button = gate_buttons_container.get_node_or_null("HALF_ADDER")
 	var full_adder_button = gate_buttons_container.get_node_or_null("FULL_ADDER")
 	var cout0_button = gate_buttons_container.get_node_or_null("COUT0")

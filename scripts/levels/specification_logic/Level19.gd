@@ -124,7 +124,7 @@ func _on_add_nxor_button_pressed():
 	print("XNOR gate added. Current count: ", xnor_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var and_button = gate_buttons_container.get_node_or_null("AND")
 	var not_button = gate_buttons_container.get_node_or_null("NOT")
 	var xnor_button = gate_buttons_container.get_node_or_null("XNOR")

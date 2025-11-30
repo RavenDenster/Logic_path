@@ -6,8 +6,41 @@ var desired_textures = []
 var current_textures = []
 
 func _ready():
+	anchor_left = 0.0
+	anchor_right = 1.0
+	anchor_top = 1.0
+	anchor_bottom = 1.0
+	
+	_update_panel_position()
+
+	# Устанавливаем фиксированную высоту панели
+	custom_minimum_size = Vector2(0, 160)  # Увеличили высоту в 2 раза
+	
+	var viewport_size = get_viewport_rect().size
+	size = Vector2(viewport_size.x, 160)
+	
+	# Подписываемся на изменение размера окна
+	get_tree().root.connect("size_changed", _on_window_size_changed)
+	
 	await get_tree().process_frame
 	initialize_textures()
+	
+func _update_panel_position():
+	var window_size = get_viewport_rect().size
+	custom_minimum_size = Vector2(window_size.x, 160)
+	size = Vector2(window_size.x, 160)
+	position = Vector2(0, window_size.y - 160)
+	queue_redraw()
+
+func _on_window_size_changed():
+	# Обновляем размер панели при изменении размера окна
+	var window_size = get_viewport_rect().size
+	custom_minimum_size = Vector2(window_size.x, 160)
+	size = Vector2(window_size.x, 160)
+	position = Vector2(0, window_size.y - 160)
+	
+	# Принудительно обновляем layout
+	queue_redraw()
 
 func initialize_textures():
 	if not has_node("Background/GridContainer"):
@@ -76,7 +109,6 @@ func load_initial_data(inputs_a, inputs_b, expected_outputs):
 	print("TestResultsPanel: Initial data loaded")
 
 func update_results(inputs_a, inputs_b, expected_outputs, actual_outputs):
-
 	load_initial_data(inputs_a, inputs_b, expected_outputs)
 
 	for i in range(4):
@@ -88,7 +120,6 @@ func update_results(inputs_a, inputs_b, expected_outputs, actual_outputs):
 	print("TestResultsPanel: Results updated with current outputs")
 
 func update_current_outputs(actual_outputs):
-
 	if current_textures.is_empty():
 		print("ERROR: Textures arrays are not initialized!")
 		return

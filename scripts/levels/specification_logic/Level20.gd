@@ -55,7 +55,7 @@ func _ready():
 
 # ДОБАВЬТЕ ЭТОТ МЕТОД ДЛЯ ПЕРЕПОДКЛЮЧЕНИЯ КНОПОК
 func _reconnect_buttons():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	
 	# Получаем список всех кнопок
 	var buttons = [
@@ -171,7 +171,7 @@ func _on_add_or_button_pressed():
 	print("OR gate added. Current count: ", or_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var and_button = gate_buttons_container.get_node_or_null("AND")
 	var or_button = gate_buttons_container.get_node_or_null("OR")
 	var comparator_button = gate_buttons_container.get_node_or_null("OneBitComparator")

@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://d02hv2sxnw4st"]
 
-[ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="1_7fcbp"]
 [ext_resource type="Script" uid="uid://bh0ryxsknjhss" path="res://scripts/levels/specification_logic/Level18.gd" id="1_4230v"]
 [ext_resource type="PackedScene" uid="uid://5cahp04cxmr" path="res://scenes/components/InputBlock2.tscn" id="2_4230v"]
 [ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="3_i37j7"]
+[ext_resource type="Texture2D" uid="uid://b5odrr6bcw7vl" path="res://assets/wide_spacing_waves_4k.png" id="4_4230v"]
 [ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="4_mna0h"]
 [ext_resource type="PackedScene" uid="uid://7i08yp8fvyqu" path="res://scenes/ui/bottom_panels/BottonPanelALU.tscn" id="6_i37j7"]
 
@@ -16,14 +16,19 @@ position = Vector2(413, 508)
 [node name="OutputBlock" parent="." instance=ExtResource("3_i37j7")]
 position = Vector2(1323, 501)
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -100
+
+[node name="Background" type="TextureRect" parent="CanvasLayer"]
 z_index = -35
-offset_left = 3.0
-offset_top = -3.0
-offset_right = 1921.0
-offset_bottom = 1079.0
-texture = ExtResource("1_7fcbp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_4230v")
 expand_mode = 1
+stretch_mode = 3
 
 [node name="TopPanel" parent="." instance=ExtResource("4_mna0h")]
 

@@ -222,7 +222,7 @@ func setup_back_button():
 		back_button = TextureButton.new()
 		back_button.name = "BackButton"
 		back_button.position = Vector2(20, 20)
-		var texture = load("res://assets/menu.png") if ResourceLoader.exists("res://assets/menu.png") else null
+		var texture = preload("res://assets/menu.png") if ResourceLoader.exists("res://assets/menu.png") else null
 		if texture:
 			back_button.texture_normal = texture
 		back_button.custom_minimum_size = Vector2(80, 80)
@@ -294,9 +294,9 @@ func create_level_buttons():
 			button.name = "Level%dButton" % level.number
 			button.custom_minimum_size = Vector2(80, 80)
 			
-			var completed_texture = load("res://assets/checkmark.png") if ResourceLoader.exists("res://assets/checkmark.png") else null
-			var normal_texture = load("res://assets/in_progress.png") if ResourceLoader.exists("res://assets/in_progress.png") else null
-			var locked_texture = load("res://assets/checkmark_block.png") if ResourceLoader.exists("res://assets/checkmark_block.png") else null
+			var completed_texture = preload("res://assets/checkmark.png") if ResourceLoader.exists("res://assets/checkmark.png") else null
+			var normal_texture = preload("res://assets/in_progress.png") if ResourceLoader.exists("res://assets/in_progress.png") else null
+			var locked_texture = preload("res://assets/checkmark_block.png") if ResourceLoader.exists("res://assets/checkmark_block.png") else null
 			
 			# Уровень разблокирован, если разблокирована группа или через чит
 			var level_unlocked = group_unlocked or is_unlocked

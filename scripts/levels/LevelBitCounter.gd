@@ -712,7 +712,7 @@ func _setup_top_panel_buttons():
 	map_button.connect("pressed", _on_map_button_pressed)
 	run_button.connect("pressed", _on_test_pressed)
 
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 
 	for child in gate_buttons_container.get_children():
 		child.hide()

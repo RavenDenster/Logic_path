@@ -4,7 +4,7 @@ var or_gate_count: int = 0
 var max_or_gates: int = 2
 
 func _ready():
-	level_data = load("res://data/level_1_data.tres")
+	level_data = preload("res://data/level_1_data.tres")
 	super._ready()
 	
 	# Устанавливаем правильные метки для InputBlock2
@@ -20,7 +20,7 @@ func _on_add_or_button_pressed():
 		print("Cannot add more OR gates. Maximum limit reached: ", max_or_gates)
 		return
 	
-	var or_gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
+	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
 	or_gate.position = Vector2(600, 400)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
@@ -31,7 +31,7 @@ func _on_add_or_button_pressed():
 	print("OR gate added. Current count: ", or_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var or_button = gate_buttons_container.get_node_or_null("OR")
 	if or_button:
 		or_button.disabled = (or_gate_count >= max_or_gates)

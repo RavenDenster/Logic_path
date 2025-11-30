@@ -58,7 +58,7 @@ func recount_components():
 	print("Recounted components - AND: ", and_gate_count, ", OR: ", or_gate_count, ", XOR: ", xor_gate_count, ", MUX4to1: ", mux4to1_count, ", OpCode: ", opcode_block_count)
 
 func update_component_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var and_button = gate_buttons_container.get_node_or_null("AND")
 	var or_button = gate_buttons_container.get_node_or_null("OR")
 	var xor_button = gate_buttons_container.get_node_or_null("XOR")

@@ -61,7 +61,7 @@ func _on_add_not_button_pressed():
 	print("NOT gate added. Current count: ", not_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var or_button = gate_buttons_container.get_node_or_null("OR")
 	var not_button = gate_buttons_container.get_node_or_null("NOT")
 	

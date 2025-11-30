@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bytueciyllgq5"]
 
 [ext_resource type="Script" uid="uid://4om40ojp1kc1" path="res://scripts/levels/specification_logic/Level23.gd" id="1_c6xcy"]
-[ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="2_278qv"]
+[ext_resource type="Texture2D" uid="uid://b5odrr6bcw7vl" path="res://assets/wide_spacing_waves_4k.png" id="2_c6xcy"]
 [ext_resource type="PackedScene" uid="uid://5cahp04cxmr" path="res://scenes/components/InputBlock2.tscn" id="3_cil24"]
 [ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="4_i0u8l"]
 [ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="5_rixjv"]
@@ -10,14 +10,19 @@
 [node name="Level23" type="Node2D"]
 script = ExtResource("1_c6xcy")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -100
+
+[node name="Background" type="TextureRect" parent="CanvasLayer"]
 z_index = -35
-offset_left = 3.0
-offset_top = -3.0
-offset_right = 1921.0
-offset_bottom = 1079.0
-texture = ExtResource("2_278qv")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_c6xcy")
 expand_mode = 1
+stretch_mode = 3
 
 [node name="InputBlock" parent="." instance=ExtResource("3_cil24")]
 position = Vector2(377, 432)

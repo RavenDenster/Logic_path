@@ -1,12 +1,17 @@
 [gd_scene load_steps=3 format=3 uid="uid://bcc05miy2038w"]
 
 [ext_resource type="Script" uid="uid://d3jd7h7wqosw2" path="res://scripts/ui/LevelMap.gd" id="1_sfsu6"]
-[ext_resource type="Texture2D" uid="uid://di8y1ro7bko22" path="res://assets/wide_spacing_waves_1920x1080.png" id="2_yhl7l"]
+[ext_resource type="Texture2D" uid="uid://b5odrr6bcw7vl" path="res://assets/wide_spacing_waves_4k.png" id="2_sfsu6"]
 
 [node name="LevelMap" type="CanvasLayer"]
 script = ExtResource("1_sfsu6")
 
 [node name="Background" type="TextureRect" parent="."]
-offset_right = 1922.0
-offset_bottom = 1088.0
-texture = ExtResource("2_yhl7l")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_sfsu6")
+expand_mode = 1
+stretch_mode = 3

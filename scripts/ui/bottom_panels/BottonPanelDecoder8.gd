@@ -1,4 +1,3 @@
-# TestResultsPanelDecoder8.gd
 extends Control
 
 var input_a_textures = []
@@ -22,24 +21,61 @@ var current_y6_textures = []
 var current_y7_textures = []
 
 func _ready():
+	# Ждем два кадра, чтобы окно точно было инициализировано
 	await get_tree().process_frame
+	await get_tree().process_frame
+	
+	# Устанавливаем правильную позицию и размер при инициализации
+	_update_panel_position()
+	
+	# Подписываемся на изменение размера окна
+	get_tree().root.connect("size_changed", _on_window_size_changed)
+	
 	initialize_textures()
 
+func _update_panel_position():
+	var window_size = get_viewport_rect().size
+	custom_minimum_size = Vector2(window_size.x, 320)
+	size = Vector2(window_size.x, 320)
+	position = Vector2(0, window_size.y - 320)
+	
+	# Центрируем содержимое панели
+	_center_panel_content()
+	
+	queue_redraw()
+
+func _center_panel_content():
+	var background = $Background
+	var main_container = background.get_node_or_null("MainContainer")
+	
+	if main_container:
+		# Центрируем MainContainer по горизонтали
+		main_container.position.x = (background.size.x - main_container.size.x) / 2
+
+func _on_window_size_changed():
+	_update_panel_position()
+
+func get_texture_rect_internal(grid_container, total_children, columns, row, col):
+	var index = row * columns + col
+	if index < total_children:
+		var child = grid_container.get_child(index)
+		if child is TextureRect:
+			return child
+	return null
+
 func initialize_textures():
-	if not has_node("Background/HBoxContainer/GridContainer") or not has_node("Background/HBoxContainer2/GridContainer"):
-		print("ERROR: GridContainers not found in new structure!")
+	# Левый GridContainer (11 строк) - Inputs & Desired
+	var left_grid_container = get_node_or_null("Background/MainContainer/LeftColumn/GridContainer")
+	if not left_grid_container:
+		print("ERROR: Left GridContainer not found!")
 		return
 
-	var left_grid_container = $Background/HBoxContainer/GridContainer
-	var right_grid_container = $Background/HBoxContainer2/GridContainer
+	var left_total_children = left_grid_container.get_child_count()
+	print("Left GridContainer has ", left_total_children, " children")
 
-	if left_grid_container.get_child_count() < 99:  # 11 строк × 9 элементов
-		print("ERROR: Left GridContainer has only ", left_grid_container.get_child_count(), " children, expected 99")
-		return
-
-	if right_grid_container.get_child_count() < 72:  # 8 строк × 9 элементов
-		print("ERROR: Right GridContainer has only ", right_grid_container.get_child_count(), " children, expected 72")
-		return
+	var left_rows = 11
+	var left_columns = 9
+	var test_cases = 8
 
 	input_a_textures = []
 	input_b_textures = []
@@ -52,6 +88,54 @@ func initialize_textures():
 	desired_y5_textures = []
 	desired_y6_textures = []
 	desired_y7_textures = []
+
+	# Заполняем левый GridContainer (11 строк)
+	for i in range(test_cases):
+		var tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 0, i + 1)
+		if tex: input_a_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 1, i + 1)
+		if tex: input_b_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 2, i + 1)
+		if tex: input_c_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 3, i + 1)
+		if tex: desired_y0_textures.append(tex)
+		
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 4, i + 1)
+		if tex: desired_y1_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 5, i + 1)
+		if tex: desired_y2_textures.append(tex)
+		
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 6, i + 1)
+		if tex: desired_y3_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 7, i + 1)
+		if tex: desired_y4_textures.append(tex)
+		
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 8, i + 1)
+		if tex: desired_y5_textures.append(tex)
+
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 9, i + 1)
+		if tex: desired_y6_textures.append(tex)
+		
+		tex = get_texture_rect_internal(left_grid_container, left_total_children, left_columns, 10, i + 1)
+		if tex: desired_y7_textures.append(tex)
+
+	# Правый GridContainer (8 строк) - Current Outputs
+	var right_grid_container = get_node_or_null("Background/MainContainer/RightColumn/GridContainer")
+	if not right_grid_container:
+		print("ERROR: Right GridContainer not found!")
+		return
+
+	var right_total_children = right_grid_container.get_child_count()
+	print("Right GridContainer has ", right_total_children, " children")
+
+	var right_rows = 8
+	var right_columns = 9
+
 	current_y0_textures = []
 	current_y1_textures = []
 	current_y2_textures = []
@@ -60,240 +144,118 @@ func initialize_textures():
 	current_y5_textures = []
 	current_y6_textures = []
 	current_y7_textures = []
+
+	# Заполняем правый GridContainer (8 строк)
+	for i in range(test_cases):
+		var tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 0, i + 1)
+		if tex: current_y0_textures.append(tex)
+		
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 1, i + 1)
+		if tex: current_y1_textures.append(tex)
+		
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 2, i + 1)
+		if tex: current_y2_textures.append(tex)
+		
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 3, i + 1)
+		if tex: current_y3_textures.append(tex)
+		
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 4, i + 1)
+		if tex: current_y4_textures.append(tex)
+		
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 5, i + 1)
+		if tex: current_y5_textures.append(tex)
+		
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 6, i + 1)
+		if tex: current_y6_textures.append(tex)
+		
+		tex = get_texture_rect_internal(right_grid_container, right_total_children, right_columns, 7, i + 1)
+		if tex: current_y7_textures.append(tex)
 	
-	# ЛЕВАЯ ЧАСТЬ (Inputs & Desired) - 11 строк
-	
-	# Input A (строка 0) - пропускаем Label (индекс 0), берем TextureRect с 1 по 8
-	for i in range(1, 9):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			input_a_textures.append(child)
-
-	# Input B (строка 1) - индексы 9-16
-	for i in range(10, 18):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			input_b_textures.append(child)
-
-	# Input C (строка 2) - индексы 18-25
-	for i in range(19, 27):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			input_c_textures.append(child)
-
-	# Desired Y0 (строка 3) - индексы 27-34
-	for i in range(28, 36):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y0_textures.append(child)
-
-	# Desired Y1 (строка 4) - индексы 36-43
-	for i in range(37, 45):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y1_textures.append(child)
-
-	# Desired Y2 (строка 5) - индексы 45-52
-	for i in range(46, 54):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y2_textures.append(child)
-
-	# Desired Y3 (строка 6) - индексы 54-61
-	for i in range(55, 63):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y3_textures.append(child)
-
-	# Desired Y4 (строка 7) - индексы 63-70
-	for i in range(64, 72):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y4_textures.append(child)
-
-	# Desired Y5 (строка 8) - индексы 72-79
-	for i in range(73, 81):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y5_textures.append(child)
-
-	# Desired Y6 (строка 9) - индексы 81-88
-	for i in range(82, 90):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y6_textures.append(child)
-
-	# Desired Y7 (строка 10) - индексы 90-97
-	for i in range(91, 99):
-		var child = left_grid_container.get_child(i)
-		if child is TextureRect:
-			desired_y7_textures.append(child)
-
-	# ПРАВАЯ ЧАСТЬ (Current Outputs) - 8 строк
-	
-	# Current Y0 (строка 0) - индексы 0-8 (пропускаем Label индекс 0, берем 1-8)
-	for i in range(1, 9):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y0_textures.append(child)
-
-	# Current Y1 (строка 1) - индексы 9-16
-	for i in range(10, 18):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y1_textures.append(child)
-
-	# Current Y2 (строка 2) - индексы 18-25
-	for i in range(19, 27):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y2_textures.append(child)
-
-	# Current Y3 (строка 3) - индексы 27-34
-	for i in range(28, 36):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y3_textures.append(child)
-
-	# Current Y4 (строка 4) - индексы 36-43
-	for i in range(37, 45):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y4_textures.append(child)
-
-	# Current Y5 (строка 5) - индексы 45-52
-	for i in range(46, 54):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y5_textures.append(child)
-
-	# Current Y6 (строка 6) - индексы 54-61
-	for i in range(55, 63):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y6_textures.append(child)
-
-	# Current Y7 (строка 7) - индексы 63-70
-	for i in range(64, 72):
-		var child = right_grid_container.get_child(i)
-		if child is TextureRect:
-			current_y7_textures.append(child)
-	
-	print("TestResultsPanelDecoder8: Successfully initialized with 11+8 structure")
-	print("Left panel (11 rows): ", input_a_textures.size(), " A, ", input_b_textures.size(), " B, ", input_c_textures.size(), " C, ",
-		  desired_y0_textures.size(), " desired Y0, ", desired_y1_textures.size(), " desired Y1, ",
-		  desired_y2_textures.size(), " desired Y2, ", desired_y3_textures.size(), " desired Y3, ",
-		  desired_y4_textures.size(), " desired Y4, ", desired_y5_textures.size(), " desired Y5, ",
-		  desired_y6_textures.size(), " desired Y6, ", desired_y7_textures.size(), " desired Y7")
-	print("Right panel (8 rows): ", current_y0_textures.size(), " current Y0, ",
-		  current_y1_textures.size(), " current Y1, ", current_y2_textures.size(), " current Y2, ",
-		  current_y3_textures.size(), " current Y3, ", current_y4_textures.size(), " current Y4, ",
-		  current_y5_textures.size(), " current Y5, ", current_y6_textures.size(), " current Y6, ",
-		  current_y7_textures.size(), " current Y7")
+	print("TestResultsPanelDecoder8: Successfully initialized with")
+	print("  Input A: ", input_a_textures.size())
+	print("  Input B: ", input_b_textures.size())
+	print("  Input C: ", input_c_textures.size())
+	print("  Desired Y0: ", desired_y0_textures.size())
+	print("  Desired Y1: ", desired_y1_textures.size())
+	print("  Desired Y2: ", desired_y2_textures.size())
+	print("  Desired Y3: ", desired_y3_textures.size())
+	print("  Desired Y4: ", desired_y4_textures.size())
+	print("  Desired Y5: ", desired_y5_textures.size())
+	print("  Desired Y6: ", desired_y6_textures.size())
+	print("  Desired Y7: ", desired_y7_textures.size())
+	print("  Current Y0: ", current_y0_textures.size())
+	print("  Current Y1: ", current_y1_textures.size())
+	print("  Current Y2: ", current_y2_textures.size())
+	print("  Current Y3: ", current_y3_textures.size())
+	print("  Current Y4: ", current_y4_textures.size())
+	print("  Current Y5: ", current_y5_textures.size())
+	print("  Current Y6: ", current_y6_textures.size())
+	print("  Current Y7: ", current_y7_textures.size())
 
 func load_initial_data(inputs_a, inputs_b, inputs_c, expected_y0, expected_y1, expected_y2, expected_y3, expected_y4, expected_y5, expected_y6, expected_y7):
-	if (input_a_textures.is_empty() or input_b_textures.is_empty() or input_c_textures.is_empty()):
-		print("ERROR: Input textures arrays are not initialized!")
-		return
+	if input_a_textures.is_empty():
+		print("ERROR: Textures arrays are not initialized!")
+		initialize_textures()
+		if input_a_textures.is_empty():
+			return
 	
-	print("Loading initial data for 3→8 decoder panel with new structure")
+	var test_cases = min(8, input_a_textures.size())
+	print("Loading initial data for ", test_cases, " test cases")
 	
-	# ЛЕВАЯ ЧАСТЬ: Inputs и Desired outputs (11 строк)
+	# Левый столбец - входы и ожидаемые выходы
+	for i in range(test_cases):
+		update_texture(input_a_textures[i], inputs_a[i] if i < inputs_a.size() else 0)
+		update_texture(input_b_textures[i], inputs_b[i] if i < inputs_b.size() else 0)
+		update_texture(input_c_textures[i], inputs_c[i] if i < inputs_c.size() else 0)
+		update_texture(desired_y0_textures[i], expected_y0[i] if i < expected_y0.size() else 0)
+		update_texture(desired_y1_textures[i], expected_y1[i] if i < expected_y1.size() else 0)
+		update_texture(desired_y2_textures[i], expected_y2[i] if i < expected_y2.size() else 0)
+		update_texture(desired_y3_textures[i], expected_y3[i] if i < expected_y3.size() else 0)
+		update_texture(desired_y4_textures[i], expected_y4[i] if i < expected_y4.size() else 0)
+		update_texture(desired_y5_textures[i], expected_y5[i] if i < expected_y5.size() else 0)
+		update_texture(desired_y6_textures[i], expected_y6[i] if i < expected_y6.size() else 0)
+		update_texture(desired_y7_textures[i], expected_y7[i] if i < expected_y7.size() else 0)
 	
-	# Input A
-	for i in range(8):
-		if i < input_a_textures.size():
-			if inputs_a[i] == 1:
-				input_a_textures[i].texture = load("res://assets/pointGreen.png")
-			else:
-				input_a_textures[i].texture = load("res://assets/point.png")
+	# Правый столбец - текущие выходы (сбрасываем)
+	for i in range(test_cases):
+		update_texture(current_y0_textures[i] if i < current_y0_textures.size() else null, 0)
+		update_texture(current_y1_textures[i] if i < current_y1_textures.size() else null, 0)
+		update_texture(current_y2_textures[i] if i < current_y2_textures.size() else null, 0)
+		update_texture(current_y3_textures[i] if i < current_y3_textures.size() else null, 0)
+		update_texture(current_y4_textures[i] if i < current_y4_textures.size() else null, 0)
+		update_texture(current_y5_textures[i] if i < current_y5_textures.size() else null, 0)
+		update_texture(current_y6_textures[i] if i < current_y6_textures.size() else null, 0)
+		update_texture(current_y7_textures[i] if i < current_y7_textures.size() else null, 0)
 	
-	# Input B
-	for i in range(8):
-		if i < input_b_textures.size():
-			if inputs_b[i] == 1:
-				input_b_textures[i].texture = load("res://assets/pointGreen.png")
-			else:
-				input_b_textures[i].texture = load("res://assets/point.png")
-	
-	# Input C
-	for i in range(8):
-		if i < input_c_textures.size():
-			if inputs_c[i] == 1:
-				input_c_textures[i].texture = load("res://assets/pointGreen.png")
-			else:
-				input_c_textures[i].texture = load("res://assets/point.png")
-	
-	# Desired outputs Y0-Y7
-	load_desired_outputs(desired_y0_textures, expected_y0)
-	load_desired_outputs(desired_y1_textures, expected_y1)
-	load_desired_outputs(desired_y2_textures, expected_y2)
-	load_desired_outputs(desired_y3_textures, expected_y3)
-	load_desired_outputs(desired_y4_textures, expected_y4)
-	load_desired_outputs(desired_y5_textures, expected_y5)
-	load_desired_outputs(desired_y6_textures, expected_y6)
-	load_desired_outputs(desired_y7_textures, expected_y7)
-	
-	# ПРАВАЯ ЧАСТЬ: Current outputs (очищаем) - 8 строк
-	clear_current_outputs()
-	
-	print("TestResultsPanelDecoder8: Initial data loaded with 11+8 structure")
-
-func load_desired_outputs(texture_array, expected_values):
-	for i in range(8):
-		if i < texture_array.size() and texture_array[i] is TextureRect:
-			if expected_values[i] == 1:
-				texture_array[i].texture = load("res://assets/pointGreen.png")
-			else:
-				texture_array[i].texture = load("res://assets/point.png")
-
-func clear_current_outputs():
-	# Очищаем все текущие выходы (ставим серые точки)
-	for i in range(8):
-		if i < current_y0_textures.size():
-			current_y0_textures[i].texture = load("res://assets/point.png")
-		if i < current_y1_textures.size():
-			current_y1_textures[i].texture = load("res://assets/point.png")
-		if i < current_y2_textures.size():
-			current_y2_textures[i].texture = load("res://assets/point.png")
-		if i < current_y3_textures.size():
-			current_y3_textures[i].texture = load("res://assets/point.png")
-		if i < current_y4_textures.size():
-			current_y4_textures[i].texture = load("res://assets/point.png")
-		if i < current_y5_textures.size():
-			current_y5_textures[i].texture = load("res://assets/point.png")
-		if i < current_y6_textures.size():
-			current_y6_textures[i].texture = load("res://assets/point.png")
-		if i < current_y7_textures.size():
-			current_y7_textures[i].texture = load("res://assets/point.png")
+	print("TestResultsPanelDecoder8: Initial data loaded for ", test_cases, " test cases")
 
 func update_current_outputs(actual_y0, actual_y1, actual_y2, actual_y3, actual_y4, actual_y5, actual_y6, actual_y7):
-	# Проверяем что массивы текущих выходов инициализированы
-	if (current_y0_textures.is_empty() or current_y1_textures.is_empty() or
-		current_y2_textures.is_empty() or current_y3_textures.is_empty() or
-		current_y4_textures.is_empty() or current_y5_textures.is_empty() or
-		current_y6_textures.is_empty() or current_y7_textures.is_empty()):
+	if current_y0_textures.is_empty():
 		print("ERROR: Current textures arrays are not initialized!")
-		return
-	
-	print("Updating current outputs for 3→8 decoder in right panel")
-	
-	# ПРАВАЯ ЧАСТЬ: Обновляем Current outputs (8 строк)
-	update_current_output(current_y0_textures, actual_y0)
-	update_current_output(current_y1_textures, actual_y1)
-	update_current_output(current_y2_textures, actual_y2)
-	update_current_output(current_y3_textures, actual_y3)
-	update_current_output(current_y4_textures, actual_y4)
-	update_current_output(current_y5_textures, actual_y5)
-	update_current_output(current_y6_textures, actual_y6)
-	update_current_output(current_y7_textures, actual_y7)
-	
-	print("TestResultsPanelDecoder8: Current outputs updated successfully in right panel")
+		initialize_textures()
+		if current_y0_textures.is_empty():
+			print("CRITICAL: Still cannot initialize current textures!")
+			return
 
-func update_current_output(texture_array, actual_values):
-	for i in range(8):
-		if i < texture_array.size() and texture_array[i] is TextureRect:
-			if actual_values[i] == 1:
-				texture_array[i].texture = load("res://assets/pointGreen.png")
-			else:
-				texture_array[i].texture = load("res://assets/point.png")
+	var test_cases = min(8, current_y0_textures.size())
+	print("Updating current outputs for ", test_cases, " test cases")
+
+	# Обновляем только правый столбец (текущие выходы)
+	for i in range(test_cases):
+		update_texture(current_y0_textures[i], actual_y0[i] if i < actual_y0.size() else 0)
+		update_texture(current_y1_textures[i], actual_y1[i] if i < actual_y1.size() else 0)
+		update_texture(current_y2_textures[i], actual_y2[i] if i < actual_y2.size() else 0)
+		update_texture(current_y3_textures[i], actual_y3[i] if i < actual_y3.size() else 0)
+		update_texture(current_y4_textures[i], actual_y4[i] if i < actual_y4.size() else 0)
+		update_texture(current_y5_textures[i], actual_y5[i] if i < actual_y5.size() else 0)
+		update_texture(current_y6_textures[i], actual_y6[i] if i < actual_y6.size() else 0)
+		update_texture(current_y7_textures[i], actual_y7[i] if i < actual_y7.size() else 0)
+	
+	print("TestResultsPanelDecoder8: Current outputs updated for ", test_cases, " test cases")
+
+func update_texture(texture_rect, value):
+	if texture_rect and is_instance_valid(texture_rect):
+		if value == 1:
+			texture_rect.texture = preload("res://assets/pointGreen.png")
+		else:
+			texture_rect.texture = preload("res://assets/point.png")

@@ -15,10 +15,43 @@ var current_sum_label: Label
 var current_carry_label: Label
 
 func _ready():
+	anchor_left = 0.0
+	anchor_right = 1.0
+	anchor_top = 1.0
+	anchor_bottom = 1.0
+	
+	_update_panel_position()
+
+	# Устанавливаем фиксированную высоту панели
+	custom_minimum_size = Vector2(0, 220)  # Увеличили высоту в 2 раза
+	
+	var viewport_size = get_viewport_rect().size
+	size = Vector2(viewport_size.x, 220)
+	
+	# Подписываемся на изменение размера окна
+	get_tree().root.connect("size_changed", _on_window_size_changed)
+	
 	await get_tree().process_frame
 	initialize_textures()
 	initialized = true
  
+func _update_panel_position():
+	var window_size = get_viewport_rect().size
+	custom_minimum_size = Vector2(window_size.x, 220)
+	size = Vector2(window_size.x, 220)
+	position = Vector2(0, window_size.y - 220)
+	queue_redraw()
+
+func _on_window_size_changed():
+	# Обновляем размер панели при изменении размера окна
+	var window_size = get_viewport_rect().size
+	custom_minimum_size = Vector2(window_size.x, 220)
+	size = Vector2(window_size.x, 220)
+	position = Vector2(0, window_size.y - 220)
+	
+	# Принудительно обновляем layout
+	queue_redraw()
+
 func initialize_textures():
 	if not has_node("Background/GridContainer"):
 		print("ERROR: Background/GridContainer not found!")

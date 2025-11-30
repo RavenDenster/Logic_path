@@ -5,10 +5,10 @@ var f_press_count = 0
 var cheat_active = false
 
 func _ready():
-	var play_campaign_btn = get_node_or_null("VBoxContainer/PlayCampaignButton")
-	var open_map_btn = get_node_or_null("VBoxContainer/OpenMapButton")
-	var new_game_btn = get_node_or_null("VBoxContainer/NewGameButton")
-	var quit_btn = get_node_or_null("VBoxContainer/QuitButton")
+	var play_campaign_btn = get_node_or_null("CenterContainer/VBoxContainer/PlayCampaignButton")
+	var open_map_btn = get_node_or_null("CenterContainer/VBoxContainer/OpenMapButton")
+	var new_game_btn = get_node_or_null("CenterContainer/VBoxContainer/NewGameButton")
+	var quit_btn = get_node_or_null("CenterContainer/VBoxContainer/QuitButton")
 	
 	if play_campaign_btn:
 		play_campaign_btn.pressed.connect(_on_play_campaign_pressed)
