@@ -75,7 +75,8 @@ func _on_add_and_button_pressed():
 	
 	print("Adding AND gate")
 	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
-	and_gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	and_gate.position = Vector2(viewport_size.x - 400, 150)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
 	and_gate_count += 1
@@ -91,7 +92,8 @@ func _on_add_not_button_pressed():
 	
 	print("Adding NOT gate")
 	var not_gate = load("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
-	not_gate.position = Vector2(600, 500)
+	var viewport_size = get_viewport().get_visible_rect().size
+	not_gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
 	not_gate_count += 1

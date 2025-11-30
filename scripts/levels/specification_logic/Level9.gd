@@ -24,7 +24,8 @@ func _on_add_xor_button_pressed():
 		return
 	
 	var xor_gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
-	xor_gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	xor_gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(xor_gate)
 	movable_objects.append(xor_gate)
 	xor_gate_count += 1

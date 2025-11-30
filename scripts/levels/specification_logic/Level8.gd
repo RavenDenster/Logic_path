@@ -29,7 +29,8 @@ func _on_add_and_button_pressed():
 		return
 	
 	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
-	and_gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	and_gate.position = Vector2(viewport_size.x - 400, 150)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
 	and_gate_count += 1
@@ -44,7 +45,8 @@ func _on_add_or_button_pressed():
 		return
 	
 	var or_gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
-	or_gate.position = Vector2(600, 600)
+	var viewport_size = get_viewport().get_visible_rect().size
+	or_gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
 	or_gate_count += 1

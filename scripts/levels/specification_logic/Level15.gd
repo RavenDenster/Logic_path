@@ -49,7 +49,8 @@ func _on_add_half_adder_button_pressed():
 		return
 	
 	var half_adder = load("res://scenes/gates/HalfAdder.tscn").instantiate()
-	half_adder.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	half_adder.position = Vector2(viewport_size.x - 600, 150)
 	add_child(half_adder)
 	movable_objects.append(half_adder)
 	half_adder_count += 1
@@ -64,7 +65,8 @@ func _on_add_full_adder_button_pressed():
 		return
 	
 	var full_adder = load("res://scenes/gates/FullAdder.tscn").instantiate()
-	full_adder.position = Vector2(600, 600)
+	var viewport_size = get_viewport().get_visible_rect().size
+	full_adder.position = Vector2(viewport_size.x - 400, 150)
 	add_child(full_adder)
 	movable_objects.append(full_adder)
 	full_adder_count += 1
@@ -79,7 +81,8 @@ func _on_add_cout0_button_pressed():
 		return
 	
 	var cout0 = load("res://scenes/gates/Cout0.tscn").instantiate()
-	cout0.position = Vector2(600, 800)
+	var viewport_size = get_viewport().get_visible_rect().size
+	cout0.position = Vector2(viewport_size.x - 200, 150)
 	add_child(cout0)
 	movable_objects.append(cout0)
 	cout0_count += 1

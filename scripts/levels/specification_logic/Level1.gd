@@ -21,7 +21,8 @@ func _on_add_or_button_pressed():
 		return
 	
 	var or_gate = preload("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
-	or_gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	or_gate.position = Vector2(viewport_size.x - 300, 150)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
 	or_gate_count += 1

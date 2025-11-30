@@ -67,10 +67,20 @@ func _ready():
 func _on_window_size_changed():
 	# Обновляем размер панели при изменении размера окна
 	var window_size = get_viewport_rect().size
-	custom_minimum_size = Vector2(window_size.x, 60)
+	size = Vector2(window_size.x, 60)
 	
 	# Принудительно обновляем layout
 	queue_redraw()
+	
+	# Ждем следующего кадра для применения изменений
+	await get_tree().process_frame
+	
+	# Принудительно обновляем контейнеры
+	if has_node("MainContainer"):
+		$MainContainer.queue_redraw()
+		$MainContainer/LeftSection.queue_redraw()
+		$MainContainer/CenterSection.queue_redraw()
+		$MainContainer/RightSection.queue_redraw()
 
 # Остальные методы остаются без изменений...
 func _determine_level_number():

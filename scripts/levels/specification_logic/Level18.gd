@@ -92,7 +92,8 @@ func _on_add_and_button_pressed():
 		return
 	
 	var gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
-	gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	gate.position = Vector2(viewport_size.x - 1000, 150)
 	add_child(gate)
 	movable_objects.append(gate)
 	and_gate_count += 1
@@ -107,7 +108,8 @@ func _on_add_or_button_pressed():
 		return
 	
 	var gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
-	gate.position = Vector2(600, 500)
+	var viewport_size = get_viewport().get_visible_rect().size
+	gate.position = Vector2(viewport_size.x - 800, 150)
 	add_child(gate)
 	movable_objects.append(gate)
 	or_gate_count += 1
@@ -122,7 +124,8 @@ func _on_add_xor_button_pressed():
 		return
 	
 	var xor_gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
-	xor_gate.position = Vector2(600, 600)
+	var viewport_size = get_viewport().get_visible_rect().size
+	xor_gate.position = Vector2(viewport_size.x - 600, 150)
 	xor_gate.name = "XORGate_" + str(randi() % 10000)  # Уникальное имя
 	add_child(xor_gate)
 	movable_objects.append(xor_gate)
@@ -138,7 +141,8 @@ func _on_add_mux4to1_button_pressed():
 		return
 	
 	var gate = load("res://scenes/gates/MUX4to1.tscn").instantiate()
-	gate.position = Vector2(600, 700)
+	var viewport_size = get_viewport().get_visible_rect().size
+	gate.position = Vector2(viewport_size.x - 400, 150)
 	add_child(gate)
 	movable_objects.append(gate)
 	mux4to1_count += 1
@@ -153,7 +157,8 @@ func _on_add_opcode_button_pressed():
 		return
 	
 	var gate = load("res://scenes/gates/OpCodeBlock.tscn").instantiate()
-	gate.position = Vector2(600, 800)
+	var viewport_size = get_viewport().get_visible_rect().size
+	gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(gate)
 	movable_objects.append(gate)
 	opcode_block_count += 1
