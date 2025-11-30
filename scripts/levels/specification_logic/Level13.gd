@@ -57,7 +57,8 @@ func _on_add_and_button_pressed():
 		return
 	
 	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
-	and_gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	and_gate.position = Vector2(viewport_size.x - 400, 150)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
 	and_gate_count += 1
@@ -72,7 +73,8 @@ func _on_add_xor_button_pressed():
 		return
 	
 	var xor_gate = load("res://scenes/gates/base_logic_el/XORGate.tscn").instantiate()
-	xor_gate.position = Vector2(600, 600)
+	var viewport_size = get_viewport().get_visible_rect().size
+	xor_gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(xor_gate)
 	movable_objects.append(xor_gate)
 	xor_gate_count += 1
@@ -82,7 +84,7 @@ func _on_add_xor_button_pressed():
 	print("XOR gate added. Current count: ", xor_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var and_button = gate_buttons_container.get_node_or_null("AND")
 	var xor_button = gate_buttons_container.get_node_or_null("XOR")
 	

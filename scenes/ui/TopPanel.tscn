@@ -7,136 +7,202 @@
 [ext_resource type="Texture2D" uid="uid://d4kdg80lsdut6" path="res://assets/run.png" id="5_th10h"]
 
 [node name="TopPanel" type="ColorRect"]
-custom_minimum_size = Vector2(720, 60)
-offset_right = 1920.0
+anchors_preset = 10
+anchor_right = 1.0
 offset_bottom = 60.0
 color = Color(0.18039216, 0.16862746, 0.23529412, 1)
 script = ExtResource("1_2ueww")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 406.0
-offset_bottom = 59.0
-theme_override_constants/separation = 40
-alignment = 1
+[node name="MainContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="MenuButton" type="TextureButton" parent="HBoxContainer"]
-custom_minimum_size = Vector2(40, 40)
+[node name="LeftSection" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 1
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+custom_minimum_size = Vector2(300, 0)
+
+[node name="MenuButton" type="TextureButton" parent="MainContainer/LeftSection"]
 layout_mode = 2
 texture_normal = ExtResource("2_qbmb5")
 stretch_mode = 3
-
-[node name="TheoryButton" type="TextureButton" parent="HBoxContainer"]
 custom_minimum_size = Vector2(40, 40)
+
+[node name="TheoryButton" type="TextureButton" parent="MainContainer/LeftSection"]
 layout_mode = 2
 texture_normal = ExtResource("3_u2lv2")
 stretch_mode = 3
-
-[node name="MapButton" type="TextureButton" parent="HBoxContainer"]
 custom_minimum_size = Vector2(40, 40)
+
+[node name="MapButton" type="TextureButton" parent="MainContainer/LeftSection"]
 layout_mode = 2
 texture_normal = ExtResource("4_o5218")
 stretch_mode = 3
+custom_minimum_size = Vector2(40, 40)
 
-[node name="RunButton" type="TextureButton" parent="HBoxContainer"]
+[node name="RunButton" type="TextureButton" parent="MainContainer/LeftSection"]
 layout_mode = 2
 texture_normal = ExtResource("5_th10h")
 stretch_mode = 3
+custom_minimum_size = Vector2(40, 40)
 
-[node name="LevelNameLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 747.0
-offset_top = 18.0
-offset_right = 1119.0
-offset_bottom = 41.0
+[node name="CenterSection" type="Control" parent="MainContainer"]
+layout_mode = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(100, 0)
+
+[node name="LevelNameLabel" type="Label" parent="MainContainer/CenterSection"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Level Name"
 horizontal_alignment = 1
 vertical_alignment = 1
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_bottom = 5
 
-[node name="GateButtonsContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 1348.0
-offset_top = 9.0
-offset_right = 1918.0
-offset_bottom = 53.0
-theme_override_constants/separation = 8
-alignment = 1
+[node name="RightSection" type="ScrollContainer" parent="MainContainer"]
+layout_mode = 1
+size_flags_horizontal = 0
+size_flags_vertical = 3
+custom_minimum_size = Vector2(300, 0)
+scroll_horizontal_enabled = true
+scroll_vertical_enabled = false
 
-[node name="NOT" type="Button" parent="GateButtonsContainer"]
+[node name="GateButtonsContainer" type="HBoxContainer" parent="MainContainer/RightSection"]
+layout_mode = 1
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="NOT" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "NOT"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="AND" type="Button" parent="GateButtonsContainer"]
+[node name="AND" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "AND"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="OR" type="Button" parent="GateButtonsContainer"]
+[node name="OR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "OR"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="XOR" type="Button" parent="GateButtonsContainer"]
+[node name="XOR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "XOR"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="NOR" type="Button" parent="GateButtonsContainer"]
+[node name="NOR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "NOR"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="NAND" type="Button" parent="GateButtonsContainer"]
+[node name="NAND" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "NAND"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="XNOR" type="Button" parent="GateButtonsContainer"]
+[node name="XNOR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "XNOR"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="Implication" type="Button" parent="GateButtonsContainer"]
+[node name="Implication" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "IMP"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="SEL0" type="Button" parent="GateButtonsContainer"]
+[node name="SEL0" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "SEL0"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="SEL1" type="Button" parent="GateButtonsContainer"]
+[node name="SEL1" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "SEL1"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="FullAdder" type="Button" parent="GateButtonsContainer"]
+[node name="FullAdder" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "SUM"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="HalfAdder" type="Button" parent="GateButtonsContainer"]
+[node name="HalfAdder" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "HSUM"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="Cout0" type="Button" parent="GateButtonsContainer"]
+[node name="Cout0" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "COUT0"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="MUX4to1" type="Button" parent="GateButtonsContainer"]
+[node name="MUX4to1" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "MUX"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="OpCode" type="Button" parent="GateButtonsContainer"]
+[node name="OpCode" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "OpCode"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="OneBitComparator" type="Button" parent="GateButtonsContainer"]
+[node name="OneBitComparator" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "OneBitComparator"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="RSFlipFlop" type="Button" parent="GateButtonsContainer"]
+[node name="RSFlipFlop" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "RSFlipFlop"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="TFlipFlop" type="Button" parent="GateButtonsContainer"]
+[node name="TFlipFlop" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "TFlipFlop"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="DFlipFlop" type="Button" parent="GateButtonsContainer"]
+[node name="DFlipFlop" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "DFlipFlop"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0
 
-[node name="CLK" type="Button" parent="GateButtonsContainer"]
+[node name="CLK" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "CLK"
+custom_minimum_size = Vector2(60, 40)
+size_flags_horizontal = 0

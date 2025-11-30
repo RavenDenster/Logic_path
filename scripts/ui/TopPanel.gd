@@ -1,11 +1,11 @@
 extends ColorRect
 
-@onready var level_name_label: Label = $LevelNameLabel
-@onready var theory_button: TextureButton = $HBoxContainer/TheoryButton
-@onready var menu_button: TextureButton = $HBoxContainer/MenuButton
-@onready var map_button: TextureButton = $HBoxContainer/MapButton
-@onready var run_button: TextureButton = $HBoxContainer/RunButton
-@onready var gate_buttons_container = $GateButtonsContainer
+@onready var level_name_label: Label = $MainContainer/CenterSection/LevelNameLabel
+@onready var theory_button: TextureButton = $MainContainer/LeftSection/TheoryButton
+@onready var menu_button: TextureButton = $MainContainer/LeftSection/MenuButton
+@onready var map_button: TextureButton = $MainContainer/LeftSection/MapButton
+@onready var run_button: TextureButton = $MainContainer/LeftSection/RunButton
+@onready var gate_buttons_container = $MainContainer/RightSection/GateButtonsContainer
 
 var theory_window_instance: Window
 var current_theory_text: String = ""
@@ -14,6 +14,15 @@ var current_level_number: int = 0
 var glow_animation_tween: Tween
 
 func _ready():
+	# Устанавливаем фиксированную высоту панели
+	custom_minimum_size = Vector2(0, 60)
+	
+	var viewport_size = get_viewport_rect().size
+	size = Vector2(viewport_size.x, 60)
+	
+	# Подписываемся на изменение размера окна
+	get_tree().root.connect("size_changed", _on_window_size_changed)
+	
 	hover_style = StyleBoxFlat.new()
 	hover_style.bg_color = Color.YELLOW
 	hover_style.corner_radius_top_left = 5
@@ -55,8 +64,26 @@ func _ready():
 	_determine_level_number()
 	_check_theory_button_animation()
 
-func _determine_level_number():
+func _on_window_size_changed():
+	# Обновляем размер панели при изменении размера окна
+	var window_size = get_viewport_rect().size
+	size = Vector2(window_size.x, 60)
+	
+	# Принудительно обновляем layout
+	queue_redraw()
+	
+	# Ждем следующего кадра для применения изменений
+	await get_tree().process_frame
+	
+	# Принудительно обновляем контейнеры
+	if has_node("MainContainer"):
+		$MainContainer.queue_redraw()
+		$MainContainer/LeftSection.queue_redraw()
+		$MainContainer/CenterSection.queue_redraw()
+		$MainContainer/RightSection.queue_redraw()
 
+# Остальные методы остаются без изменений...
+func _determine_level_number():
 	var current_scene = get_tree().current_scene
 	if current_scene:
 		var scene_path = current_scene.scene_file_path
@@ -92,7 +119,6 @@ func _check_theory_button_animation():
 			var theory_viewed = save_system.is_theory_viewed(current_level_number)
 			var failed_attempts = save_system.get_failed_attempts(current_level_number)
 			
-			# Анимируем кнопку если теория не просмотрена ИЛИ есть подсказки
 			if not theory_viewed or failed_attempts >= 5:
 				print("Starting glow animation for level ", current_level_number)
 				_start_glow_animation()

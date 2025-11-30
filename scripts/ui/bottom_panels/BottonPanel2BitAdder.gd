@@ -12,8 +12,39 @@ var current_s0_textures = []
 var current_cout_textures = []
 
 func _ready():
+	# Ждем два кадра, чтобы окно точно было инициализировано
 	await get_tree().process_frame
+	await get_tree().process_frame
+	
+	# Устанавливаем правильную позицию и размер при инициализации
+	_update_panel_position()
+	
+	# Подписываемся на изменение размера окна
+	get_tree().root.connect("size_changed", _on_window_size_changed)
+	
 	initialize_textures()
+
+func _update_panel_position():
+	var window_size = get_viewport_rect().size
+	custom_minimum_size = Vector2(window_size.x, 220)
+	size = Vector2(window_size.x, 220)
+	position = Vector2(0, window_size.y - 220)
+	
+	# Центрируем содержимое панели
+	_center_panel_content()
+	
+	queue_redraw()
+
+func _center_panel_content():
+	var background = $Background
+	var main_container = background.get_node_or_null("MainContainer")
+	
+	if main_container:
+		# Центрируем MainContainer по горизонтали
+		main_container.position.x = (background.size.x - main_container.size.x) / 2
+
+func _on_window_size_changed():
+	_update_panel_position()
 
 func get_texture_rect_internal(grid_container, total_children, columns, row, col):
 	var index = row * columns + col
@@ -25,7 +56,7 @@ func get_texture_rect_internal(grid_container, total_children, columns, row, col
 
 func initialize_textures():
 	# Левый GridContainer (7 строк) - Inputs & Expected
-	var left_grid_container = get_node_or_null("Background/VBoxContainer/GridContainer")
+	var left_grid_container = get_node_or_null("Background/MainContainer/LeftColumn/GridContainer")
 	if not left_grid_container:
 		print("ERROR: Left GridContainer not found!")
 		return
@@ -69,14 +100,10 @@ func initialize_textures():
 		if tex: desired_cout_textures.append(tex)
 
 	# Правый GridContainer (3 строки) - Current Outputs
-	var right_grid_container = get_node_or_null("Background/VBoxContainer2/GridContainer")
+	var right_grid_container = get_node_or_null("Background/MainContainer/RightColumn/GridContainer")
 	if not right_grid_container:
-		print("ERROR: Right GridContainer (VBoxContainer2) not found!")
-		# Попробуем найти в старом расположении
-		right_grid_container = get_node_or_null("Background/HBoxContainer/RightColumn/RightGridContainer")
-		if not right_grid_container:
-			print("ERROR: No Right GridContainer found at all!")
-			return
+		print("ERROR: Right GridContainer not found!")
+		return
 
 	var right_total_children = right_grid_container.get_child_count()
 	print("Right GridContainer has ", right_total_children, " children")
@@ -161,6 +188,6 @@ func update_current_outputs(actual_s1, actual_s0, actual_cout):
 func update_texture(texture_rect, value):
 	if texture_rect and is_instance_valid(texture_rect):
 		if value == 1:
-			texture_rect.texture = load("res://assets/pointGreen.png")
+			texture_rect.texture = preload("res://assets/pointGreen.png")
 		else:
-			texture_rect.texture = load("res://assets/point.png")
+			texture_rect.texture = preload("res://assets/point.png")

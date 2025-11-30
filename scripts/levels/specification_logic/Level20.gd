@@ -55,7 +55,7 @@ func _ready():
 
 # ДОБАВЬТЕ ЭТОТ МЕТОД ДЛЯ ПЕРЕПОДКЛЮЧЕНИЯ КНОПОК
 func _reconnect_buttons():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	
 	# Получаем список всех кнопок
 	var buttons = [
@@ -129,7 +129,8 @@ func _on_add_comparator_button_pressed():
 	
 	print("Adding 1-bit Comparator")
 	var comparator = load("res://scenes/gates/OneBitComparatorGate.tscn").instantiate()
-	comparator.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	comparator.position = Vector2(viewport_size.x - 600, 150)
 	add_child(comparator)
 	movable_objects.append(comparator)
 	comparator_gate_count += 1
@@ -145,7 +146,8 @@ func _on_add_and_button_pressed():
 	
 	print("Adding AND gate")
 	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
-	and_gate.position = Vector2(600, 500)
+	var viewport_size = get_viewport().get_visible_rect().size
+	and_gate.position = Vector2(viewport_size.x - 400, 150)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
 	and_gate_count += 1
@@ -161,7 +163,8 @@ func _on_add_or_button_pressed():
 	
 	print("Adding OR gate")
 	var or_gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
-	or_gate.position = Vector2(600, 600)
+	var viewport_size = get_viewport().get_visible_rect().size
+	or_gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
 	or_gate_count += 1
@@ -171,7 +174,7 @@ func _on_add_or_button_pressed():
 	print("OR gate added. Current count: ", or_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var and_button = gate_buttons_container.get_node_or_null("AND")
 	var or_button = gate_buttons_container.get_node_or_null("OR")
 	var comparator_button = gate_buttons_container.get_node_or_null("OneBitComparator")

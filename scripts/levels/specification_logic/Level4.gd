@@ -36,7 +36,8 @@ func _on_add_or_button_pressed():
 		return
 	
 	var or_gate = load("res://scenes/gates/base_logic_el/ORGate.tscn").instantiate()
-	or_gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	or_gate.position = Vector2(viewport_size.x - 400, 150)
 	add_child(or_gate)
 	movable_objects.append(or_gate)
 	or_gate_count += 1
@@ -51,7 +52,8 @@ func _on_add_not_button_pressed():
 		return
 	
 	var not_gate = load("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
-	not_gate.position = Vector2(600, 500)
+	var viewport_size = get_viewport().get_visible_rect().size
+	not_gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
 	not_gate_count += 1
@@ -61,7 +63,7 @@ func _on_add_not_button_pressed():
 	print("NOT gate added. Current count: ", not_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var or_button = gate_buttons_container.get_node_or_null("OR")
 	var not_button = gate_buttons_container.get_node_or_null("NOT")
 	

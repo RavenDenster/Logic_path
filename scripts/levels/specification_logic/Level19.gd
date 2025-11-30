@@ -84,7 +84,8 @@ func _on_add_and_button_pressed():
 		return
 	
 	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
-	and_gate.position = Vector2(600, 400)
+	var viewport_size = get_viewport().get_visible_rect().size
+	and_gate.position = Vector2(viewport_size.x - 600, 150)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
 	and_gate_count += 1
@@ -99,7 +100,8 @@ func _on_add_not_button_pressed():
 		return
 	
 	var not_gate = load("res://scenes/gates/base_logic_el/NOTGate.tscn").instantiate()
-	not_gate.position = Vector2(600, 500)
+	var viewport_size = get_viewport().get_visible_rect().size
+	not_gate.position = Vector2(viewport_size.x - 400, 150)
 	add_child(not_gate)
 	movable_objects.append(not_gate)
 	not_gate_count += 1
@@ -114,7 +116,8 @@ func _on_add_nxor_button_pressed():
 		return
 	
 	var xnor_gate = load("res://scenes/gates/base_logic_el/XNORGate.tscn").instantiate()
-	xnor_gate.position = Vector2(600, 600)
+	var viewport_size = get_viewport().get_visible_rect().size
+	xnor_gate.position = Vector2(viewport_size.x - 200, 150)
 	add_child(xnor_gate)
 	movable_objects.append(xnor_gate)
 	xnor_gate_count += 1
@@ -124,7 +127,7 @@ func _on_add_nxor_button_pressed():
 	print("XNOR gate added. Current count: ", xnor_gate_count)
 
 func update_gate_buttons_state():
-	var gate_buttons_container = $TopPanel/GateButtonsContainer
+	var gate_buttons_container = $TopPanel/MainContainer/RightSection/GateButtonsContainer
 	var and_button = gate_buttons_container.get_node_or_null("AND")
 	var not_button = gate_buttons_container.get_node_or_null("NOT")
 	var xnor_button = gate_buttons_container.get_node_or_null("XNOR")
