@@ -55,6 +55,8 @@ func _ready():
 	var level_number = get_level_number()
 	if level_number > 0:
 		var save_system = get_node_or_null("/root/SaveSystem")
+		if save_system and save_system.has_method("record_level_start"):
+			save_system.record_level_start(level_number)
 		if save_system:
 			failed_attempts_count = save_system.get_failed_attempts(level_number)
 			hints_enabled = (failed_attempts_count >= 10)
@@ -223,6 +225,12 @@ func _on_add_or_button_pressed():
 
 func _on_test_pressed():
 	print("=== Testing 2-bit Comparator level ===")
+	var level_number = get_level_number()
+	if level_number > 0:
+		var save_system = get_node_or_null("/root/SaveSystem")
+		if save_system and save_system.has_method("record_level_attempt"):
+			save_system.record_level_attempt(level_number)
+	
 	reset_all_port_sprites()
 
 	if output_block_agtb:
