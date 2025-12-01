@@ -9,6 +9,7 @@ func _ready():
 	var open_map_btn = get_node_or_null("CenterContainer/VBoxContainer/OpenMapButton")
 	var new_game_btn = get_node_or_null("CenterContainer/VBoxContainer/NewGameButton")
 	var quit_btn = get_node_or_null("CenterContainer/VBoxContainer/QuitButton")
+	var statistics_btn = get_node_or_null("CenterContainer/VBoxContainer/StatisticsButton") 
 	
 	if play_campaign_btn:
 		play_campaign_btn.pressed.connect(_on_play_campaign_pressed)
@@ -18,13 +19,18 @@ func _ready():
 		new_game_btn.pressed.connect(_on_new_game_pressed)
 	if quit_btn:
 		quit_btn.pressed.connect(_on_quit_button_pressed)
+	if statistics_btn:  # НОВОЕ
+		statistics_btn.pressed.connect(_on_statistics_button_pressed)
 	
 	if confirmation_dialog:
 		confirmation_dialog.dialog_text = "Are you sure you want to reset all progress? This cannot be undone."
 		confirmation_dialog.confirmed.connect(_on_confirmation_confirmed)
 	
 	
-
+func _on_statistics_button_pressed():
+	print("Statistics pressed - loading statistics scene")
+	get_tree().change_scene_to_file("res://scenes/ui/Statistics.tscn")
+	
 func _input(event):
 	# Обработка чит-кода по нажатию F
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -71,7 +77,7 @@ func activate_cheat():
 func unlock_all_levels(save_system):
 	# Создаем массив всех номеров уровней
 	var all_levels = []
-	for i in range(1, 31):
+	for i in range(1, 31):  # ИСПРАВЛЕНО: теперь до 31 (30 включительно)
 		all_levels.append(i)
 	
 	# Используем новый метод unlock_levels в SaveSystem

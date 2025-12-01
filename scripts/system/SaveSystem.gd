@@ -7,7 +7,8 @@ var game_data = {
 	"level_states": {},
 	"player_name": "Player",
 	"last_played_level": 1,
-	"theory_viewed": {}
+	"theory_viewed": {},
+	"level_stats": {}
 }
 
 func _ready():
@@ -86,14 +87,94 @@ func load_game():
 func reset_progress():
 	game_data = {
 		"completed_levels": [],
-		"unlocked_levels": [],  # Сбрасываем и unlocked_levels
+		"unlocked_levels": [],
 		"level_states": {},
 		"player_name": "Player",
 		"last_played_level": 1,
-		"theory_viewed": {} 
+		"theory_viewed": {},
+		"level_stats": {}  # НОВОЕ
 	}
 	save_game()
 	print("Game progress reset")
+	
+func record_level_start(level_number: int):
+	var level_str = str(level_number)
+	if not game_data.has("level_stats"):
+		game_data["level_stats"] = {}
+	
+	if not game_data["level_stats"].has(level_str):
+		# Первый заход на уровень
+		game_data["level_stats"][level_str] = {
+			"first_entry_time": Time.get_unix_time_from_system(),
+			"completion_time": 0,
+			"attempts": 0,
+			"best_time": 0,
+			"completed": false
+		}
+		save_game()
+		print("Recorded first entry for level ", level_number)
+
+func record_level_attempt(level_number: int):
+	var level_str = str(level_number)
+	if game_data.has("level_stats") and game_data["level_stats"].has(level_str):
+		var stats = game_data["level_stats"][level_str]
+		stats["attempts"] = stats.get("attempts", 0) + 1
+		save_game()
+		print("Recorded attempt for level ", level_number, ": ", stats["attempts"])
+
+func record_level_completion(level_number: int):
+	var level_str = str(level_number)
+	if game_data.has("level_stats") and game_data["level_stats"].has(level_str):
+		var stats = game_data["level_stats"][level_str]
+		if not stats.get("completed", false):
+			var completion_time = Time.get_unix_time_from_system()
+			var time_taken = completion_time - stats.get("first_entry_time", completion_time)
+			
+			stats["completion_time"] = completion_time
+			stats["time_taken"] = time_taken  # время в секундах
+			stats["completed"] = true
+			
+			# Сохраняем лучшее время
+			if stats.get("best_time", 0) == 0 or time_taken < stats["best_time"]:
+				stats["best_time"] = time_taken
+			
+			save_game()
+			print("Recorded completion for level ", level_number, 
+				" Time taken: ", format_time(time_taken),
+				" Attempts: ", stats["attempts"])
+	else:
+		# Если статистики не было, создаем запись
+		record_level_start(level_number)
+		record_level_completion(level_number)
+
+func get_level_stats(level_number: int) -> Dictionary:
+	var level_str = str(level_number)
+	if game_data.has("level_stats") and game_data["level_stats"].has(level_str):
+		return game_data["level_stats"][level_str].duplicate(true)
+	return {
+		"completed": false,
+		"attempts": 0,
+		"time_taken": 0,
+		"best_time": 0
+	}
+
+func get_all_level_stats() -> Dictionary:
+	if game_data.has("level_stats"):
+		return game_data["level_stats"].duplicate(true)
+	return {}
+
+func format_time(seconds: float) -> String:
+	if seconds <= 0:
+		return "N/A"
+	
+	var minutes = int(seconds / 60)
+	var secs = int(seconds) % 60
+	var ms = int((seconds - int(seconds)) * 100)
+	
+	if minutes > 0:
+		return "%02d:%02d.%02d" % [minutes, secs, ms]
+	else:
+		return "%02d.%02d" % [secs, ms]
 
 func unlock_levels(level_numbers):
 	for level_num in level_numbers:
@@ -144,6 +225,7 @@ func complete_level(level_number):
 	var level_int = int(level_number)
 	if not is_level_completed(level_int):
 		game_data["completed_levels"].append(level_int)
+		record_level_completion(level_int)  # Записываем статистику
 		save_game()
 		print("Level ", level_int, " marked as completed")
 	else:
@@ -187,7 +269,7 @@ func set_last_played_level(level_number):
 	save_game()
 
 func get_next_level_to_play():
-	var max_level = 23
+	var max_level = 30  # ИСПРАВЛЕНО: было 23, теперь 30
 	var last_played = game_data["last_played_level"]
 	var completed_levels = game_data["completed_levels"]
 

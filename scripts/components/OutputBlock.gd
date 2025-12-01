@@ -208,17 +208,20 @@ func _find_grid_container():
 	if not test_results_panel:
 		return null
 	
-	# НОВАЯ СТРУКТУРА: сначала ищем левую панель (Inputs & Expected)
-	var grid = test_results_panel.get_node_or_null("Background/HBoxContainer/GridContainer")
-	if grid:
-		return grid
-	
-	# Затем ищем правую панель (Current Outputs)
-	grid = test_results_panel.get_node_or_null("Background/HBoxContainer2/GridContainer")
+	# Новая структура для TestResultsPanel2BitAdder
+	var grid = test_results_panel.get_node_or_null("Background/MainContainer/LeftColumn/GridContainer")
 	if grid:
 		return grid
 	
 	# Старые пути для обратной совместимости
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer/GridContainer")
+	if grid:
+		return grid
+	
+	grid = test_results_panel.get_node_or_null("Background/HBoxContainer2/GridContainer")
+	if grid:
+		return grid
+	
 	grid = test_results_panel.get_node_or_null("Background/GridContainer")
 	if grid:
 		return grid
