@@ -12,8 +12,15 @@ var current_theory_text: String = ""
 var hover_style: StyleBoxFlat
 var current_level_number: int = 0
 var glow_animation_tween: Tween
+var is_tutorial: bool = false  # НОВОЕ: флаг для обучалки
 
 func _ready():
+	# Проверяем, находимся ли мы в обучалке
+	var current_scene = get_tree().current_scene
+	if current_scene and current_scene.name == "Tutorial":
+		is_tutorial = true
+		level_name_label.text = "Tutorial"
+	
 	# Устанавливаем фиксированную высоту панели
 	custom_minimum_size = Vector2(0, 60)
 	
@@ -47,6 +54,9 @@ func _ready():
 	if menu_button:
 		menu_button.connect("mouse_entered", _on_button_mouse_entered.bind(menu_button))
 		menu_button.connect("mouse_exited", _on_button_mouse_exited.bind(menu_button))
+		# В обучалке кнопка меню возвращает в главное меню
+		if is_tutorial:
+			menu_button.connect("pressed", _on_tutorial_menu_pressed)
 	
 	if theory_button:
 		theory_button.connect("mouse_entered", _on_button_mouse_entered.bind(theory_button))
@@ -56,13 +66,32 @@ func _ready():
 	if map_button:
 		map_button.connect("mouse_entered", _on_button_mouse_entered.bind(map_button))
 		map_button.connect("mouse_exited", _on_button_mouse_exited.bind(map_button))
+		# В обучалке отключаем кнопку карты
+		if is_tutorial:
+			map_button.disabled = true
+			map_button.modulate = Color(1, 1, 1, 0.5)
 	
 	if run_button:
 		run_button.connect("mouse_entered", _on_button_mouse_entered.bind(run_button))
 		run_button.connect("mouse_exited", _on_button_mouse_exited.bind(run_button))
+		# В обучалке отключаем кнопку запуска
+		if is_tutorial:
+			run_button.disabled = true
+			run_button.modulate = Color(1, 1, 1, 0.5)
+	
+	# В обучалке скрываем кнопки ворот
+	if is_tutorial and gate_buttons_container:
+		for child in gate_buttons_container.get_children():
+			child.visible = false
+	
+	# Определяем номер уровня только если не в обучалке
+	if not is_tutorial:
+		_determine_level_number()
+		_check_theory_button_animation()
 
-	_determine_level_number()
-	_check_theory_button_animation()
+func _on_tutorial_menu_pressed():
+	# Возврат в главное меню из обучалки
+	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
 
 func _on_window_size_changed():
 	# Обновляем размер панели при изменении размера окна
@@ -82,7 +111,7 @@ func _on_window_size_changed():
 		$MainContainer/CenterSection.queue_redraw()
 		$MainContainer/RightSection.queue_redraw()
 
-# Остальные методы остаются без изменений...
+# Остальные методы без изменений...
 func _determine_level_number():
 	var current_scene = get_tree().current_scene
 	if current_scene:

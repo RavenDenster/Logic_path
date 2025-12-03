@@ -211,3 +211,8 @@ func _reset_all_highlights():
 					child.modulate = Color.WHITE
 		else:
 			print("InputBlock2: GridContainer not found for reset")
+			
+func set_values(values_a, values_b):
+	values_A = values_a
+	values_B = values_b
+	print("InputBlock2 values set: A=", values_A, " B=", values_B)
