@@ -9,7 +9,8 @@ func _ready():
 	var open_map_btn = get_node_or_null("CenterContainer/VBoxContainer/OpenMapButton")
 	var new_game_btn = get_node_or_null("CenterContainer/VBoxContainer/NewGameButton")
 	var quit_btn = get_node_or_null("CenterContainer/VBoxContainer/QuitButton")
-	var statistics_btn = get_node_or_null("CenterContainer/VBoxContainer/StatisticsButton") 
+	var statistics_btn = get_node_or_null("CenterContainer/VBoxContainer/StatisticsButton")
+	var tutorial_btn = get_node_or_null("CenterContainer/VBoxContainer/TutorialButton")  # НОВОЕ
 	
 	if play_campaign_btn:
 		play_campaign_btn.pressed.connect(_on_play_campaign_pressed)
@@ -19,13 +20,18 @@ func _ready():
 		new_game_btn.pressed.connect(_on_new_game_pressed)
 	if quit_btn:
 		quit_btn.pressed.connect(_on_quit_button_pressed)
-	if statistics_btn:  # НОВОЕ
+	if statistics_btn:
 		statistics_btn.pressed.connect(_on_statistics_button_pressed)
+	if tutorial_btn:  # НОВОЕ
+		tutorial_btn.pressed.connect(_on_tutorial_button_pressed)
 	
 	if confirmation_dialog:
 		confirmation_dialog.dialog_text = "Are you sure you want to reset all progress? This cannot be undone."
 		confirmation_dialog.confirmed.connect(_on_confirmation_confirmed)
-	
+
+func _on_tutorial_button_pressed():  # НОВОЕ
+	print("Tutorial pressed - loading tutorial scene")
+	get_tree().change_scene_to_file("res://scenes/ui/Tutorial.tscn")
 	
 func _on_statistics_button_pressed():
 	print("Statistics pressed - loading statistics scene")
