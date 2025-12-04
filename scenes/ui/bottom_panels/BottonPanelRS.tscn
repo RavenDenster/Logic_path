@@ -1,26 +1,21 @@
 [gd_scene load_steps=3 format=3 uid="uid://fvxmtso73apy"]
 
-[ext_resource type="Script" uid="uid://b71h3h806klih" path="res://scripts/ui/TestResultsPanelRS.gd" id="1_mvykv"]
+[ext_resource type="Script" uid="uid://b71h3h806klih" path="res://scripts/ui/bottom_panels/BottonPanelRS.gd" id="1_mvykv"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="2_l4wgq"]
 
 [node name="TestResultsPanelRs" type="Control"]
+custom_minimum_size = Vector2(0, 250)
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_mvykv")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -961.0
-offset_top = -107.0
-offset_right = 959.0
-offset_bottom = 115.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
 color = Color(0.18039216, 0.16862746, 0.23529412, 1)
 
 [node name="GridContainer" type="GridContainer" parent="Background"]
@@ -166,7 +161,7 @@ stretch_mode = 3
 
 [node name="Label3" type="Label" parent="Background/GridContainer"]
 layout_mode = 2
-text = "Q"
+text = "Desired Q"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -228,7 +223,7 @@ stretch_mode = 3
 
 [node name="Label4" type="Label" parent="Background/GridContainer"]
 layout_mode = 2
-text = "!Q"
+text = "Desired !Q"
 horizontal_alignment = 1
 vertical_alignment = 1
 
