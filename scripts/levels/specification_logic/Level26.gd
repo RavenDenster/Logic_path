@@ -1,5 +1,5 @@
 # Level26.gd
-extends "res://scripts/levels/LevelD.gd"
+extends "res://scripts/levels/level_templates/LevelD.gd"
 
 var and_gate_count: int = 0
 var or_gate_count: int = 0
