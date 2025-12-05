@@ -53,39 +53,90 @@ func _on_area_mouse_exited():
 	_reset_all_highlights()
 
 func _highlight_input_label():
+	# Перед началом выводим отладочную информацию
+	print("=== InputBlockSingle._highlight_input_label() called ===")
+	print("  This block label: '", input_label, "'")
+	print("  Has test_results_panel: ", test_results_panel != null)
+	
 	if not test_results_panel:
-		# Ищем TestResultsPanel в дереве сцены
-		test_results_panel = _find_test_results_panel()
+		# Ищем TestResultsPanel в дереве сцены для DLatch
+		test_results_panel = _find_dlatch_test_results_panel()
 		if not test_results_panel:
-			print("InputBlockSingle: TestResultsPanel not found for label: ", input_label)
+			print("  ERROR: TestResultsPanel not found for DLatch")
 			return
 		else:
-			print("InputBlockSingle: Found test panel: ", test_results_panel.name)
+			print("  Found DLatch test panel: ", test_results_panel.name)
 	
-	# Сбрасываем все подсветки
-	_reset_all_highlights()
+	# Сбрасываем все подсветки через метод панели, если он есть
+	if test_results_panel.has_method("reset_all_highlights"):
+		test_results_panel.reset_all_highlights()
+	else:
+		print("  WARNING: test_results_panel doesn't have reset_all_highlights method")
 	
 	# Находим и подсвечиваем соответствующую метку
 	if input_label != "":
-		var grid = _find_grid_container()
+		var grid = _find_dlatch_grid_container()
 		if grid:
+			# Для отладки выведем все доступные Label
+			print("  Available labels in grid (", grid.get_child_count(), " children):")
+			var all_labels = []
+			for i in range(grid.get_child_count()):
+				var child = grid.get_child(i)
+				if child is Label:
+					var text = child.text.strip_edges()
+					all_labels.append(text)
+					print("    [", i, "] '", text, "'")
+			
 			var found = false
-			for child in grid.get_children():
+			for i in range(grid.get_child_count()):
+				var child = grid.get_child(i)
 				if child is Label and child.text.strip_edges() == input_label:
 					child.modulate = Color.YELLOW
 					found = true
-					print("InputBlockSingle: Highlighted label: '", input_label, "'")
+					print("  SUCCESS: Highlighted label: '", input_label, "' at index ", i)
 					break
 			
 			if not found:
-				print("InputBlockSingle: Label not found in grid: '", input_label, "'")
-				# Выведем все доступные метки для отладки
-				print("Available labels:")
-				for child in grid.get_children():
-					if child is Label:
-						print("  - '", child.text.strip_edges(), "'")
+				print("  ERROR: Label not found in grid: '", input_label, "'")
+				print("  Looking for exact match among: ", all_labels)
 		else:
-			print("InputBlockSingle: GridContainer not found in test panel")
+			print("  ERROR: GridContainer not found in test panel")
+	else:
+		print("  WARNING: input_label is empty!")
+
+func _find_dlatch_test_results_panel():
+	# Ищем панель для D-защелки
+	var panel = get_tree().get_root().find_child("TestResultsPanelDLatch", true, false)
+	if panel:
+		return panel
+	
+	# Также можно попробовать найти по группам
+	for node in get_tree().get_nodes_in_group("test_panel"):
+		if "DLatch" in node.name:
+			return node
+	
+	# Если не нашли, ищем любую тестовую панель
+	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
+	return panel
+
+func _find_dlatch_grid_container():
+	if not test_results_panel:
+		return null
+	
+	# Пробуем разные пути к GridContainer
+	var paths_to_try = [
+		"Background/GridContainer",
+		"GridContainer",
+		"Container/GridContainer",
+		"VBoxContainer/GridContainer"
+	]
+	
+	for path in paths_to_try:
+		var grid = test_results_panel.get_node_or_null(path)
+		if grid:
+			return grid
+	
+	return null
 
 func _find_test_results_panel():
 	# Сначала ищем панель для декодера
@@ -142,3 +193,9 @@ func _reset_all_highlights():
 					child.modulate = Color.WHITE
 		else:
 			print("InputBlockSingle: GridContainer not found for reset")
+			
+func get_current_output():
+	if current_test_index >= 0 and current_test_index < values.size():
+		return values[current_test_index]
+	return 0
+	
