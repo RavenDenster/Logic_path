@@ -1,0 +1,68 @@
+[gd_scene load_steps=8 format=3 uid="uid://drxnmeth46c1e"]
+
+[ext_resource type="Script" uid="uid://dfrm6glagiycr" path="res://scripts/gates/DTrigger.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dw42kpfq4hdy3" path="res://assets/d_trigger.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_input_d"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_input_clk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_output_q"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_output_q_not"]
+
+[node name="DTrigger" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 4
+texture = ExtResource("2")
+
+[node name="InputD" type="Area2D" parent="."]
+z_index = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InputD"]
+position = Vector2(-40, -20)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_input_d")
+
+[node name="Sprite2D" type="Sprite2D" parent="InputD"]
+position = Vector2(-40, -20)
+texture = ExtResource("3")
+
+[node name="InputCLK" type="Area2D" parent="."]
+z_index = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InputCLK"]
+position = Vector2(-40, 20)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_input_clk")
+
+[node name="Sprite2D" type="Sprite2D" parent="InputCLK"]
+position = Vector2(-40, 20)
+texture = ExtResource("3")
+
+[node name="OutputQ" type="Area2D" parent="."]
+z_index = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputQ"]
+position = Vector2(40, -20)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_output_q")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputQ"]
+position = Vector2(40, -20)
+texture = ExtResource("3")
+
+[node name="OutputQNot" type="Area2D" parent="."]
+z_index = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OutputQNot"]
+position = Vector2(40, 20)
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_output_q_not")
+
+[node name="Sprite2D" type="Sprite2D" parent="OutputQNot"]
+position = Vector2(40, 20)
+texture = ExtResource("3")

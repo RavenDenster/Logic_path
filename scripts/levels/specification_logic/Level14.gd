@@ -1,5 +1,5 @@
 # Level14.gd
-extends "res://scripts/levels/level_templates/"
+extends "res://scripts/levels/level_templates/LevelFullAdder.gd"
 
 var and_gate_count: int = 0
 var xor_gate_count: int = 0

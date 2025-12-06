@@ -230,6 +230,11 @@ func _get_hint_for_level(level_number: int) -> String:
 					   • Вход D: выход первой защелки
 					   • Вход Enable: прямой CLK
 					   • Выход Q: окончательный выход триггера"
+		28:
+			return "[b]Подсказка:[/b] Схема состоит из следующих компонентов:
+					1. D-триггер (DTrigger) - основной элемент
+					2. Элемент XOR для вычисления D = Q XOR 1
+					3. Источник ConstantOne (постоянная 1)"
 		_:
 			return ""
 		
@@ -466,6 +471,10 @@ func _setup_top_panel_buttons():
 					button.connect("pressed", _on_add_clk_button_pressed)
 				"D_LATCH":
 					button.connect("pressed", _on_add_dlatch_button_pressed)
+				"DTrigger":
+					button.connect("pressed", _on_add_dtrigger_button_pressed )
+				"ConstantOne":
+					button.connect("pressed", _on_add_constant_one_button_pressed )
 					
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
@@ -473,6 +482,12 @@ func update_all_logic_objects():
 	
 func _on_add_dlatch_button_pressed():
 	print("add dlatch")
+
+func _on_add_dtrigger_button_pressed():
+	print("add dtrigger")
+
+func _on_add_constant_one_button_pressed():
+	print("add const")
 	
 func _on_test_pressed():
 	# Базовый метод - будет переопределен в дочерних классах

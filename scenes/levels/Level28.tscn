@@ -1,0 +1,35 @@
+[gd_scene load_steps=8 format=3 uid="uid://level28"]
+
+[ext_resource type="Script" uid="uid://level28_script" path="res://scripts/levels/Level28.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://output_block_q" path="res://scenes/components/OutputBlockQ.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://top_panel" path="res://scenes/ui/TopPanel.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://background" path="res://assets/wide_spacing_waves_4k.png" id="4"]
+[ext_resource type="PackedScene" uid="uid://input_block" path="res://scenes/components/InputBlockSingle.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://ttrigger_panel" path="res://scenes/ui/BottonPanelTTrigger.tscn" id="6"]
+
+[node name="Level28" type="Node2D"]
+script = ExtResource("1")
+
+[node name="InputBlockCLK" parent="." instance=ExtResource("5")]
+position = Vector2(300, 400)
+
+[node name="OutputBlockQ" parent="." instance=ExtResource("2")]
+position = Vector2(1200, 400)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -100
+
+[node name="Background" type="TextureRect" parent="CanvasLayer"]
+z_index = -35
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 3
+
+[node name="TopPanel" parent="." instance=ExtResource("3")]
+
+[node name="TestResultsPanelTTrigger" parent="." instance=ExtResource("6")]
