@@ -204,3 +204,11 @@ text = "CLK"
 [node name="D_LATCH" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
 layout_mode = 2
 text = "D_LATCH"
+
+[node name="DTrigger" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
+layout_mode = 2
+text = "DTrigger"
+
+[node name="ConstantOne" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
+layout_mode = 2
+text = "ConstantOne"

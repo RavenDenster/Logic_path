@@ -152,3 +152,11 @@ Y7 = A AND B AND C
 ### level 26
 
 ![Alt text](/image_solution/image-25.png)
+
+### level 27
+
+![Alt text](/image_solution/image-26.png)
+
+### level 28
+
+![Alt text](/image_solution/image-27.png)
