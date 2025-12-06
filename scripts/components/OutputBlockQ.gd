@@ -1,9 +1,11 @@
-# OutputBlockQ.gd
+# OutputBlockQ.gd (обновленный)
 extends Node2D
 
 var received_value: int = 0
 var expected = []
 var area: Area2D
+var test_results_panel: Node  # Добавляем ссылку на панель
+var output_label: String = "Current Q"  # Добавляем метку для поиска
 
 func _ready():
 	# Добавляем Area2D для обнаружения наведения
@@ -68,16 +70,96 @@ func _on_area_mouse_exited():
 	_reset_all_highlights()
 
 func _highlight_output_labels():
-	# Ищем TestResultsPanelRS в дереве сцены
-	var panel = get_tree().get_root().find_child("TestResultsPanelRS", true, false)
-	if panel and panel.has_method("highlight_labels"):
-		print("Found TestResultsPanelRS, highlighting labels 2 and 4 (Desired Q and Current Q)")
-		panel.highlight_labels([2, 4])  # Индекс 2 = "Desired Q", 4 = "Current Q"
+	print("=== OutputBlockQ._highlight_output_labels() called ===")
+	print("  This block label: '", output_label, "'")
+	print("  Has test_results_panel: ", test_results_panel != null)
+	
+	# Если test_results_panel не установлен, пытаемся найти его
+	if not test_results_panel:
+		test_results_panel = _find_dtrigger_test_results_panel()
+		if not test_results_panel:
+			print("  ERROR: TestResultsPanel not found")
+			return
+		else:
+			print("  Found test panel: ", test_results_panel.name)
+	
+	# Сбрасываем все подсветки через метод панели, если он есть
+	if test_results_panel.has_method("reset_all_highlights"):
+		test_results_panel.reset_all_highlights()
 	else:
-		print("TestResultsPanelRS not found or missing highlight_labels method")
+		print("  WARNING: test_results_panel doesn't have reset_all_highlights method")
+	
+	# Находим и подсвечиваем соответствующую метку
+	if output_label != "":
+		var grid = _find_dtrigger_grid_container()
+		if grid:
+			# Для отладки выведем все доступные Label
+			print("  Available labels in grid (", grid.get_child_count(), " children):")
+			var all_labels = []
+			for i in range(grid.get_child_count()):
+				var child = grid.get_child(i)
+				if child is Label:
+					var text = child.text.strip_edges()
+					all_labels.append(text)
+					print("    [", i, "] '", text, "'")
+			
+			var found = false
+			for i in range(grid.get_child_count()):
+				var child = grid.get_child(i)
+				if child is Label and child.text.strip_edges() == output_label:
+					child.modulate = Color.YELLOW
+					found = true
+					print("  SUCCESS: Highlighted label: '", output_label, "' at index ", i)
+					break
+			
+			if not found:
+				print("  ERROR: Label not found in grid: '", output_label, "'")
+				print("  Looking for exact match among: ", all_labels)
+		else:
+			print("  ERROR: GridContainer not found in test panel")
+	else:
+		print("  WARNING: output_label is empty!")
+
+func _find_dtrigger_test_results_panel():
+	# Ищем панель для D-триггера
+	var panel = get_tree().get_root().find_child("TestResultsPanelDTrigger", true, false)
+	if panel:
+		return panel
+	
+	# Также можно попробовать найти по группам
+	for node in get_tree().get_nodes_in_group("test_panel"):
+		if "DTrigger" in node.name:
+			return node
+	
+	# Если не нашли, ищем любую тестовую панель
+	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
+	return panel
+
+func _find_dtrigger_grid_container():
+	if not test_results_panel:
+		return null
+	
+	# Пробуем разные пути к GridContainer для D-триггера
+	var paths_to_try = [
+		"Background/GridContainer",
+		"GridContainer",
+		"Container/GridContainer",
+		"VBoxContainer/GridContainer"
+	]
+	
+	for path in paths_to_try:
+		var grid = test_results_panel.get_node_or_null(path)
+		if grid:
+			return grid
+	
+	return null
 
 func _reset_all_highlights():
-	# Ищем TestResultsPanelRS в дереве сцены
-	var panel = get_tree().get_root().find_child("TestResultsPanelRS", true, false)
-	if panel and panel.has_method("reset_all_highlights"):
-		panel.reset_all_highlights()
+	if test_results_panel:
+		var grid = _find_dtrigger_grid_container()
+		if grid:
+			for child in grid.get_children():
+				if child is Label:
+					child.modulate = Color.WHITE
+		else:
+			print("OutputBlockQ: GridContainer not found for reset")

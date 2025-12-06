@@ -30,7 +30,7 @@ var levels_data = [
 	{"number": 24, "scene": "res://scenes/levels/Level24.tscn"},
 	{"number": 25, "scene": "res://scenes/levels/Level25.tscn"},
 	{"number": 26, "scene": "res://scenes/levels/Level26.tscn"},
-	{"number": 27, "scene": "res://scenes/levels/Level30.tscn"},
+	{"number": 27, "scene": "res://scenes/levels/Level27.tscn"},
 	{"number": 28, "scene": "res://scenes/levels/Level30.tscn"},
 	{"number": 29, "scene": "res://scenes/levels/Level29.tscn"},
 	{"number": 30, "scene": "res://scenes/levels/Level30.tscn"}
@@ -131,7 +131,7 @@ func group_levels():
 		[
 			{"number": 25, "scene": "res://scenes/levels/Level25.tscn"},
 			{"number": 26, "scene": "res://scenes/levels/Level26.tscn"},
-			{"number": 27, "scene": "res://scenes/levels/Level30.tscn"}
+			{"number": 27, "scene": "res://scenes/levels/Level27.tscn"}
 		],
 		[
 			{"number": 28, "scene": "res://scenes/levels/Level30.tscn"},
@@ -362,7 +362,7 @@ func get_level_name(level_number: int) -> String:
 		24: "Level 24: 3->8 Decoder",
 		25: "Level 25: RS-триггер на NOR",
 		26: "Level 26: D-защелка",
-		27: "Level 27:",
+		27: "Level 27: Clocked D-Flip-Flop",
 		28: "Level 28:",
 		29: "Level 29: 2-bit Counter",
 		30: "Level 30: 4-bit Shift Register"

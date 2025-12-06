@@ -1,4 +1,3 @@
-# InputBlockSingle.gd (исправленный)
 extends Node2D
 
 var values = []
@@ -53,19 +52,18 @@ func _on_area_mouse_exited():
 	_reset_all_highlights()
 
 func _highlight_input_label():
-	# Перед началом выводим отладочную информацию
 	print("=== InputBlockSingle._highlight_input_label() called ===")
 	print("  This block label: '", input_label, "'")
 	print("  Has test_results_panel: ", test_results_panel != null)
 	
 	if not test_results_panel:
-		# Ищем TestResultsPanel в дереве сцены для DLatch
-		test_results_panel = _find_dlatch_test_results_panel()
+		# Пытаемся найти панель для D-триггера
+		test_results_panel = _find_dtrigger_test_results_panel()
 		if not test_results_panel:
-			print("  ERROR: TestResultsPanel not found for DLatch")
+			print("  ERROR: TestResultsPanel not found for DTrigger")
 			return
 		else:
-			print("  Found DLatch test panel: ", test_results_panel.name)
+			print("  Found DTrigger test panel: ", test_results_panel.name)
 	
 	# Сбрасываем все подсветки через метод панели, если он есть
 	if test_results_panel.has_method("reset_all_highlights"):
@@ -75,7 +73,7 @@ func _highlight_input_label():
 	
 	# Находим и подсвечиваем соответствующую метку
 	if input_label != "":
-		var grid = _find_dlatch_grid_container()
+		var grid = _find_dtrigger_grid_container()
 		if grid:
 			# Для отладки выведем все доступные Label
 			print("  Available labels in grid (", grid.get_child_count(), " children):")
@@ -103,6 +101,35 @@ func _highlight_input_label():
 			print("  ERROR: GridContainer not found in test panel")
 	else:
 		print("  WARNING: input_label is empty!")
+
+func _find_dtrigger_test_results_panel():
+	# Ищем панель для D-триггера
+	var panel = get_tree().get_root().find_child("TestResultsPanelDTrigger", true, false)
+	if panel:
+		return panel
+	
+	# Если не нашли, ищем другие возможные панели
+	panel = get_tree().get_root().find_child("TestResultsPanel", true, false)
+	return panel
+	
+func _find_dtrigger_grid_container():
+	if not test_results_panel:
+		return null
+	
+	# Пробуем разные пути к GridContainer для D-триггера
+	var paths_to_try = [
+		"Background/GridContainer",
+		"GridContainer",
+		"Container/GridContainer",
+		"VBoxContainer/GridContainer"
+	]
+	
+	for path in paths_to_try:
+		var grid = test_results_panel.get_node_or_null(path)
+		if grid:
+			return grid
+	
+	return null
 
 func _find_dlatch_test_results_panel():
 	# Ищем панель для D-защелки
