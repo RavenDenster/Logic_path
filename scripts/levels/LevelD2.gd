@@ -1,10 +1,8 @@
 extends "res://scripts/levels/LevelBase.gd"
 
-var input_block_a
-var input_block_b  
-var input_block_cin
-var output_block_sum
-var output_block_cout
+var input_block_d
+var input_block_clk
+var output_block_q
 
 func _ready():
 	if not level_data:
@@ -19,7 +17,7 @@ func _ready():
 		$TopPanel.set_level_name(level_data.level_name)
 		$TopPanel.set_theory_text(level_data.theory_text)
 
-	setup_full_adder_level()
+	setup_d_trigger_level()
 	
 	temp_line = Line2D.new()
 	add_child(temp_line)
@@ -33,11 +31,9 @@ func _ready():
 
 	if test_results_panel and test_results_panel.has_method("load_initial_data"):
 		test_results_panel.load_initial_data(
-			level_data.input_values_a, 
-			level_data.input_values_b,
-			level_data.input_values_cin,
-			level_data.expected_sum,
-			level_data.expected_cout
+			level_data.input_values_d,
+			level_data.input_values_clk,
+			level_data.expected_q
 		)
 
 	load_level_state()
@@ -58,166 +54,341 @@ func _ready():
 			hints_enabled = (failed_attempts_count >= 10)
 			print("Failed attempts for level ", level_number, ": ", failed_attempts_count, ", hints enabled: ", hints_enabled)
 	
-	print("Full Adder level ready completed successfully")
+	print("D Trigger level ready completed successfully")
 
-# LevelFullAdder.gd (обновляем setup_full_adder_level)
-func setup_full_adder_level():
-	print("Setting up Full Adder level with three inputs and two outputs")
+func setup_d_trigger_level():
+	print("Setting up D Trigger level with D and CLK inputs and Q output")
 	
 	movable_objects = []
 	
-	# Get input blocks using simple get_node
-	input_block_a = get_node_or_null("InputBlockA")
-	input_block_b = get_node_or_null("InputBlockB")
-	input_block_cin = get_node_or_null("InputBlockCin")
+	# Get input blocks
+	input_block_d = get_node_or_null("InputBlockD")
+	input_block_clk = get_node_or_null("InputBlockCLK")
 	
-	if input_block_a and input_block_b and input_block_cin:
-		input_block_a.values = level_data.input_values_a.duplicate()
-		input_block_b.values = level_data.input_values_b.duplicate()
-		input_block_cin.values = level_data.input_values_cin.duplicate()
+	if input_block_d and input_block_clk:
+		input_block_d.values = level_data.input_values_d.duplicate()
+		input_block_clk.values = level_data.input_values_clk.duplicate()
 		
 		# Устанавливаем метки для подсветки
-		input_block_a.input_label = "Input A"
-		input_block_b.input_label = "Input B" 
-		input_block_cin.input_label = "Cin"
+		input_block_d.input_label = "Input D"
+		input_block_clk.input_label = "Input CLK"
 		
-		movable_objects.append(input_block_a)
-		movable_objects.append(input_block_b)
-		movable_objects.append(input_block_cin)
-		print("Full Adder input blocks initialized")
+		movable_objects.append(input_block_d)
+		movable_objects.append(input_block_clk)
+		print("D Trigger input blocks initialized")
 	else:
-		push_error("Input blocks not found in Full Adder level!")
+		push_error("Input blocks not found in D Trigger level!")
 
-	# Get output blocks using simple get_node
-	output_block_sum = get_node_or_null("OutputBlockSum")
-	output_block_cout = get_node_or_null("OutputBlockCout")
+	# Get output block
+	output_block_q = get_node_or_null("OutputBlockQ")
 	
-	if output_block_sum and output_block_cout:
-		output_block_sum.expected = level_data.expected_sum.duplicate()
-		output_block_cout.expected = level_data.expected_cout.duplicate()
+	if output_block_q:
+		output_block_q.expected = level_data.expected_q.duplicate()
 		
-		# Устанавливаем типы выходов для подсветки
-		output_block_sum.output_type = "SUM"
-		output_block_cout.output_type = "COUT"
+		# УБИРАЕМ проблемную строку - в OutputBlockQ нет свойства output_type
+		# output_block_q.output_type = "Q"
 		
-		movable_objects.append(output_block_sum)
-		movable_objects.append(output_block_cout)
-		print("Full Adder output blocks initialized")
+		movable_objects.append(output_block_q)
+		print("D Trigger output block initialized")
 	else:
-		push_error("Output blocks not found in Full Adder level!")
+		push_error("Output block not found in D Trigger level!")
 
-	test_results_panel = get_node_or_null("TestResultsPanelFullAdder")
+	test_results_panel = get_node_or_null("TestResultsPanelDTrigger")
 	if test_results_panel:
-		print("Full Adder test panel found")
+		print("D Trigger test panel found")
 
 		# Устанавливаем test_results_panel для всех блоков
-		if input_block_a:
-			input_block_a.test_results_panel = test_results_panel
-		if input_block_b:
-			input_block_b.test_results_panel = test_results_panel
-		if input_block_cin:
-			input_block_cin.test_results_panel = test_results_panel
-		if output_block_sum:
-			output_block_sum.test_results_panel = test_results_panel
-		if output_block_cout:
-			output_block_cout.test_results_panel = test_results_panel
+		if input_block_d:
+			input_block_d.test_results_panel = test_results_panel
+		if input_block_clk:
+			input_block_clk.test_results_panel = test_results_panel
+		if output_block_q:
+			output_block_q.test_results_panel = test_results_panel
 
 	update_all_logic_objects()
 	print("Movable objects: ", movable_objects.size())
 	print("All logic objects: ", all_logic_objects.size())
 
+func get_wires_data():
+	var wires_data = []
+
+	for wire in wires:
+		if not wire or not is_instance_valid(wire):
+			continue
+			
+		var start_port = wire.start_port
+		var end_port = wire.end_port
+		
+		if not start_port or not is_instance_valid(start_port) or not end_port or not is_instance_valid(end_port):
+			continue
+			
+		var start_parent = start_port.get_parent()
+		var end_parent = end_port.get_parent()
+		
+		if not start_parent or not is_instance_valid(start_parent) or not end_parent or not is_instance_valid(end_parent):
+			continue
+		
+		# Получаем тип и положение родительских объектов
+		var start_data = get_port_data(start_parent, start_port)
+		var end_data = get_port_data(end_parent, end_port)
+		
+		if start_data and end_data:
+			var wire_data = {
+				"start": start_data,
+				"end": end_data
+			}
+			wires_data.append(wire_data)
+	
+	print("Saving ", wires_data.size(), " wires with new format")
+	return wires_data
+
+func get_port_data(parent, port):
+	if not parent or not port:
+		return null
+	
+	var parent_type = get_object_type(parent)
+	var port_name = port.name
+	
+	# Для специальных блоков (Input/Output) используем их фиксированные имена
+	var parent_name = ""
+	if parent == input_block_d:
+		parent_name = "InputBlockD"
+	elif parent == input_block_clk:
+		parent_name = "InputBlockCLK"
+	elif parent == output_block_q:
+		parent_name = "OutputBlockQ"
+	else:
+		# Для гейтов генерируем уникальный идентификатор на основе типа и позиции
+		parent_name = "%s_%d_%d" % [parent_type, int(parent.position.x), int(parent.position.y)]
+	
+	return {
+		"parent_type": parent_type,
+		"parent_name": parent_name,
+		"parent_position": [parent.position.x, parent.position.y],
+		"port_name": port_name
+	}
+
+func create_wire_from_data(wire_data):
+	var start_data = wire_data.get("start", {})
+	var end_data = wire_data.get("end", {})
+	
+	if not start_data or not end_data:
+		print("WARNING: Invalid wire data")
+		return
+	
+	var start_port = find_port_by_data(start_data)
+	var end_port = find_port_by_data(end_data)
+	
+	if start_port and end_port and is_instance_valid(start_port) and is_instance_valid(end_port):
+		var wire = load("res://scenes/components/Wire.tscn").instantiate()
+		wire.connect_ports(start_port, end_port)
+		add_child(wire)
+		wires.append(wire)
+		print("Successfully restored wire: ", start_data.get("port_name", ""), " -> ", end_data.get("port_name", ""))
+	else:
+		print("WARNING: Could not restore wire - ports not found")
+
+func find_port_by_data(port_data):
+	var parent_type = port_data.get("parent_type", "")
+	var parent_name = port_data.get("parent_name", "")
+	var position_array = port_data.get("parent_position", [0, 0])
+	var port_name = port_data.get("port_name", "")
+	var position = Vector2(position_array[0], position_array[1])
+	
+	# Сначала пытаемся найти по фиксированным именам
+	var parent = null
+	
+	if parent_name == "InputBlockD" and input_block_d:
+		parent = input_block_d
+	elif parent_name == "InputBlockCLK" and input_block_clk:
+		parent = input_block_clk
+	elif parent_name == "OutputBlockQ" and output_block_q:
+		parent = output_block_q
+	else:
+		# Ищем среди всех объектов по типу и позиции
+		for obj in movable_objects:
+			if not obj or not is_instance_valid(obj):
+				continue
+				
+			var obj_type = get_object_type(obj)
+			if obj_type == parent_type and obj.position.distance_to(position) < 10.0:
+				parent = obj
+				break
+	
+	if not parent:
+		print("Parent not found for type: ", parent_type, " at position: ", position)
+		return null
+	
+	# Ищем порт сначала по сохраненному имени
+	var port = null
+	
+	# Сначала пробуем найти порт по exact имени
+	if port_name:
+		var port_node_name = str(port_name)
+		port = parent.get_node_or_null(port_node_name)
+	
+	# Если не нашли, пробуем альтернативные имена в зависимости от типа родителя
+	if not port:
+		if parent_type == "INPUT_BLOCK_D" or parent_type == "INPUT_BLOCK_CLK":
+			# Пробуем различные варианты имен для выходных портов входных блоков
+			port = parent.get_node_or_null("Output") or parent.get_node_or_null("output") or parent.get_node_or_null("Out")
+		elif parent_type == "OUTPUT_BLOCK_Q":
+			# Пробуем различные варианты имен для входных портов выходных блоков
+			port = parent.get_node_or_null("InputPort") or parent.get_node_or_null("Input") or parent.get_node_or_null("In")
+		else:
+			# Для гейтов
+			if port_name == "Input" or port_name == "Input1" or port_name == "D":
+				port = parent.get_node_or_null("D") or parent.get_node_or_null("Input") or parent.get_node_or_null("Input1")
+			elif port_name == "Input2" or port_name == "Enable":
+				port = parent.get_node_or_null("Enable") or parent.get_node_or_null("Input2")
+			elif port_name == "Output":
+				port = parent.get_node_or_null("Output")
+	
+	if not port:
+		print("Port not found: ", parent_name, "/", port_name, " for parent type: ", parent_type)
+	
+	return port
+
+func create_gate_from_data(gate_data):
+	var gate_type = gate_data.get("type", "")
+	var position_array = gate_data.get("position", [0, 0])
+	var position = Vector2(position_array[0], position_array[1])
+	
+	# Обработка специальных блоков
+	if gate_type == "INPUT_BLOCK_D" and input_block_d:
+		input_block_d.position = position
+		print("Restored InputBlockD position: ", position)
+		return
+	elif gate_type == "INPUT_BLOCK_CLK" and input_block_clk:
+		input_block_clk.position = position
+		print("Restored InputBlockCLK position: ", position)
+		return
+	elif gate_type == "OUTPUT_BLOCK_Q" and output_block_q:
+		output_block_q.position = position
+		print("Restored OutputBlockQ position: ", position)
+		return
+
+	# Обработка обычных гейтов
+	var gate_scene = null
+	
+	match gate_type:
+		"AND":
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
+		"OR":
+			gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
+		"NOT":
+			gate_scene = load("res://scenes/gates/base_logic_el/NOTGate.tscn")
+		"XOR":
+			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
+		"NAND":
+			gate_scene = load("res://scenes/gates/base_logic_el/NANDGate.tscn")
+		"NOR":
+			gate_scene = load("res://scenes/gates/base_logic_el/NORGate.tscn")
+		"XNOR":
+			gate_scene = load("res://scenes/gates/base_logic_el/XNORGate.tscn")
+		"IMPLICATION":
+			gate_scene = load("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
+		"SEL0":
+			gate_scene = load("res://scenes/gates/Sel0.tscn")
+		"SEL1":
+			gate_scene = load("res://scenes/gates/Sel1.tscn")
+		"D_LATCH":
+			gate_scene = load("res://scenes/gates/DLatchGate.tscn")
+	
+	if gate_scene:
+		var gate = gate_scene.instantiate()
+		gate.position = position
+		add_child(gate)
+		movable_objects.append(gate)
+		
+		# Устанавливаем имя, которое будет использоваться для восстановления проводов
+		gate.set_meta("gate_type", gate_type)
+		gate.set_meta("original_position", position)
+		
+		print("Restored gate: ", gate_type, " at ", position, " with name: ", gate.name)
+
 func _on_test_pressed():
-	print("=== Testing Full Adder level ===")
+	print("=== Testing D Trigger level ===")
 	var level_number = get_level_number()
 	if level_number > 0:
 		var save_system = get_node_or_null("/root/SaveSystem")
-		if save_system:
-			failed_attempts_count = save_system.get_failed_attempts(level_number)
-			hints_enabled = (failed_attempts_count >= 5)
-			print("Failed attempts for level ", level_number, ": ", failed_attempts_count, ", hints enabled: ", hints_enabled)
-			
-			# Если подсказки уже включены, обновляем теорию
-			if hints_enabled:
-				_update_theory_with_hint()
+		if save_system and save_system.has_method("record_level_attempt"):
+			save_system.record_level_attempt(level_number)
 	
 	reset_all_port_sprites()
 
-	if output_block_sum:
-		output_block_sum.set_default_style()
-	if output_block_cout:
-		output_block_cout.set_default_style()
+	if output_block_q:
+		output_block_q.set_default_style()
 	
-	var player_sum_outputs = []
-	var player_cout_outputs = []
+	var player_q_outputs = []
 	
+	# Полностью сбрасываем состояние всех DLatchGate перед началом тестирования
+	for obj in all_logic_objects:
+		if obj and obj.has_method("reset_state"):
+			obj.reset_state()
+		elif obj and obj.has_method("reset_inputs"):
+			obj.reset_inputs()
+	
+	# Для каждого тестового случая
 	for i in range(8):
 		print("--- Test case ", i, " ---")
-		input_block_a.current_test_index = i
-		input_block_b.current_test_index = i
-		input_block_cin.current_test_index = i
-		print("Inputs: A=", input_block_a.values[i], " B=", input_block_b.values[i], " Cin=", input_block_cin.values[i])
+		
+		# Устанавливаем текущие значения входов
+		input_block_d.current_test_index = i
+		input_block_clk.current_test_index = i
+		
+		print("Inputs: D=", input_block_d.values[i], " CLK=", input_block_clk.values[i])
 
+		# НЕ сбрасываем входы DLatchGate для этого теста
+		# Только комбинационные элементы
 		for obj in all_logic_objects:
-			if obj and obj.has_method("reset_inputs"):
+			if obj and obj.has_method("reset_inputs") and not obj.has_method("reset_state"):
 				obj.reset_inputs()
-
-		if output_block_sum:
-			output_block_sum.received_value = 0
-		if output_block_cout:
-			output_block_cout.received_value = 0
-			
+		
+		if output_block_q:
+			output_block_q.received_value = 0
+		
+		# Пропускаем сигналы через созданную схему
 		propagate_signals()
 		
-		if output_block_sum:
-			player_sum_outputs.append(int(output_block_sum.received_value))
-			print("Sum output: ", output_block_sum.received_value)
+		# Получаем значение с выхода схемы
+		if output_block_q:
+			player_q_outputs.append(int(output_block_q.received_value))
+			print("Q output: ", output_block_q.received_value)
 		else:
-			player_sum_outputs.append(0)
-		
-		if output_block_cout:
-			player_cout_outputs.append(int(output_block_cout.received_value))
-			print("Cout output: ", output_block_cout.received_value)
-		else:
-			player_cout_outputs.append(0)
+			player_q_outputs.append(0)
 	
 	print("=== Test results ===")
-	print("Player Sum: ", player_sum_outputs)
-	print("Expected Sum: ", level_data.expected_sum)
-	print("Player Cout: ", player_cout_outputs)
-	print("Expected Cout: ", level_data.expected_cout)
+	print("Player Q: ", player_q_outputs)
+	print("Expected Q: ", level_data.expected_q)
 
 	if test_results_panel and test_results_panel.has_method("update_current_outputs"):
-		test_results_panel.update_current_outputs(player_sum_outputs, player_cout_outputs)
+		test_results_panel.update_current_outputs(player_q_outputs)
 		print("Test panel updated")
 
-	var sum_correct = player_sum_outputs == level_data.expected_sum
-	var cout_correct = player_cout_outputs == level_data.expected_cout
+	var q_correct = player_q_outputs == level_data.expected_q
 	
-	print("Sum correct: ", sum_correct, " Cout correct: ", cout_correct)
+	print("Q correct: ", q_correct)
 	
-	if sum_correct and cout_correct:
-		if output_block_sum:
-			output_block_sum.set_correct_style()
-		if output_block_cout:
-			output_block_cout.set_correct_style()
+	if q_correct:
+		if output_block_q:
+			output_block_q.set_correct_style()
 		if not level_completed_this_session:
 			save_level_progress()
 			level_completed_this_session = true
 		handle_test_success()
 		print("Level completed successfully!")
 	else:
-		if output_block_sum:
-			output_block_sum.set_default_style()
-		if output_block_cout:
-			output_block_cout.set_default_style()
+		if output_block_q:
+			output_block_q.set_default_style()
 		level_completed_this_session = false
 		handle_test_failure()
 		print("Level not completed - outputs don't match")
 	
 	update_all_port_colors()
-
+	
 func propagate_signals():
-	print("=== Starting signal propagation for Full Adder ===")
+	print("=== Starting signal propagation for D Trigger ===")
 
 	for obj in all_logic_objects:
 		if obj and obj.has_method("reset_inputs"):
@@ -283,7 +454,7 @@ func propagate_signals():
 		if not current or not is_instance_valid(current):
 			continue
 			
-		if current in [input_block_a, input_block_b, input_block_cin]:
+		if current in [input_block_d, input_block_clk]:
 			var output_value = int(current.get_output("Output"))
 			
 			for wire in wires:
@@ -298,19 +469,19 @@ func propagate_signals():
 						continue
 						
 					var end_port_name = wire.end_port.name
-					
+
 					if end_gate.has_method("set_input"):
 						var port_num = 1
-						if end_port_name == "Input2":
+						if end_port_name == "Input2" or end_port_name == "Enable":
 							port_num = 2
-						elif end_port_name == "InputPort":
+						elif end_port_name == "Input" or end_port_name == "Input1" or end_port_name == "D":
 							port_num = 1
-						elif end_port_name == "Input":
+						elif end_port_name == "InputPort":
 							port_num = 1
 						
 						end_gate.set_input(port_num, output_value)
 
-		elif current.has_method("get_output") and current != output_block_sum and current != output_block_cout:
+		elif current.has_method("get_output") and current != output_block_q:
 			var output_value = int(current.get_output("Output"))
 			
 			for wire in wires:
@@ -328,11 +499,11 @@ func propagate_signals():
 					
 					if end_gate.has_method("set_input"):
 						var port_num = 1
-						if end_port_name == "Input2":
+						if end_port_name == "Input2" or end_port_name == "Enable":
 							port_num = 2
-						elif end_port_name == "InputPort":
+						elif end_port_name == "Input" or end_port_name == "Input1" or end_port_name == "D":
 							port_num = 1
-						elif end_port_name == "Input":
+						elif end_port_name == "InputPort":
 							port_num = 1
 						
 						end_gate.set_input(port_num, output_value)
@@ -342,47 +513,33 @@ func propagate_signals():
 func get_gates_data():
 	var gates_data = []
 
-	if input_block_a:
-		var input_block_a_data = {
-			"type": "INPUT_BLOCK_A",
-			"position": [input_block_a.position.x, input_block_a.position.y]
+	if input_block_d:
+		var input_block_d_data = {
+			"type": "INPUT_BLOCK_D",
+			"position": [input_block_d.position.x, input_block_d.position.y]
 		}
-		gates_data.append(input_block_a_data)
+		gates_data.append(input_block_d_data)
 	
-	if input_block_b:
-		var input_block_b_data = {
-			"type": "INPUT_BLOCK_B",
-			"position": [input_block_b.position.x, input_block_b.position.y]
+	if input_block_clk:
+		var input_block_clk_data = {
+			"type": "INPUT_BLOCK_CLK",
+			"position": [input_block_clk.position.x, input_block_clk.position.y]
 		}
-		gates_data.append(input_block_b_data)
+		gates_data.append(input_block_clk_data)
 
-	if input_block_cin:
-		var input_block_cin_data = {
-			"type": "INPUT_BLOCK_CIN",
-			"position": [input_block_cin.position.x, input_block_cin.position.y]
+	if output_block_q:
+		var output_block_q_data = {
+			"type": "OUTPUT_BLOCK_Q", 
+			"position": [output_block_q.position.x, output_block_q.position.y]
 		}
-		gates_data.append(input_block_cin_data)
-	
-	if output_block_sum:
-		var output_block_sum_data = {
-			"type": "OUTPUT_BLOCK_SUM", 
-			"position": [output_block_sum.position.x, output_block_sum.position.y]
-		}
-		gates_data.append(output_block_sum_data)
-	
-	if output_block_cout:
-		var output_block_cout_data = {
-			"type": "OUTPUT_BLOCK_COUT", 
-			"position": [output_block_cout.position.x, output_block_cout.position.y]
-		}
-		gates_data.append(output_block_cout_data)
+		gates_data.append(output_block_q_data)
 
 	for obj in movable_objects:
 		var skip = false
 
-		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
+		if obj == input_block_d or obj == input_block_clk:
 			skip = true
-		if obj == output_block_sum or obj == output_block_cout:
+		if obj == output_block_q:
 			skip = true
 
 		if skip:
@@ -411,6 +568,8 @@ func get_gates_data():
 			gate_type = "SEL0"
 		elif "Sel1" in scene_file:
 			gate_type = "SEL1"
+		elif "DLatchGate" in scene_file:
+			gate_type = "D_LATCH"
 		
 		var gate_data = {
 			"type": gate_type,
@@ -430,9 +589,9 @@ func clear_level():
 		var obj = movable_objects[i]
 
 		var skip = false
-		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
+		if obj == input_block_d or obj == input_block_clk:
 			skip = true
-		if obj == output_block_sum or obj == output_block_cout:
+		if obj == output_block_q:
 			skip = true
 
 		if skip:
@@ -445,78 +604,17 @@ func clear_level():
 	update_all_logic_objects()
 	reset_all_port_sprites()
 	
-	print("Full Adder level cleared - kept Input/Output blocks, removed gates and wires")
-	
-func create_gate_from_data(gate_data):
-	var gate_type = gate_data.get("type", "")
-	var position_array = gate_data.get("position", [0, 0])
-	var position = Vector2(position_array[0], position_array[1])
-	
-	if gate_type == "INPUT_BLOCK_A" and input_block_a:
-		input_block_a.position = position
-		print("Restored InputBlockA position: ", position)
-		return
-	elif gate_type == "INPUT_BLOCK_B" and input_block_b:
-		input_block_b.position = position
-		print("Restored InputBlockB position: ", position)
-		return
-	elif gate_type == "INPUT_BLOCK_CIN" and input_block_cin:
-		input_block_cin.position = position
-		print("Restored InputBlockCin position: ", position)
-		return
-	elif gate_type == "OUTPUT_BLOCK_SUM" and output_block_sum:
-		output_block_sum.position = position
-		print("Restored OutputBlockSum position: ", position)
-		return
-	elif gate_type == "OUTPUT_BLOCK_COUT" and output_block_cout:
-		output_block_cout.position = position
-		print("Restored OutputBlockCout position: ", position)
-		return
-
-	var gate_scene = null
-	
-	match gate_type:
-		"AND":
-			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
-		"OR":
-			gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
-		"NOT":
-			gate_scene = load("res://scenes/gates/base_logic_el/NOTGate.tscn")
-		"XOR":
-			gate_scene = load("res://scenes/gates/base_logic_el/XORGate.tscn")
-		"NAND":
-			gate_scene = load("res://scenes/gates/base_logic_el/NANDGate.tscn")
-		"NOR":
-			gate_scene = load("res://scenes/gates/base_logic_el/NORGate.tscn")
-		"XNOR":
-			gate_scene = load("res://scenes/gates/base_logic_el/XNORGate.tscn")
-		"IMPLICATION":
-			gate_scene = load("res://scenes/gates/base_logic_el/ImplicationGate.tscn")
-		"SEL0":
-			gate_scene = load("res://scenes/gates/Sel0.tscn")
-		"SEL1":
-			gate_scene = load("res://scenes/gates/Sel1.tscn")
-	
-	if gate_scene:
-		var gate = gate_scene.instantiate()
-		gate.position = position
-		add_child(gate)
-		movable_objects.append(gate)
-		print("Restored gate: ", gate_type, " at ", position)
+	print("D Trigger level cleared - kept Input/Output blocks, removed gates and wires")
 
 func find_port_by_name(parent_name, port_name):
 	var parent = null
 	
-	if parent_name == "InputBlockA" and input_block_a:
-		parent = input_block_a
-	elif parent_name == "InputBlockB" and input_block_b:
-		parent = input_block_b
-	elif parent_name == "InputBlockCin" and input_block_cin:
-		parent = input_block_cin
-	elif parent_name == "OutputBlockSum" and output_block_sum:
-		parent = output_block_sum
-	elif parent_name == "OutputBlockCout" and output_block_cout:
-		parent = output_block_cout
+	if parent_name == "InputBlockD" and input_block_d:
+		parent = input_block_d
+	elif parent_name == "InputBlockCLK" and input_block_clk:
+		parent = input_block_clk
+	elif parent_name == "OutputBlockQ" and output_block_q:
+		parent = output_block_q
 
 	if not parent:
 		for obj in movable_objects:
@@ -528,10 +626,12 @@ func find_port_by_name(parent_name, port_name):
 		print("Parent not found: ", parent_name)
 		return null
 
-	var port = parent.get_node_or_null(str(port_name))
+	# Преобразуем port_name в строку
+	var port_node_name = str(port_name)
+	var port = parent.get_node_or_null(port_node_name)
 	
 	if not port:
-		print("Port not found: ", parent_name, "/", port_name)
+		print("Port not found: ", parent_name, "/", port_node_name)
 	
 	return port
 
@@ -561,17 +661,15 @@ func get_object_type(obj):
 		return "XNOR"
 	elif "ImplicationGate" in scene_file:
 		return "IMPLICATION"
+	elif "DLatchGate" in scene_file:
+		return "D_LATCH"
 
-	if obj == input_block_a:
-		return "INPUT_BLOCK_A"
-	elif obj == input_block_b:
-		return "INPUT_BLOCK_B"
-	elif obj == input_block_cin:
-		return "INPUT_BLOCK_CIN"
-	elif obj == output_block_sum:
-		return "OUTPUT_BLOCK_SUM"
-	elif obj == output_block_cout:
-		return "OUTPUT_BLOCK_COUT"
+	if obj == input_block_d:
+		return "INPUT_BLOCK_D"
+	elif obj == input_block_clk:
+		return "INPUT_BLOCK_CLK"
+	elif obj == output_block_q:
+		return "OUTPUT_BLOCK_Q"
 	
 	return "UNKNOWN"
 
@@ -585,21 +683,21 @@ func find_port_near_position(position, max_distance = 50.0):
 			
 		var ports = []
 
-		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
-			var output = obj.get_node_or_null("Output")
+		if obj == input_block_d or obj == input_block_clk:
+			var output = obj.get_node_or_null("Output")  # Исправлено с "output" на "Output"
 			if output: ports.append(output)
-		elif obj == output_block_sum or obj == output_block_cout:
+		elif obj == output_block_q:
 			var input_port = obj.get_node_or_null("InputPort")
 			if input_port: ports.append(input_port)
 		else:
-			var input1 = obj.get_node_or_null("Input1")
-			var input2 = obj.get_node_or_null("Input2")
-			var input_port = obj.get_node_or_null("InputPort")
-			var output = obj.get_node_or_null("Output")
+			var input1 = obj.get_node_or_null("Input")
+			var enable = obj.get_node_or_null("Enable")
+			var d_port = obj.get_node_or_null("D")
+			var output = obj.get_node_or_null("Output")  # Исправлено с "output" на "Output"
 			
 			if input1: ports.append(input1)
-			if input2: ports.append(input2)
-			if input_port: ports.append(input_port)
+			if enable: ports.append(enable)
+			if d_port: ports.append(d_port)
 			if output: ports.append(output)
 		
 		for port in ports:
@@ -613,36 +711,22 @@ func find_port_near_position(position, max_distance = 50.0):
 	return closest_port
 
 func reset_all_port_sprites():
-	if input_block_a:
-		var output_port = input_block_a.get_node_or_null("output")
+	if input_block_d:
+		var output_port = input_block_d.get_node_or_null("output")  # Исправлено с "output" на "Output"
 		if output_port and is_instance_valid(output_port):
 			var sprite = output_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = load("res://assets/point.png")
 
-	if input_block_b:
-		var output_port = input_block_b.get_node_or_null("Output")
+	if input_block_clk:
+		var output_port = input_block_clk.get_node_or_null("output")  # Исправлено с "output" на "Output"
 		if output_port and is_instance_valid(output_port):
 			var sprite = output_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = load("res://assets/point.png")
 
-	if input_block_cin:
-		var output_port = input_block_cin.get_node_or_null("Output")
-		if output_port and is_instance_valid(output_port):
-			var sprite = output_port.get_node_or_null("Sprite2D")
-			if sprite and is_instance_valid(sprite):
-				sprite.texture = load("res://assets/point.png")
-
-	if output_block_sum:
-		var input_port = output_block_sum.get_node_or_null("InputPort")
-		if input_port and is_instance_valid(input_port):
-			var sprite = input_port.get_node_or_null("Sprite2D")
-			if sprite and is_instance_valid(sprite):
-				sprite.texture = load("res://assets/point.png")
-
-	if output_block_cout:
-		var input_port = output_block_cout.get_node_or_null("InputPort")
+	if output_block_q:
+		var input_port = output_block_q.get_node_or_null("InputPort")
 		if input_port and is_instance_valid(input_port):
 			var sprite = input_port.get_node_or_null("Sprite2D")
 			if sprite and is_instance_valid(sprite):
@@ -652,13 +736,13 @@ func reset_all_port_sprites():
 		if not obj or not is_instance_valid(obj):
 			continue
 
-		if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
+		if obj == input_block_d or obj == input_block_clk:
 			continue
-		if obj == output_block_sum or obj == output_block_cout:
+		if obj == output_block_q:
 			continue
 
 		var ports = []
-		var possible_port_names = ["Input1", "Input2", "InputPort", "Output"]
+		var possible_port_names = ["Input", "Enable", "D", "Output"]
 		
 		for port_name in possible_port_names:
 			var port = obj.get_node_or_null(port_name)
@@ -670,7 +754,7 @@ func reset_all_port_sprites():
 			if sprite and is_instance_valid(sprite):
 				sprite.texture = load("res://assets/point.png")
 	
-	print("Full Adder level: Reset all port sprites")
+	print("D Trigger level: Reset all port sprites")
 
 func _input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -715,9 +799,9 @@ func _input(event):
 			var obj = movable_objects[i]
 			var skip = false
 
-			if obj == input_block_a or obj == input_block_b or obj == input_block_cin:
+			if obj == input_block_d or obj == input_block_clk:
 				skip = true
-			if obj == output_block_sum or obj == output_block_cout:
+			if obj == output_block_q:
 				skip = true
 
 			if skip:
@@ -728,12 +812,15 @@ func _input(event):
 				var local_mouse = sprite.to_local(mouse_pos)
 				var sprite_rect = sprite.get_rect()
 				if sprite_rect.has_point(local_mouse):
-					# Определяем тип гейта и вызываем соответствующий метод удаления
 					var scene_file = obj.scene_file_path
 					print("Removing object with scene file: ", scene_file)
 					
-					# Более точная проверка типов гейтов с правильным порядком
-					if scene_file.find("XORGate") != -1:
+					if scene_file.find("DLatchGate") != -1:
+						if has_method("remove_dlatch_gate"):
+							remove_dlatch_gate()
+						else:
+							print("WARNING: remove_dlatch_gate method not found")
+					elif scene_file.find("XORGate") != -1:
 						if has_method("remove_xor_gate"):
 							remove_xor_gate()
 						else:
@@ -833,6 +920,9 @@ func remove_or_gate():
 func remove_not_gate():
 	pass
 	
+func remove_dlatch_gate():
+	pass
+	
 func get_port_under_mouse():
 	var mouse_pos = get_global_mouse_position()
 	var space_state = get_world_2d().direct_space_state
@@ -844,7 +934,6 @@ func get_port_under_mouse():
 	if intersects.size() > 0:
 		var collider = intersects[0].collider
 		if collider is Area2D and is_instance_valid(collider):
-			# Проверяем, что это не Area2D для подсветки (не на слое 2)
 			if collider.collision_layer != 2:
 				return collider
 	return null

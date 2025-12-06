@@ -219,6 +219,17 @@ func _get_hint_for_level(level_number: int) -> String:
 					2. Путь обратной связи (активен при Enable=0): Q AND NOT Enable
 					3. Объедините оба пути через OR элемент
 					4. Создайте обратную связь: выход OR подключите ко второму AND элементу"
+		27:
+			return "[b]Подсказка:[/b] Схема состоит из следующих компонентов:
+					1. Инвертор для тактового сигнала: CLK → NOT → NOT_CLK
+					2. Первая D-защелка:
+					   • Вход D: внешний вход D
+					   • Вход Enable: NOT_CLK
+					   • Выход: внутренний сигнал (подключить ко второй защелке)
+					3. Вторая D-защелка:
+					   • Вход D: выход первой защелки
+					   • Вход Enable: прямой CLK
+					   • Выход Q: окончательный выход триггера"
 		_:
 			return ""
 		
@@ -453,10 +464,15 @@ func _setup_top_panel_buttons():
 					button.connect("pressed", _on_add_d_flip_flop_button_pressed)
 				"CLK":
 					button.connect("pressed", _on_add_clk_button_pressed)
+				"D_LATCH":
+					button.connect("pressed", _on_add_dlatch_button_pressed)
 					
 func update_all_logic_objects():
 	all_logic_objects = movable_objects.duplicate()
 	print("Updated all_logic_objects: ", all_logic_objects)
+	
+func _on_add_dlatch_button_pressed():
+	print("add dlatch")
 	
 func _on_test_pressed():
 	# Базовый метод - будет переопределен в дочерних классах

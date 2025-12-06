@@ -22,41 +22,41 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="LeftSection" type="HBoxContainer" parent="MainContainer"]
-layout_mode = 1
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 theme_override_constants/separation = 30
-custom_minimum_size = Vector2(300, 0)
 
 [node name="MenuButton" type="TextureButton" parent="MainContainer/LeftSection"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture_normal = ExtResource("2_qbmb5")
 stretch_mode = 3
-custom_minimum_size = Vector2(40, 40)
 
 [node name="TheoryButton" type="TextureButton" parent="MainContainer/LeftSection"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture_normal = ExtResource("3_u2lv2")
 stretch_mode = 3
-custom_minimum_size = Vector2(40, 40)
 
 [node name="MapButton" type="TextureButton" parent="MainContainer/LeftSection"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture_normal = ExtResource("4_o5218")
 stretch_mode = 3
-custom_minimum_size = Vector2(40, 40)
 
 [node name="RunButton" type="TextureButton" parent="MainContainer/LeftSection"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture_normal = ExtResource("5_th10h")
 stretch_mode = 3
-custom_minimum_size = Vector2(40, 40)
 
 [node name="CenterSection" type="Control" parent="MainContainer"]
-layout_mode = 1
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_minimum_size = Vector2(100, 0)
 
 [node name="LevelNameLabel" type="Label" parent="MainContainer/CenterSection"]
 layout_mode = 1
@@ -68,141 +68,139 @@ grow_vertical = 2
 text = "Level Name"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_bottom = 5
 
 [node name="RightSection" type="ScrollContainer" parent="MainContainer"]
-layout_mode = 1
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
-custom_minimum_size = Vector2(300, 0)
-scroll_horizontal_enabled = true
-scroll_vertical_enabled = false
 
 [node name="GateButtonsContainer" type="HBoxContainer" parent="MainContainer/RightSection"]
-layout_mode = 1
+layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 
 [node name="NOT" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "NOT"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "NOT"
 
 [node name="AND" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "AND"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "AND"
 
 [node name="OR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "OR"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "OR"
 
 [node name="XOR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "XOR"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "XOR"
 
 [node name="NOR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "NOR"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "NOR"
 
 [node name="NAND" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "NAND"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "NAND"
 
 [node name="XNOR" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "XNOR"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "XNOR"
 
 [node name="Implication" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "IMP"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "IMP"
 
 [node name="SEL0" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "SEL0"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "SEL0"
 
 [node name="SEL1" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "SEL1"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "SEL1"
 
 [node name="FullAdder" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "SUM"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "SUM"
 
 [node name="HalfAdder" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "HSUM"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "HSUM"
 
 [node name="Cout0" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "COUT0"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "COUT0"
 
 [node name="MUX4to1" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "MUX"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "MUX"
 
 [node name="OpCode" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "OpCode"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "OpCode"
 
 [node name="OneBitComparator" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "OneBitComparator"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "OneBitComparator"
 
 [node name="RSFlipFlop" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "RSFlipFlop"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "RSFlipFlop"
 
 [node name="TFlipFlop" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "TFlipFlop"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "TFlipFlop"
 
 [node name="DFlipFlop" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "DFlipFlop"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "DFlipFlop"
 
 [node name="CLK" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
-layout_mode = 2
-text = "CLK"
 custom_minimum_size = Vector2(60, 40)
+layout_mode = 2
 size_flags_horizontal = 0
+text = "CLK"
+
+[node name="D_LATCH" type="Button" parent="MainContainer/RightSection/GateButtonsContainer"]
+layout_mode = 2
+text = "D_LATCH"

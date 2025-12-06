@@ -143,3 +143,12 @@ Y6 = A AND B AND NOT C
 Y7 = A AND B AND C
 
 ![Alt text](/image_solution/image-23.png)
+
+
+### level 25
+
+![Alt text](/image_solution/image-24.png)
+
+### level 26
+
+![Alt text](/image_solution/image-25.png)
