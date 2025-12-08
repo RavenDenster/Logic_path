@@ -13,7 +13,24 @@ func _ready():
 		input_block.input_labels = ["Input 1", "Input 2"]
 		print("Level1: Set input labels to ['Input 1', 'Input 2']")
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_center_y = viewport_rect.size.y / 2
+	
+	# Располагаем InputBlock слева (10% от ширины экрана)
+	var input_block = get_node_or_null("InputBlock")
+	if input_block:
+		input_block.position = Vector2(viewport_rect.size.x * 0.1, screen_center_y)
+	
+	# Располагаем OutputBlock справа (90% от ширины экрана)
+	var output_block = get_node_or_null("OutputBlock")
+	if output_block:
+		output_block.position = Vector2(viewport_rect.size.x * 0.9, screen_center_y)
 
 func _on_add_or_button_pressed():
 	if or_gate_count >= max_or_gates:
@@ -46,6 +63,8 @@ func remove_or_gate():
 func clear_level():
 	super.clear_level()
 	or_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level1 cleared - OR gate count reset to 0")
 

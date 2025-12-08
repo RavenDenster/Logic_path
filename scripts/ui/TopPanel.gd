@@ -6,13 +6,14 @@ extends ColorRect
 @onready var map_button: TextureButton = $MainContainer/LeftSection/MapButton
 @onready var run_button: TextureButton = $MainContainer/LeftSection/RunButton
 @onready var gate_buttons_container = $MainContainer/RightSection/GateButtonsContainer
+@onready var left_section: HBoxContainer = $MainContainer/LeftSection
 
 var theory_window_instance: Window
 var current_theory_text: String = ""
 var hover_style: StyleBoxFlat
 var current_level_number: int = 0
 var glow_animation_tween: Tween
-var is_tutorial: bool = false  # НОВОЕ: флаг для обучалки
+var is_tutorial: bool = false
 
 func _ready():
 	# Проверяем, находимся ли мы в обучалке
@@ -27,8 +28,14 @@ func _ready():
 	var viewport_size = get_viewport_rect().size
 	size = Vector2(viewport_size.x, 60)
 	
+	# Создаем отступ слева другим способом
+	_create_left_margin()
+	
 	# Подписываемся на изменение размера окна
 	get_tree().root.connect("size_changed", _on_window_size_changed)
+	
+	# Инициализируем стили для кнопок
+	_init_button_styles()
 	
 	hover_style = StyleBoxFlat.new()
 	hover_style.bg_color = Color.YELLOW
@@ -51,33 +58,8 @@ func _ready():
 		if theory_window_instance.get_script() == null:
 			push_error("TheoryWindow instance has no script assigned!")
 
-	if menu_button:
-		menu_button.connect("mouse_entered", _on_button_mouse_entered.bind(menu_button))
-		menu_button.connect("mouse_exited", _on_button_mouse_exited.bind(menu_button))
-		# В обучалке кнопка меню возвращает в главное меню
-		if is_tutorial:
-			menu_button.connect("pressed", _on_tutorial_menu_pressed)
-	
-	if theory_button:
-		theory_button.connect("mouse_entered", _on_button_mouse_entered.bind(theory_button))
-		theory_button.connect("mouse_exited", _on_button_mouse_exited.bind(theory_button))
-		theory_button.connect("pressed", _on_theory_button_pressed)
-	
-	if map_button:
-		map_button.connect("mouse_entered", _on_button_mouse_entered.bind(map_button))
-		map_button.connect("mouse_exited", _on_button_mouse_exited.bind(map_button))
-		# В обучалке отключаем кнопку карты
-		if is_tutorial:
-			map_button.disabled = true
-			map_button.modulate = Color(1, 1, 1, 0.5)
-	
-	if run_button:
-		run_button.connect("mouse_entered", _on_button_mouse_entered.bind(run_button))
-		run_button.connect("mouse_exited", _on_button_mouse_exited.bind(run_button))
-		# В обучалке отключаем кнопку запуска
-		if is_tutorial:
-			run_button.disabled = true
-			run_button.modulate = Color(1, 1, 1, 0.5)
+	# Настройка кнопок
+	_setup_buttons()
 	
 	# В обучалке скрываем кнопки ворот
 	if is_tutorial and gate_buttons_container:
@@ -89,9 +71,122 @@ func _ready():
 		_determine_level_number()
 		_check_theory_button_animation()
 
+func _init_button_styles():
+	# Создаем стили для кнопок, чтобы убрать белые линии при фокусе
+	var focus_style = StyleBoxEmpty.new()
+	
+	# Применяем стили ко всем кнопкам в левой секции
+	for child in left_section.get_children():
+		if child is TextureButton:
+			child.focus_mode = Control.FOCUS_NONE  # Отключаем фокус для кнопок
+			# В Godot 4 используем add_theme_stylebox_override вместо theme_override_styles
+			child.add_theme_stylebox_override("focus", focus_style)
+			child.add_theme_stylebox_override("pressed", focus_style)
+	
+	# Также применяем к кнопкам ворот
+	if gate_buttons_container:
+		for child in gate_buttons_container.get_children():
+			if child is Button:
+				child.focus_mode = Control.FOCUS_NONE  # Отключаем фокус
+				# В Godot 4 используем add_theme_stylebox_override для Button
+				child.add_theme_stylebox_override("focus", focus_style)
+				child.add_theme_stylebox_override("pressed", focus_style)
+
+func _create_left_margin():
+	# Вместо оборачивания в MarginContainer, просто добавляем отступ к левой секции
+	# Изменяем минимальный размер левой секции и добавляем отступ через layout
+	left_section.custom_minimum_size.x += 20  # Добавляем 20 пикселей к ширине
+	
+	# Создаем пустой Control для отступа
+	var spacer = Control.new()
+	spacer.custom_minimum_size = Vector2(20, 0)
+	
+	# Добавляем его первым элементом в левую секцию
+	left_section.add_child(spacer)
+	left_section.move_child(spacer, 0)
+	
+	# Обновляем ссылки на кнопки, так как их индексы изменились
+	_update_button_references()
+
+func _update_button_references():
+	# Обновляем ссылки на кнопки, так как мы добавили spacer первым элементом
+	# Теперь кнопки находятся на позициях 1, 2, 3, 4 вместо 0, 1, 2, 3
+	
+	# Получаем все дочерние элементы левой секции
+	var children = left_section.get_children()
+	
+	# Находим кнопки по их типу и текстуре
+	for child in children:
+		if child is TextureButton:
+			# Проверяем, какая это кнопка по текстуре
+			var texture_normal = child.texture_normal
+			if texture_normal:
+				var texture_path = texture_normal.resource_path
+				
+				if "menu.png" in texture_path:
+					menu_button = child
+				elif "teory.png" in texture_path:
+					theory_button = child
+				elif "map.png" in texture_path:
+					map_button = child
+				elif "run.png" in texture_path:
+					run_button = child
+
+func _setup_buttons():
+	# Настройка кнопки меню
+	if menu_button:
+		menu_button.connect("mouse_entered", _on_button_mouse_entered.bind(menu_button))
+		menu_button.connect("mouse_exited", _on_button_mouse_exited.bind(menu_button))
+		# В обучалке кнопка меню возвращает в главное меню
+		if is_tutorial:
+			menu_button.connect("pressed", _on_tutorial_menu_pressed)
+		else:
+			menu_button.connect("pressed", _on_menu_pressed)
+	
+	# Настройка кнопки теории
+	if theory_button:
+		theory_button.connect("mouse_entered", _on_button_mouse_entered.bind(theory_button))
+		theory_button.connect("mouse_exited", _on_button_mouse_exited.bind(theory_button))
+		theory_button.connect("pressed", _on_theory_button_pressed)
+	
+	# Настройка кнопки карты
+	if map_button:
+		map_button.connect("mouse_entered", _on_button_mouse_entered.bind(map_button))
+		map_button.connect("mouse_exited", _on_button_mouse_exited.bind(map_button))
+		map_button.connect("pressed", _on_map_pressed)
+		# В обучалке отключаем кнопку карты
+		if is_tutorial:
+			map_button.disabled = true
+			map_button.modulate = Color(1, 1, 1, 0.5)
+	
+	# Настройка кнопки запуска
+	if run_button:
+		run_button.connect("mouse_entered", _on_button_mouse_entered.bind(run_button))
+		run_button.connect("mouse_exited", _on_button_mouse_exited.bind(run_button))
+		run_button.connect("pressed", _on_run_pressed)
+		# В обучалке отключаем кнопку запуска
+		if is_tutorial:
+			run_button.disabled = true
+			run_button.modulate = Color(1, 1, 1, 0.5)
+
 func _on_tutorial_menu_pressed():
 	# Возврат в главное меню из обучалки
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
+
+func _on_menu_pressed():
+	# Обработка нажатия кнопки меню (для обычных уровней)
+	print("Menu button pressed")
+	# Здесь можно добавить логику для обычных уровней
+
+func _on_map_pressed():
+	# Обработка нажатия кнопки карты
+	print("Map button pressed")
+	# Здесь можно добавить логику перехода к карте
+
+func _on_run_pressed():
+	# Обработка нажатия кнопки запуска
+	print("Run button pressed")
+	# Здесь можно добавить логику запуска симуляции
 
 func _on_window_size_changed():
 	# Обновляем размер панели при изменении размера окна
@@ -111,7 +206,6 @@ func _on_window_size_changed():
 		$MainContainer/CenterSection.queue_redraw()
 		$MainContainer/RightSection.queue_redraw()
 
-# Остальные методы без изменений...
 func _determine_level_number():
 	var current_scene = get_tree().current_scene
 	if current_scene:

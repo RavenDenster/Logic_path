@@ -10,8 +10,23 @@ var max_not_gates: int = 2
 func _ready():
 	level_data = load("res://data/level_10_data.tres")
 	super._ready()
+	setup_initial_block_positions()
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_center_y = viewport_rect.size.y / 2
+	
+	# Располагаем InputBlock слева (10% от ширины экрана)
+	var input_block = get_node_or_null("InputBlock")
+	if input_block:
+		input_block.position = Vector2(viewport_rect.size.x * 0.1, screen_center_y)
+	
+	# Располагаем OutputBlock справа (90% от ширины экрана)
+	var output_block = get_node_or_null("OutputBlock")
+	if output_block:
+		output_block.position = Vector2(viewport_rect.size.x * 0.9, screen_center_y)
 
 func recount_gates():
 	and_gate_count = 0
@@ -129,6 +144,7 @@ func clear_level():
 	and_gate_count = 0
 	or_gate_count = 0
 	not_gate_count = 0
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level10 cleared - AND gate count reset to 0, OR gate count reset to 0, NOT gate count reset to 0")
 

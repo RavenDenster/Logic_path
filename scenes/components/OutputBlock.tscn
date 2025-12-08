@@ -7,6 +7,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_vkcc2"]
 
 [node name="OutputBlock" type="Node2D"]
+z_index = 2
 script = ExtResource("1_dt1jh")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

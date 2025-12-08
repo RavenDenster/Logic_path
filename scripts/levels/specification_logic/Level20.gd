@@ -26,6 +26,9 @@ func _ready():
 	
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
@@ -52,6 +55,41 @@ func _ready():
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# InputBlockA - слева вверху
+	var input_block_a = get_node_or_null("InputBlockA")
+	if input_block_a:
+		input_block_a.position = Vector2(screen_width * 0.15, screen_height * 0.3)
+		print("Level20: InputBlockA positioned at: ", input_block_a.position)
+	
+	# InputBlockB - слева внизу
+	var input_block_b = get_node_or_null("InputBlockB")
+	if input_block_b:
+		input_block_b.position = Vector2(screen_width * 0.15, screen_height * 0.7)
+		print("Level20: InputBlockB positioned at: ", input_block_b.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Равномерно распределяем по вертикали
+	var output_block_agtb = get_node_or_null("OutputBlockAgtb")
+	if output_block_agtb:
+		output_block_agtb.position = Vector2(screen_width * 0.85, screen_height * 0.25)
+		print("Level20: OutputBlockAgtb positioned at: ", output_block_agtb.position)
+	
+	var output_block_altb = get_node_or_null("OutputBlockAltb")
+	if output_block_altb:
+		output_block_altb.position = Vector2(screen_width * 0.85, screen_height * 0.5)
+		print("Level20: OutputBlockAltb positioned at: ", output_block_altb.position)
+	
+	var output_block_aeqb = get_node_or_null("OutputBlockAeqb")
+	if output_block_aeqb:
+		output_block_aeqb.position = Vector2(screen_width * 0.85, screen_height * 0.75)
+		print("Level20: OutputBlockAeqb positioned at: ", output_block_aeqb.position)
 
 # ДОБАВЬТЕ ЭТОТ МЕТОД ДЛЯ ПЕРЕПОДКЛЮЧЕНИЯ КНОПОК
 func _reconnect_buttons():
@@ -237,6 +275,8 @@ func clear_level():
 	and_gate_count = 0
 	or_gate_count = 0
 	comparator_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level20 cleared - all gate counts reset to 0")
 
@@ -271,34 +311,34 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки 2-битного компаратора
-	if gate_type == "INPUT_BLOCK_A" and input_block_a:
-		input_block_a.position = position
+	if gate_type == "INPUT_BLOCK_A" and has_node("InputBlockA"):
+		$InputBlockA.position = position
 		if gate_name != "":
-			input_block_a.name = gate_name
+			$InputBlockA.name = gate_name
 		print("Restored InputBlockA position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_B" and input_block_b:
-		input_block_b.position = position
+	elif gate_type == "INPUT_BLOCK_B" and has_node("InputBlockB"):
+		$InputBlockB.position = position
 		if gate_name != "":
-			input_block_b.name = gate_name
+			$InputBlockB.name = gate_name
 		print("Restored InputBlockB position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_AGTB" and output_block_agtb:
-		output_block_agtb.position = position
+	elif gate_type == "OUTPUT_BLOCK_AGTB" and has_node("OutputBlockAgtb"):
+		$OutputBlockAgtb.position = position
 		if gate_name != "":
-			output_block_agtb.name = gate_name
+			$OutputBlockAgtb.name = gate_name
 		print("Restored OutputBlockAgtb position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_ALTB" and output_block_altb:
-		output_block_altb.position = position
+	elif gate_type == "OUTPUT_BLOCK_ALTB" and has_node("OutputBlockAltb"):
+		$OutputBlockAltb.position = position
 		if gate_name != "":
-			output_block_altb.name = gate_name
+			$OutputBlockAltb.name = gate_name
 		print("Restored OutputBlockAltb position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_AEQB" and output_block_aeqb:
-		output_block_aeqb.position = position
+	elif gate_type == "OUTPUT_BLOCK_AEQB" and has_node("OutputBlockAeqb"):
+		$OutputBlockAeqb.position = position
 		if gate_name != "":
-			output_block_aeqb.name = gate_name
+			$OutputBlockAeqb.name = gate_name
 		print("Restored OutputBlockAeqb position: ", position)
 		return
 

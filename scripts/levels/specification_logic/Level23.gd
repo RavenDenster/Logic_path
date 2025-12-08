@@ -10,6 +10,9 @@ func _ready():
 	level_data = load("res://data/level_23_data.tres")
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
@@ -35,6 +38,27 @@ func _ready():
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем InputBlock слева (15% от ширины, по центру по вертикали)
+	var input_block = get_node_or_null("InputBlock")
+	if input_block:
+		input_block.position = Vector2(screen_width * 0.15, screen_height * 0.5)
+		print("Level23: InputBlock positioned at: ", input_block.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Равномерно распределяем по вертикали
+	if output_blocks.size() >= 4:
+		for i in range(output_blocks.size()):
+			var output_block = output_blocks[i]
+			if output_block:
+				var vertical_position = 0.2 + (i * 0.2)  # 20%, 40%, 60%, 80% для 4 блоков
+				output_block.position = Vector2(screen_width * 0.85, screen_height * vertical_position)
+				print("Level23: OutputBlockY", i, " positioned at: ", output_block.position)
 
 func setup_decoder_level():
 	super.setup_decoder_level()
@@ -154,6 +178,8 @@ func clear_level():
 	super.clear_level()
 	and_gate_count = 0
 	not_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level23 cleared - all gate counts reset to 0")
 
@@ -197,8 +223,8 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки Decoder
-	if gate_type == "INPUT_BLOCK" and input_block:
-		input_block.position = position
+	if gate_type == "INPUT_BLOCK" and has_node("InputBlock"):
+		$InputBlock.position = position
 		print("Restored InputBlock position: ", position)
 		return
 	elif gate_type.begins_with("OUTPUT_BLOCK_Y") and output_blocks:

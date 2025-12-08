@@ -25,8 +25,47 @@ func _ready():
 	print("  Expected Cout: ", level_data.expected_cout)
 	
 	super._ready()
+	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	recount_components()
 	update_component_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# InputBlockA (для битов A1 и A0) - вверху слева
+	var input_block_a = get_node_or_null("InputBlockA")
+	if input_block_a:
+		input_block_a.position = Vector2(screen_width * 0.15, screen_height * 0.3)
+		print("Level15: InputBlockA positioned at: ", input_block_a.position)
+	
+	# InputBlockB (для битов B1 и B0) - внизу слева
+	var input_block_b = get_node_or_null("InputBlockB")
+	if input_block_b:
+		input_block_b.position = Vector2(screen_width * 0.15, screen_height * 0.7)
+		print("Level15: InputBlockB positioned at: ", input_block_b.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Равномерно распределяем по вертикали
+	var output_s1 = get_node_or_null("OutputS1")
+	if output_s1:
+		output_s1.position = Vector2(screen_width * 0.85, screen_height * 0.25)
+		print("Level15: OutputS1 positioned at: ", output_s1.position)
+	
+	var output_s0 = get_node_or_null("OutputS0")
+	if output_s0:
+		output_s0.position = Vector2(screen_width * 0.85, screen_height * 0.5)
+		print("Level15: OutputS0 positioned at: ", output_s0.position)
+	
+	var output_cout = get_node_or_null("OutputCout")
+	if output_cout:
+		output_cout.position = Vector2(screen_width * 0.85, screen_height * 0.75)
+		print("Level15: OutputCout positioned at: ", output_cout.position)
 
 func recount_components():
 	half_adder_count = 0
@@ -161,6 +200,8 @@ func clear_level():
 	half_adder_count = 0
 	full_adder_count = 0
 	cout0_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_component_buttons_state()
 	print("Level15 cleared - all component counts reset to 0")
 
@@ -203,24 +244,24 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки 2-Bit Adder
-	if gate_type == "INPUT_BLOCK_A" and input_block_a:
-		input_block_a.position = position
+	if gate_type == "INPUT_BLOCK_A" and has_node("InputBlockA"):
+		$InputBlockA.position = position
 		print("Restored InputBlockA position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_B" and input_block_b:
-		input_block_b.position = position
+	elif gate_type == "INPUT_BLOCK_B" and has_node("InputBlockB"):
+		$InputBlockB.position = position
 		print("Restored InputBlockB position: ", position)
 		return
-	elif gate_type == "OUTPUT_S1" and output_s1:
-		output_s1.position = position
+	elif gate_type == "OUTPUT_S1" and has_node("OutputS1"):
+		$OutputS1.position = position
 		print("Restored OutputS1 position: ", position)
 		return
-	elif gate_type == "OUTPUT_S0" and output_s0:
-		output_s0.position = position
+	elif gate_type == "OUTPUT_S0" and has_node("OutputS0"):
+		$OutputS0.position = position
 		print("Restored OutputS0 position: ", position)
 		return
-	elif gate_type == "OUTPUT_COUT" and output_cout:
-		output_cout.position = position
+	elif gate_type == "OUTPUT_COUT" and has_node("OutputCout"):
+		$OutputCout.position = position
 		print("Restored OutputCout position: ", position)
 		return
 

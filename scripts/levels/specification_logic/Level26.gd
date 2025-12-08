@@ -12,9 +12,35 @@ func _ready():
 	level_data = load("res://data/level_26_data.tres")
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Пересчитываем гейты после инициализации
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# Распределяем по вертикали
+	var input_block_d = get_node_or_null("InputBlockD")
+	if input_block_d:
+		input_block_d.position = Vector2(screen_width * 0.15, screen_height * 0.35)
+		print("Level26: InputBlockD positioned at: ", input_block_d.position)
+	
+	var input_block_enable = get_node_or_null("InputBlockEnable")
+	if input_block_enable:
+		input_block_enable.position = Vector2(screen_width * 0.15, screen_height * 0.65)
+		print("Level26: InputBlockEnable positioned at: ", input_block_enable.position)
+	
+	# Располагаем выходной блок справа (85% от ширины, по центру по вертикали)
+	var output_block_q = get_node_or_null("OutputBlockQ")
+	if output_block_q:
+		output_block_q.position = Vector2(screen_width * 0.85, screen_height * 0.5)
+		print("Level26: OutputBlockQ positioned at: ", output_block_q.position)
 
 func recount_gates():
 	and_gate_count = 0
@@ -135,6 +161,8 @@ func clear_level():
 	and_gate_count = 0
 	or_gate_count = 0
 	not_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level26 cleared - all gate counts reset to 0")
 
@@ -178,16 +206,16 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки
-	if gate_type == "INPUT_BLOCK_D" and input_block_d:
-		input_block_d.position = position
+	if gate_type == "INPUT_BLOCK_D" and has_node("InputBlockD"):
+		$InputBlockD.position = position
 		print("Restored InputBlockD position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_ENABLE" and input_block_enable:
-		input_block_enable.position = position
+	elif gate_type == "INPUT_BLOCK_ENABLE" and has_node("InputBlockEnable"):
+		$InputBlockEnable.position = position
 		print("Restored InputBlockEnable position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_Q" and output_block_q:
-		output_block_q.position = position
+	elif gate_type == "OUTPUT_BLOCK_Q" and has_node("OutputBlockQ"):
+		$OutputBlockQ.position = position
 		print("Restored OutputBlockQ position: ", position)
 		return
 	

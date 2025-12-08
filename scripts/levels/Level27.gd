@@ -1,3 +1,4 @@
+# Level27.gd
 extends "res://scripts/levels/LevelD2.gd"
 
 var not_gate_count: int = 0
@@ -18,6 +19,9 @@ func _ready():
 	print("  Expected Q: ", level_data.expected_q)
 	
 	super._ready()
+	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
 	
 	# ДОБАВЬТЕ ЭТОТ КОД ПОСЛЕ super._ready():
 	# Проверяем и включаем подсказки если нужно
@@ -43,6 +47,29 @@ func _ready():
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# Распределяем по вертикали
+	var input_block_d = get_node_or_null("InputBlockD")
+	if input_block_d:
+		input_block_d.position = Vector2(screen_width * 0.15, screen_height * 0.35)
+		print("Level27: InputBlockD positioned at: ", input_block_d.position)
+	
+	var input_block_clk = get_node_or_null("InputBlockClk")
+	if input_block_clk:
+		input_block_clk.position = Vector2(screen_width * 0.15, screen_height * 0.65)
+		print("Level27: InputBlockClk positioned at: ", input_block_clk.position)
+	
+	# Располагаем выходной блок справа (85% от ширины, по центру по вертикали)
+	var output_block_q = get_node_or_null("OutputBlockQ")
+	if output_block_q:
+		output_block_q.position = Vector2(screen_width * 0.85, screen_height * 0.5)
+		print("Level27: OutputBlockQ positioned at: ", output_block_q.position)
 
 func recount_gates():
 	not_gate_count = 0
@@ -145,6 +172,8 @@ func clear_level():
 	super.clear_level()
 	not_gate_count = 0
 	dlatch_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level27 cleared - NOT gate count reset to 0, D-Latch gate count reset to 0")
 
