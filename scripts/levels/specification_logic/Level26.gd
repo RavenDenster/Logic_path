@@ -66,7 +66,7 @@ func _on_add_and_button_pressed():
 		print("Cannot add more AND gates. Maximum limit reached: ", max_and_gates)
 		return
 	
-	var and_gate = load("res://scenes/gates/ANDGate.tscn").instantiate()
+	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	var viewport_size = get_viewport().get_visible_rect().size
 	and_gate.position = Vector2(viewport_size.x - 600, 150)
 	add_child(and_gate)
@@ -222,7 +222,7 @@ func create_gate_from_data(gate_data):
 	var gate_scene = null
 	match gate_type:
 		"AND":
-			gate_scene = load("res://scenes/gates/ANDGate.tscn")
+			gate_scene = load("res://scenes/gates/base_logic_el/ANDGate.tscn")
 		"OR":
 			gate_scene = load("res://scenes/gates/base_logic_el/ORGate.tscn")
 		"NOT":

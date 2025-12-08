@@ -897,7 +897,7 @@ func _on_add_not_button_pressed():
 	mark_level_state_dirty()
 
 func _on_add_and_button_pressed():
-	var and_gate = load("res://scenes/gates/ANDGate.tscn").instantiate()
+	var and_gate = load("res://scenes/gates/base_logic_el/ANDGate.tscn").instantiate()
 	and_gate.position = Vector2(600, 500)
 	add_child(and_gate)
 	movable_objects.append(and_gate)
