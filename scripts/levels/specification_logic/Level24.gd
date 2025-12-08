@@ -20,6 +20,9 @@ func _ready():
 	
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Устанавливаем метки для входных блоков
 	if input_block_a:
 		input_block_a.input_label = "Input A"
@@ -38,6 +41,50 @@ func _ready():
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# Распределяем по вертикали
+	var input_block_a = get_node_or_null("InputBlockA")
+	if input_block_a:
+		input_block_a.position = Vector2(screen_width * 0.15, screen_height * 0.25)
+		print("Level24: InputBlockA positioned at: ", input_block_a.position)
+	
+	var input_block_b = get_node_or_null("InputBlockB")
+	if input_block_b:
+		input_block_b.position = Vector2(screen_width * 0.15, screen_height * 0.5)
+		print("Level24: InputBlockB positioned at: ", input_block_b.position)
+	
+	var input_block_c = get_node_or_null("InputBlockC")
+	if input_block_c:
+		input_block_c.position = Vector2(screen_width * 0.15, screen_height * 0.75)
+		print("Level24: InputBlockC positioned at: ", input_block_c.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Создаем два столбца по 4 блока в каждом
+	if output_blocks.size() >= 8:
+		for i in range(8):
+			var output_block = output_blocks[i]
+			if output_block:
+				var column = i % 2  # 0 для левого столбца, 1 для правого
+				var row = i / 2     # 0-3 для рядов
+				
+				# Позиционируем в два столбца
+				var x_pos = screen_width * 0.85
+				if column == 0:
+					x_pos = screen_width * 0.75  # Левый столбец
+				else:
+					x_pos = screen_width * 0.85  # Правый столбец
+				
+				# Распределяем по вертикали (4 ряда)
+				var y_pos = screen_height * (0.2 + (row * 0.2))
+				
+				output_block.position = Vector2(x_pos, y_pos)
+				print("Level24: OutputBlockY", i, " positioned at: ", output_block.position)
 
 func recount_gates():
 	and_gate_count = 0
@@ -113,6 +160,8 @@ func clear_level():
 	super.clear_level()
 	and_gate_count = 0
 	not_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level24 cleared - all gate counts reset to 0")
 
@@ -152,16 +201,16 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки Decoder
-	if gate_type == "INPUT_BLOCK_A" and input_block_a:
-		input_block_a.position = position
+	if gate_type == "INPUT_BLOCK_A" and has_node("InputBlockA"):
+		$InputBlockA.position = position
 		print("Restored InputBlockA position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_B" and input_block_b:
-		input_block_b.position = position
+	elif gate_type == "INPUT_BLOCK_B" and has_node("InputBlockB"):
+		$InputBlockB.position = position
 		print("Restored InputBlockB position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_C" and input_block_c:
-		input_block_c.position = position
+	elif gate_type == "INPUT_BLOCK_C" and has_node("InputBlockC"):
+		$InputBlockC.position = position
 		print("Restored InputBlockC position: ", position)
 		return
 	elif gate_type.begins_with("OUTPUT_BLOCK_Y") and output_blocks:

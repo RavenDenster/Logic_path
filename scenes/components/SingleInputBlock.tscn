@@ -10,6 +10,7 @@
 script = ExtResource("1_e742f")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 2
 texture = ExtResource("1_bgy6l")
 
 [node name="Area2D" type="Area2D" parent="."]

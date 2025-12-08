@@ -24,12 +24,49 @@ func _ready():
 	
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Явно устанавливаем заголовки для полного сумматора (опционально)
 	if test_results_panel and test_results_panel.has_method("set_titles"):
 		test_results_panel.set_titles("Desired SUM", "Desired COUT", "Current SUM", "Current COUT")
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# Равномерно распределяем по вертикали
+	var input_block_a = get_node_or_null("InputBlockA")
+	if input_block_a:
+		input_block_a.position = Vector2(screen_width * 0.15, screen_height * 0.3)
+		print("Level14: InputBlockA positioned at: ", input_block_a.position)
+	
+	var input_block_b = get_node_or_null("InputBlockB")
+	if input_block_b:
+		input_block_b.position = Vector2(screen_width * 0.15, screen_height * 0.5)
+		print("Level14: InputBlockB positioned at: ", input_block_b.position)
+	
+	var input_block_cin = get_node_or_null("InputBlockCin")
+	if input_block_cin:
+		input_block_cin.position = Vector2(screen_width * 0.15, screen_height * 0.7)
+		print("Level14: InputBlockCin positioned at: ", input_block_cin.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Распределяем по вертикали
+	var output_block_sum = get_node_or_null("OutputBlockSum")
+	if output_block_sum:
+		output_block_sum.position = Vector2(screen_width * 0.85, screen_height * 0.4)
+		print("Level14: OutputBlockSum positioned at: ", output_block_sum.position)
+	
+	var output_block_cout = get_node_or_null("OutputBlockCout")
+	if output_block_cout:
+		output_block_cout.position = Vector2(screen_width * 0.85, screen_height * 0.6)
+		print("Level14: OutputBlockCout positioned at: ", output_block_cout.position)
 
 func recount_gates():
 	and_gate_count = 0
@@ -155,6 +192,8 @@ func clear_level():
 	and_gate_count = 0
 	xor_gate_count = 0
 	or_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level14 cleared - AND gate count reset to 0, XOR gate count reset to 0, OR gate count reset to 0")
 
@@ -197,24 +236,24 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки Full Adder
-	if gate_type == "INPUT_BLOCK_A" and input_block_a:
-		input_block_a.position = position
+	if gate_type == "INPUT_BLOCK_A" and has_node("InputBlockA"):
+		$InputBlockA.position = position
 		print("Restored InputBlockA position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_B" and input_block_b:
-		input_block_b.position = position
+	elif gate_type == "INPUT_BLOCK_B" and has_node("InputBlockB"):
+		$InputBlockB.position = position
 		print("Restored InputBlockB position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_CIN" and input_block_cin:
-		input_block_cin.position = position
+	elif gate_type == "INPUT_BLOCK_CIN" and has_node("InputBlockCin"):
+		$InputBlockCin.position = position
 		print("Restored InputBlockCin position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_SUM" and output_block_sum:
-		output_block_sum.position = position
+	elif gate_type == "OUTPUT_BLOCK_SUM" and has_node("OutputBlockSum"):
+		$OutputBlockSum.position = position
 		print("Restored OutputBlockSum position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_COUT" and output_block_cout:
-		output_block_cout.position = position
+	elif gate_type == "OUTPUT_BLOCK_COUT" and has_node("OutputBlockCout"):
+		$OutputBlockCout.position = position
 		print("Restored OutputBlockCout position: ", position)
 		return
 

@@ -1,3 +1,4 @@
+# Level25.gd
 extends "res://scripts/levels/level_templates/LevelRS.gd"
 
 var nor_gate_count: int = 0
@@ -18,6 +19,9 @@ func _ready():
 	# Вызываем super._ready() из LevelRS.gd
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Записываем начало прохождения уровня
 	var level_number = get_level_number()
 	if level_number > 0:
@@ -28,6 +32,35 @@ func _ready():
 	# Пересчитываем гейты после инициализации
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# Распределяем по вертикали
+	var input_block_r = get_node_or_null("InputBlockR")
+	if input_block_r:
+		input_block_r.position = Vector2(screen_width * 0.15, screen_height * 0.35)
+		print("Level25: InputBlockR positioned at: ", input_block_r.position)
+	
+	var input_block_s = get_node_or_null("InputBlockS")
+	if input_block_s:
+		input_block_s.position = Vector2(screen_width * 0.15, screen_height * 0.65)
+		print("Level25: InputBlockS positioned at: ", input_block_s.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Распределяем по вертикали
+	var output_block_q = get_node_or_null("OutputBlockQ")
+	if output_block_q:
+		output_block_q.position = Vector2(screen_width * 0.85, screen_height * 0.35)
+		print("Level25: OutputBlockQ positioned at: ", output_block_q.position)
+	
+	var output_block_not_q = get_node_or_null("OutputBlockNotQ")
+	if output_block_not_q:
+		output_block_not_q.position = Vector2(screen_width * 0.85, screen_height * 0.65)
+		print("Level25: OutputBlockNotQ positioned at: ", output_block_not_q.position)
 
 func _on_test_pressed():
 	print("=== Testing RS level ===")
@@ -171,6 +204,8 @@ func remove_nor_gate():
 func clear_level():
 	super.clear_level()
 	nor_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level25 cleared - NOR gate count reset to 0")
 
@@ -207,20 +242,20 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки
-	if gate_type == "INPUT_BLOCK_R" and input_block_r:
-		input_block_r.position = position
+	if gate_type == "INPUT_BLOCK_R" and has_node("InputBlockR"):
+		$InputBlockR.position = position
 		print("Restored InputBlockR position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_S" and input_block_s:
-		input_block_s.position = position
+	elif gate_type == "INPUT_BLOCK_S" and has_node("InputBlockS"):
+		$InputBlockS.position = position
 		print("Restored InputBlockS position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_Q" and output_block_q:
-		output_block_q.position = position
+	elif gate_type == "OUTPUT_BLOCK_Q" and has_node("OutputBlockQ"):
+		$OutputBlockQ.position = position
 		print("Restored OutputBlockQ position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_NOT_Q" and output_block_not_q:
-		output_block_not_q.position = position
+	elif gate_type == "OUTPUT_BLOCK_NOT_Q" and has_node("OutputBlockNotQ"):
+		$OutputBlockNotQ.position = position
 		print("Restored OutputBlockNotQ position: ", position)
 		return
 	

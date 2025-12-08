@@ -27,6 +27,9 @@ func _ready():
 		input_block.input_labels = ["Input 1", "Input 2"]
 		print("Level13: Set input labels to ['Input 1', 'Input 2']")
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
@@ -38,6 +41,29 @@ func _ready():
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_center_y = viewport_rect.size.y / 2
+	
+	# Располагаем InputBlock слева (15% от ширины экрана)
+	var input_block = get_node_or_null("InputBlock")
+	if input_block:
+		input_block.position = Vector2(viewport_rect.size.x * 0.15, screen_center_y)
+		print("Level13: InputBlock positioned at: ", input_block.position)
+	
+	# Располагаем OutputBlockSum и OutputBlockCarry справа
+	# OutputBlockSum - выше (85% от ширины экрана, 40% по высоте)
+	var output_sum_block = get_node_or_null("OutputBlockSum")
+	if output_sum_block:
+		output_sum_block.position = Vector2(viewport_rect.size.x * 0.85, viewport_rect.size.y * 0.4)
+		print("Level13: OutputBlockSum positioned at: ", output_sum_block.position)
+	
+	# OutputBlockCarry - ниже (85% от ширины экрана, 60% по высоте)
+	var output_carry_block = get_node_or_null("OutputBlockCarry")
+	if output_carry_block:
+		output_carry_block.position = Vector2(viewport_rect.size.x * 0.85, viewport_rect.size.y * 0.6)
+		print("Level13: OutputBlockCarry positioned at: ", output_carry_block.position)
 
 func recount_gates():
 	and_gate_count = 0
@@ -135,6 +161,8 @@ func clear_level():
 	super.clear_level()
 	and_gate_count = 0
 	xor_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level13 cleared - AND gate count reset to 0, XOR gate count reset to 0")
 

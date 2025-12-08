@@ -555,12 +555,12 @@ func start_step(step):
 		
 		TutorialStep.COMPLETION:
 			show_tutorial_popup(
-				"[b]Congratulations![/b] 🎉\n\n" +
+				"[b]Congratulations![/b]\n\n" +
 				"You've completed the tutorial!\n\n" +
 				"You've learned:\n" +
-				"✓ How to navigate the interface\n" +
-				"✓ How Input and Output blocks work\n" +
-				"✓ How to create connections between components\n\n" +
+				"How to navigate the interface\n" +
+				"How Input and Output blocks work\n" +
+				"How to create connections between components\n\n" +
 				"You're now ready to start playing Logic Path!\n\n" +
 				"Press 'Finish' to return to Main Menu."
 			)
@@ -1079,7 +1079,7 @@ func show_success_message():
 		get_node("HintMessage").queue_free()
 	
 	var message = Label.new()
-	message.text = "Great! Connection successful! ✓"
+	message.text = "Connection successful!"
 	
 	# Создаем стиль для сообщения
 	message.add_theme_color_override("font_color", Color.GREEN)

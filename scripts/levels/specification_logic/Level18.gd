@@ -27,8 +27,43 @@ func _ready():
 	print(" Expected Result: ", level_data.expected_result)
 	
 	super._ready()
+	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	recount_components()
 	update_component_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем InputBlockAB слева (15% от ширины, по центру по вертикали)
+	var input_block_ab = get_node_or_null("InputBlockAB")
+	if input_block_ab:
+		input_block_ab.position = Vector2(screen_width * 0.15, screen_height * 0.5)
+		print("Level18: InputBlockAB positioned at: ", input_block_ab.position)
+	
+	# Располагаем OutputBlock справа (85% от ширины, по центру по вертикали)
+	var output_block = get_node_or_null("OutputBlock")
+	if output_block:
+		output_block.position = Vector2(screen_width * 0.85, screen_height * 0.5)
+		print("Level18: OutputBlock positioned at: ", output_block.position)
+	
+	# Если есть OpCodeBlock (опционально, может быть добавлен позже)
+	var opcode_block = get_node_or_null("OpCodeBlock")
+	if opcode_block:
+		# Располагаем OpCodeBlock слева, но ниже InputBlockAB
+		opcode_block.position = Vector2(screen_width * 0.15, screen_height * 0.7)
+		print("Level18: OpCodeBlock positioned at: ", opcode_block.position)
+	
+	# Если есть MUX4to1 (опционально, может быть добавлен позже)
+	var mux4to1 = get_node_or_null("MUX4to1")
+	if mux4to1:
+		# Располагаем MUX4to1 в центре экрана
+		mux4to1.position = Vector2(screen_width * 0.5, screen_height * 0.5)
+		print("Level18: MUX4to1 positioned at: ", mux4to1.position)
 
 func recount_components():
 	and_gate_count = 0
@@ -224,6 +259,8 @@ func clear_level():
 	xor_gate_count = 0
 	mux4to1_count = 0
 	opcode_block_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_component_buttons_state()
 	print("Level18 cleared - all component counts reset to 0")
 
@@ -284,12 +321,12 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Пропускаем специальные блоки ALU, они обрабатываются в родительском классе
-	if gate_type == "INPUT_BLOCK_AB" and input_block_ab:
-		input_block_ab.position = position
+	if gate_type == "INPUT_BLOCK_AB" and has_node("InputBlockAB"):
+		$InputBlockAB.position = position
 		print("Restored InputBlockAB position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK" and output_block:
-		output_block.position = position
+	elif gate_type == "OUTPUT_BLOCK" and has_node("OutputBlock"):
+		$OutputBlock.position = position
 		print("Restored OutputBlock position: ", position)
 		return
 	

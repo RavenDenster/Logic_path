@@ -24,6 +24,9 @@ func _ready():
 	
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
@@ -46,6 +49,38 @@ func _ready():
 	recount_gates()
 	update_gate_buttons_state()
 
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем InputBlockAB слева (15% от ширины, по центру по вертикали)
+	var input_block_ab = get_node_or_null("InputBlockAB")
+	if input_block_ab:
+		input_block_ab.position = Vector2(screen_width * 0.15, screen_height * 0.5)
+		print("Level19: InputBlockAB positioned at: ", input_block_ab.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Используем правильные имена: OutputBlock, OutputBlock2, OutputBlock3
+	# Равномерно распределяем по вертикали
+	var output_block = get_node_or_null("OutputBlock")
+	if output_block:
+		output_block.position = Vector2(screen_width * 0.85, screen_height * 0.3)
+		print("Level19: OutputBlock (A>B) positioned at: ", output_block.position)
+		output_block.output_type = "A>B"
+	
+	var output_block2 = get_node_or_null("OutputBlock2")
+	if output_block2:
+		output_block2.position = Vector2(screen_width * 0.85, screen_height * 0.5)
+		print("Level19: OutputBlock2 (A<B) positioned at: ", output_block2.position)
+		output_block2.output_type = "A<B"
+	
+	var output_block3 = get_node_or_null("OutputBlock3")
+	if output_block3:
+		output_block3.position = Vector2(screen_width * 0.85, screen_height * 0.7)
+		print("Level19: OutputBlock3 (A==B) positioned at: ", output_block3.position)
+		output_block3.output_type = "A==B"
+
 func setup_comparator_level():
 	super.setup_comparator_level()
 	
@@ -54,12 +89,12 @@ func setup_comparator_level():
 		input_block_ab.input_labels = ["Input A", "Input B"]
 		
 	# Устанавливаем типы выходов для выходных блоков
-	if output_block_agtb:
-		output_block_agtb.output_type = "A>B"
-	if output_block_altb:
-		output_block_altb.output_type = "A<B"
-	if output_block_aeqb:
-		output_block_aeqb.output_type = "A==B"
+	if has_node("OutputBlock"):
+		get_node("OutputBlock").output_type = "A>B"
+	if has_node("OutputBlock2"):
+		get_node("OutputBlock2").output_type = "A<B"
+	if has_node("OutputBlock3"):
+		get_node("OutputBlock3").output_type = "A==B"
 
 func recount_gates():
 	and_gate_count = 0
@@ -187,6 +222,8 @@ func clear_level():
 	and_gate_count = 0
 	not_gate_count = 0
 	xnor_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level19 cleared - all gate counts reset to 0")
 
@@ -229,21 +266,21 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки Comparator
-	if gate_type == "INPUT_BLOCK_AB" and input_block_ab:
-		input_block_ab.position = position
+	if gate_type == "INPUT_BLOCK_AB" and has_node("InputBlockAB"):
+		$InputBlockAB.position = position
 		print("Restored InputBlockAB position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_AGTB" and output_block_agtb:
-		output_block_agtb.position = position
-		print("Restored OutputBlockAgtb position: ", position)
+	elif gate_type == "OUTPUT_BLOCK_AGTB" and has_node("OutputBlock"):
+		$OutputBlock.position = position
+		print("Restored OutputBlock (A>B) position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_ALTB" and output_block_altb:
-		output_block_altb.position = position
-		print("Restored OutputBlockAltb position: ", position)
+	elif gate_type == "OUTPUT_BLOCK_ALTB" and has_node("OutputBlock2"):
+		$OutputBlock2.position = position
+		print("Restored OutputBlock2 (A<B) position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_AEQB" and output_block_aeqb:
-		output_block_aeqb.position = position
-		print("Restored OutputBlockAeqb position: ", position)
+	elif gate_type == "OUTPUT_BLOCK_AEQB" and has_node("OutputBlock3"):
+		$OutputBlock3.position = position
+		print("Restored OutputBlock3 (A==B) position: ", position)
 		return
 
 	var gate_scene = null

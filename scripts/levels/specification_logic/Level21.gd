@@ -12,6 +12,9 @@ func _ready():
 	level_data = load("res://data/level_21_data.tres")
 	super._ready()
 	
+	# Автоматически располагаем блоки по краям экрана
+	setup_initial_block_positions()
+	
 	# Ждем полной инициализации test_results_panel
 	await get_tree().process_frame
 	
@@ -35,6 +38,35 @@ func _ready():
 	
 	recount_gates()
 	update_gate_buttons_state()
+
+func setup_initial_block_positions():
+	var viewport_rect = get_viewport().get_visible_rect()
+	var screen_width = viewport_rect.size.x
+	var screen_height = viewport_rect.size.y
+	
+	# Располагаем входные блоки слева (15% от ширины экрана)
+	# Равномерно распределяем по вертикали
+	var input_block_i0_i1 = get_node_or_null("InputBlockI0I1")
+	if input_block_i0_i1:
+		input_block_i0_i1.position = Vector2(screen_width * 0.15, screen_height * 0.3)
+		print("Level21: InputBlockI0I1 positioned at: ", input_block_i0_i1.position)
+	
+	var input_block_i2_i3 = get_node_or_null("InputBlockI2I3")
+	if input_block_i2_i3:
+		input_block_i2_i3.position = Vector2(screen_width * 0.15, screen_height * 0.7)
+		print("Level21: InputBlockI2I3 positioned at: ", input_block_i2_i3.position)
+	
+	# Располагаем выходные блоки справа (85% от ширины экрана)
+	# Распределяем по вертикали
+	var output_block_o0 = get_node_or_null("OutputBlockO0")
+	if output_block_o0:
+		output_block_o0.position = Vector2(screen_width * 0.85, screen_height * 0.4)
+		print("Level21: OutputBlockO0 positioned at: ", output_block_o0.position)
+	
+	var output_block_o1 = get_node_or_null("OutputBlockO1")
+	if output_block_o1:
+		output_block_o1.position = Vector2(screen_width * 0.85, screen_height * 0.6)
+		print("Level21: OutputBlockO1 positioned at: ", output_block_o1.position)
 
 func setup_encoder_level():
 	super.setup_encoder_level()
@@ -180,6 +212,8 @@ func clear_level():
 	or_gate_count = 0
 	and_gate_count = 0
 	not_gate_count = 0
+	# При очистке уровня также переставляем блоки по краям
+	setup_initial_block_positions()
 	update_gate_buttons_state()
 	print("Level21 cleared - all gate counts reset to 0")
 
@@ -228,20 +262,20 @@ func create_gate_from_data(gate_data):
 		return
 	
 	# Проверяем специальные блоки Encoder
-	if gate_type == "INPUT_BLOCK_I0I1" and input_block_i0_i1:
-		input_block_i0_i1.position = position
+	if gate_type == "INPUT_BLOCK_I0I1" and has_node("InputBlockI0I1"):
+		$InputBlockI0I1.position = position
 		print("Restored InputBlockI0I1 position: ", position)
 		return
-	elif gate_type == "INPUT_BLOCK_I2I3" and input_block_i2_i3:
-		input_block_i2_i3.position = position
+	elif gate_type == "INPUT_BLOCK_I2I3" and has_node("InputBlockI2I3"):
+		$InputBlockI2I3.position = position
 		print("Restored InputBlockI2I3 position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_O0" and output_block_o0:
-		output_block_o0.position = position
+	elif gate_type == "OUTPUT_BLOCK_O0" and has_node("OutputBlockO0"):
+		$OutputBlockO0.position = position
 		print("Restored OutputBlockO0 position: ", position)
 		return
-	elif gate_type == "OUTPUT_BLOCK_O1" and output_block_o1:
-		output_block_o1.position = position
+	elif gate_type == "OUTPUT_BLOCK_O1" and has_node("OutputBlockO1"):
+		$OutputBlockO1.position = position
 		print("Restored OutputBlockO1 position: ", position)
 		return
 
