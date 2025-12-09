@@ -23,6 +23,12 @@ SaveSystem="*res://scripts/system/SaveSystem.gd"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+
+[gui]
+
+theme/custom="uid://djhqrreawofcm"
 
 [rendering]
 

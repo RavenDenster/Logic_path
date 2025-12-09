@@ -1,17 +1,36 @@
-[gd_scene load_steps=3 format=3 uid="uid://bcc05miy2038w"]
+[gd_scene load_steps=2 format=3 uid="uid://bcc05miy2038w"]
 
 [ext_resource type="Script" uid="uid://d3jd7h7wqosw2" path="res://scripts/ui/LevelMap.gd" id="1_sfsu6"]
-[ext_resource type="Texture2D" uid="uid://b5odrr6bcw7vl" path="res://assets/wide_spacing_waves_4k.png" id="2_sfsu6"]
 
 [node name="LevelMap" type="CanvasLayer"]
 script = ExtResource("1_sfsu6")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Panel" type="Panel" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 7.0
+offset_right = 4.0
+offset_bottom = 7.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_sfsu6")
-expand_mode = 1
-stretch_mode = 3
+
+[node name="Exit" type="Button" parent="."]
+offset_left = 42.0
+offset_top = 38.0
+offset_right = 117.0
+offset_bottom = 71.0
+size_flags_horizontal = 0
+text = " ⇽ Back"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+offset_left = 40.0
+offset_top = 99.0
+offset_right = 1893.0
+offset_bottom = 1049.0
+
+[node name="LevelListContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+
+[connection signal="pressed" from="Exit" to="." method="_on_exit_pressed"]

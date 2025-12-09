@@ -3,38 +3,36 @@ extends CanvasLayer
 
 var screen_size = Vector2(1920, 1080)
 
-var levels_data = [
-	{"number": 1, "scene": "res://scenes/levels/Level1.tscn"},
-	{"number": 2, "scene": "res://scenes/levels/Level2.tscn"},
-	{"number": 3, "scene": "res://scenes/levels/Level3.tscn"},
-	{"number": 4, "scene": "res://scenes/levels/Level4.tscn"},  
-	{"number": 5, "scene": "res://scenes/levels/Level5.tscn"},  
-	{"number": 6, "scene": "res://scenes/levels/Level6.tscn"},  
-	{"number": 7, "scene": "res://scenes/levels/Level7.tscn"}, 
-	{"number": 8, "scene": "res://scenes/levels/Level8.tscn"}, 
-	{"number": 9, "scene": "res://scenes/levels/Level9.tscn"}, 
-	{"number": 10, "scene": "res://scenes/levels/Level10.tscn"}, 
-	{"number": 11, "scene": "res://scenes/levels/Level11.tscn"}, 
-	{"number": 12, "scene": "res://scenes/levels/Level12.tscn"},
-	{"number": 13, "scene": "res://scenes/levels/Level13.tscn"},
-	{"number": 14, "scene": "res://scenes/levels/Level14.tscn"},
-	{"number": 15, "scene": "res://scenes/levels/Level15.tscn"},
-	{"number": 16, "scene": "res://scenes/levels/Level16.tscn"},
-	{"number": 17, "scene": "res://scenes/levels/Level17.tscn"},
-	{"number": 18, "scene": "res://scenes/levels/Level18.tscn"},
-	{"number": 19, "scene": "res://scenes/levels/Level19.tscn"},
-	{"number": 20, "scene": "res://scenes/levels/Level20.tscn"},
-	{"number": 21, "scene": "res://scenes/levels/Level21.tscn"},
-	{"number": 22, "scene": "res://scenes/levels/Level22.tscn"},
-	{"number": 23, "scene": "res://scenes/levels/Level23.tscn"},
-	{"number": 24, "scene": "res://scenes/levels/Level24.tscn"},
-	{"number": 25, "scene": "res://scenes/levels/Level25.tscn"},
-	{"number": 26, "scene": "res://scenes/levels/Level26.tscn"},
-	{"number": 27, "scene": "res://scenes/levels/Level27.tscn"},
-	{"number": 28, "scene": "res://scenes/levels/Level28.tscn"},
-	{"number": 29, "scene": "res://scenes/levels/Level29.tscn"},
-	{"number": 30, "scene": "res://scenes/levels/Level30.tscn"}
-]
+@onready var level_list_container = find_child("LevelListContainer")
+
+func scan_levels_folder() -> Array[String]:
+	var level_files: Array[String] = []
+	var dir = DirAccess.open("res://levels/")
+	
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir() and file_name.ends_with(".json"):
+				level_files.append("res://levels/" + file_name)
+			file_name = dir.get_next()
+	
+	return level_files
+
+func load_json_file(path: String) -> Variant:
+	var file = FileAccess.open(path, FileAccess.READ)
+	var json_text = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var error = json.parse(json_text)
+	
+	if error != OK:
+		push_error("JSON Parse Error: " + json.get_error_message())
+		return null
+	
+	print(json)
+	return json.get_data()
 
 var current_scroll = 0
 var max_scroll = 0
@@ -44,28 +42,52 @@ var scroll_speed = 300  # Скорость прокрутки в пикселя�
 var level_name_label
 var section_separators = []  # Массив для хранения разделителей
 
+func _create_level_buttons() -> void:
+	var grid = GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 20)
+	grid.add_theme_constant_override("v_separation", 20)
+	
+	var filenames = scan_levels_folder()
+	for file in filenames:
+		var j = load_json_file(file)
+		
+		var btn = Button.new()
+		var vbox = VBoxContainer.new()
+		var lab1 = Label.new()
+		var lab2 = Label.new()
+		
+		var gates_text = ", ".join(j.allowed_gates)
+		lab1.add_theme_font_size_override("font_size", 30)
+		lab1.text = j.name
+		lab2.text = "Inputs:%d | Outputs:%d | %s" % [j.n_inputs, j.n_outputs, gates_text]
+		btn.add_theme_font_size_override("font_size", 40)
+		btn.text = "▶"
+		btn.set_custom_minimum_size(Vector2(80, 80))
+		
+		vbox.add_child(lab1)
+		vbox.add_child(lab2)
+		grid.add_child(btn)
+		grid.add_child(vbox)
+		
+	level_list_container.add_child(grid)
+
 func _ready():
 	screen_size = get_viewport().get_visible_rect().size
+	_create_level_buttons()
 	
-	# Создаем контейнер для всех кнопок уровней
-	level_container = Node2D.new()
-	add_child(level_container)
+	# level_container = Node2D.new()
+	# dd_child(level_container)
 	
-	setup_back_button()
-	setup_level_name_label()
-	group_levels()
-	create_level_buttons()
-	create_section_separators()  # Создаем разделители до установки лимитов прокрутки
-	setup_scroll_limits()
+	# setup_back_button()
+	# setup_level_name_label()
+	# group_levels()
+	# create_level_buttons()
+	# create_section_separators()
+	# setup_scroll_limits()
 	
-	# Отладочная информация
-	var save_system = get_node_or_null("/root/SaveSystem")
-	if save_system:
-		print("LevelMap: Unlocked levels from save: ", save_system.game_data.get("unlocked_levels", []))
-	
-	# Начинаем с самого низа
-	current_scroll = max_scroll
-	update_level_positions()  # Обновляем позиции после установки скролла
+	# current_scroll = max_scroll
+	# update_level_positions()
 
 func setup_level_name_label():
 	# Создаем метку для отображения названия уровня
@@ -209,38 +231,6 @@ func setup_scroll_limits():
 	var visible_groups = 4  # Количество групп, видимых одновременно
 	max_scroll = max(0, (group_count - visible_groups) * 180)
 	current_scroll = max_scroll  # Начинаем с самого низа
-
-func setup_back_button():
-	var back_button = get_node_or_null("BackButton")
-	if back_button:
-		back_button.connect("pressed", _on_back_button_pressed)
-		back_button.position = Vector2(50, 50)
-		# Добавляем обработчики событий мыши для подсветки
-		back_button.connect("mouse_entered", _on_back_button_mouse_entered.bind(back_button))
-		back_button.connect("mouse_exited", _on_back_button_mouse_exited.bind(back_button))
-	else:
-		back_button = TextureButton.new()
-		back_button.name = "BackButton"
-		back_button.position = Vector2(20, 20)
-		var texture = preload("res://assets/menu.png") if ResourceLoader.exists("res://assets/menu.png") else null
-		if texture:
-			back_button.texture_normal = texture
-		back_button.custom_minimum_size = Vector2(80, 80)
-		add_child(back_button)
-		back_button.connect("pressed", _on_back_button_pressed)
-		# Добавляем обработчики событий мыши для подсветки
-		back_button.connect("mouse_entered", _on_back_button_mouse_entered.bind(back_button))
-		back_button.connect("mouse_exited", _on_back_button_mouse_exited.bind(back_button))
-
-func _on_back_button_mouse_entered(button: TextureButton):
-	if not button.disabled:
-		button.modulate = Color.YELLOW
-
-func _on_back_button_mouse_exited(button: TextureButton):
-	if button.disabled:
-		button.modulate = Color(1, 1, 1, 0.5)
-	else:
-		button.modulate = Color.WHITE
 
 func is_group_unlocked(group_index):
 	if group_index == 0:
@@ -439,5 +429,5 @@ func _on_level_button_pressed(scene_path):
 		error_label.position = Vector2(100, 100)
 		add_child(error_label)
 
-func _on_back_button_pressed():
+func _on_exit_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")

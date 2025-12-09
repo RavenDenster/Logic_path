@@ -55,8 +55,8 @@ NOT A OR B
 
 ### level 12
 (Data0 AND NOT Sel1 AND NOT Sel0) OR 
-         (Data1 AND NOT Sel1 AND Sel0) OR 
-         (Data2 AND Sel1 AND NOT Sel0)
+		 (Data1 AND NOT Sel1 AND Sel0) OR 
+		 (Data2 AND Sel1 AND NOT Sel0)
 
 ![Alt text](/image_solution/image-11.png)
 

@@ -1,0 +1,143 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0lot5d8wobvw"]
+
+[ext_resource type="Script" uid="uid://bjyn56nlixqya" path="res://scripts/LevelCreator.gd" id="1_holjt"]
+
+[node name="LevelCreator" type="Node2D"]
+script = ExtResource("1_holjt")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Menu" type="Panel" parent="CanvasLayer"]
+custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1930.0
+offset_bottom = 1081.0
+
+[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Menu"]
+layout_mode = 0
+offset_left = 423.0
+offset_top = 15.0
+offset_right = 1900.0
+offset_bottom = 1061.0
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Menu/Scroll"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="Container" type="HBoxContainer" parent="CanvasLayer/Menu/Scroll/MarginContainer"]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="CanvasLayer/Menu"]
+layout_mode = 0
+offset_left = 381.0
+offset_top = 1.0
+offset_right = 440.0
+offset_bottom = 1093.0
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Menu"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 5.0
+offset_right = 404.0
+offset_bottom = 1076.0
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Menu/MarginContainer"]
+layout_mode = 2
+
+[node name="Exit" type="Button" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = " ⇽ Back"
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Level editor"
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 15
+columns = 2
+
+[node name="Label6" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Filename"
+
+[node name="FilenameInput" type="LineEdit" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+placeholder_text = "sample_name"
+
+[node name="Label1" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Name"
+
+[node name="NameInput" type="LineEdit" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+placeholder_text = "Sample Name"
+
+[node name="Label3" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Number of inputs"
+
+[node name="InputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+value = 3.0
+
+[node name="Label2" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Number of outputs"
+
+[node name="OutputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+value = 1.0
+
+[node name="GatesInput" type="ItemList" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+select_mode = 2
+max_text_lines = 3
+
+[node name="GroupInput" type="ItemList" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+max_text_lines = 3
+item_count = 6
+item_0/text = "Basic"
+item_1/text = "Medium"
+item_2/text = "Arithmetics"
+item_3/text = "Comparators & Coders"
+item_4/text = "Sequential"
+item_5/text = "Custom"
+
+[node name="SaveButton" type="Button" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Save"
+
+[node name="LoadButton" type="Button" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Load"
+
+[node name="Label7" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Help Message"
+
+[node name="HelpInput" type="TextEdit" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Solve this problem"
+
+[connection signal="pressed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
+[connection signal="value_changed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/InputsSpinBox" to="." method="_on_inputs_spin_box_value_changed"]
+[connection signal="value_changed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/OutputsSpinBox" to="." method="_on_outputs_spin_box_value_changed"]
+[connection signal="pressed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/LoadButton" to="." method="_on_load_button_pressed"]
