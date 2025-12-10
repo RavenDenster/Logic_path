@@ -4,6 +4,13 @@ extends Control
 var f_press_count = 0
 var cheat_active = false
 
+@onready var play_campaign_btn = $CenterContainer/VBoxContainer/PlayCampaignButton
+
+func _ready() -> void:
+	var save_system = get_node("/root/SaveSystem")
+	if len(save_system.get_completed_levels()) == 0:
+		play_campaign_btn.text = "Начать"
+
 func _input(event):
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_F:	

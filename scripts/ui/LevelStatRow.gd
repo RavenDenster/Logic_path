@@ -9,37 +9,26 @@ func set_data(level_num: int, level_name: String, completed: bool, time_taken: f
 	level_label.text = level_name
 	
 	if completed:
-		status_label.text = "Completed"
+		status_label.text = "Выполнена"
 		status_label.add_theme_color_override("font_color", Color(0, 0.8, 0, 1))  # Зеленый
 		
-		# Форматируем время с единицами измерения
-		if time_taken > 0:
-			if time_taken < 60:
-				# Меньше минуты: показываем секунды
-				time_label.text = "%.1f s" % time_taken
-			elif time_taken < 3600:
-				# Меньше часа: показываем минуты и секунды
-				var minutes = int(time_taken / 60)
-				var seconds = int(time_taken) - (minutes * 60)  # Исправлено
-				if seconds > 0:
-					time_label.text = "%d m %d s" % [minutes, seconds]
-				else:
-					time_label.text = "%d m" % minutes
-			else:
-				# Больше часа: показываем часы и минуты
-				var hours = int(time_taken / 3600)
-				var minutes = int((time_taken - (hours * 3600)) / 60)  # Исправлено
-				time_label.text = "%d h %d m" % [hours, minutes]
-		else:
-			time_label.text = "N/A"
+		var itime = int(time_taken)
+		var secs  = itime % 60
+		@warning_ignore("integer_division")
+		itime = int(itime / 60)
+		var mins  = itime % 60
+		@warning_ignore("integer_division")
+		itime = int(itime / 60)
+		var hours = itime % 60
+		
+		time_label.text = "%d:%02d:%02d" % [hours, mins, secs]
 	else:
-		status_label.text = "Not Completed"
+		status_label.text = "Не выполнена"
 		status_label.add_theme_color_override("font_color", Color(0.8, 0.2, 0.2, 1))  # Красный
-		time_label.text = "N/A"
+		time_label.text = "—"
 	
 	attempts_label.text = str(attempts)
 	
-	# Добавляем фоновый цвет для чередующихся строк
 	var index = get_index()
 	if index % 2 == 0:
 		add_theme_stylebox_override("panel", _create_stylebox(Color(0.2, 0.2, 0.25, 0.3)))

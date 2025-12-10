@@ -46,32 +46,32 @@ layout_mode = 2
 [node name="PlayCampaignButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Play Campaign"
+text = "Продолжить"
 
 [node name="TutorialButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Tutorial"
+text = "Обучение"
 
 [node name="OpenMapButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Open Map"
+text = "Список задач"
 
 [node name="StatisticsButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Statistics"
+text = "Статистика"
 
 [node name="LevelEditor" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Level Editor"
+text = "Создать задачу"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Quit"
+text = "Выйти"
 
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 title = "Please Confirm"

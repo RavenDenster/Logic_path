@@ -3,8 +3,8 @@ extends ProgrammaticTheme
 
 var default_font_size = 16
 
-var background_color = Color(0.133, 0.133, 0.133, 1.0)
-var btn_color = Color(0.88, 0.703, 0.537, 0.204)
+var background_color = Color(0.934, 0.934, 0.934, 1.0)
+var btn_color = Color(0.0, 0.76, 0.882, 1.0)
 var text_color = Color(0.227, 0.227, 0.227, 1.0)
 
 func setup_light_theme():
@@ -13,96 +13,92 @@ func setup_light_theme():
 func a(col, x):
 	return col + Color(0, 0, 0, x)
 
+func sat(col: Color, s):
+	col.s += s
+	return col
+
+func val(col: Color, v):
+	col.v += v
+	return col
+
 func define_theme():
 	define_default_font_size(default_font_size)
-
-	define_style("PanelContainer", {
-		panel = stylebox_flat({
-			bg_color = background_color
-		})
-	})
 	
 	var panel = stylebox_flat({
 		bg_color = background_color
 	})
-	
-	define_style("Panel", {
-		panel = panel
-	})
 
-	var btn = stylebox_flat({
-		bg_color = btn_color,
-		text_color = text_color,
+	var btn0 = stylebox_flat({
+		bg_color = sat(btn_color, -0.8),
 		corner_ = corner_radius(16, 16, 16, 16),
 		content_margin_ = content_margins(10, 5, 10, 5),
-		border_width = 0,
+		border_width = 0
 	})
 	
-	var btn0 = inherit(btn, { bg_color = a(btn_color, -0.1) })
-	var btn1 = inherit(btn, { bg_color = a(btn_color, 0.1) })
-	var btn2 = inherit(btn, { bg_color = a(btn_color, 0.2) })
-	var btn3 = inherit(btn, { bg_color = a(btn_color, 0.3) })
-	#var focus = stylebox_flat({ border_color = a(btn_color, 1), border_width_ = border_width(1, 1, 1, 1) })
-	var focus = stylebox_flat({ border_color = a(btn_color, 1), border_width_ = border_width(0, 0, 0, 0) })
-	
-	var check_style = inherit(btn, {
-		bg_color = Color(0, 0, 0, 0)
+	var btn1 = inherit(btn0, { bg_color = sat(btn_color, -0.6) })
+	var btn2 = inherit(btn0, { bg_color = sat(btn_color, -0.4) })
+	var btn3 = inherit(btn0, { bg_color = sat(btn_color, -0.2) })
+	var btn4 = inherit(btn0, { bg_color = sat(btn_color, -0.0) })
+	var focus = stylebox_flat({
+		bg_color = Color(0, 0, 0, 0),
+		border_color = sat(val(btn_color, -0.5), -0.5),
+		border_width_ = border_width(1, 1, 1, 1),
+		corner_ = corner_radius(16, 16, 16, 16)
 	})
 	
-	var text_ed = stylebox_flat({
-		bg_color = btn_color,
-		corner_ = corner_radius(16, 16, 16, 16),
-		content_margin_ = content_margins(10, 5, 10, 5)
-	})
-	
-	var scroll = stylebox_flat({
-		bg_color = btn_color,
-		corner_ = corner_radius(8, 8, 8, 8)
-	})
-
-	define_style("Button", {
-		normal = btn,
-		hover = btn1,
-		pressed = btn2,
+	var button_style = {
+		font_color = text_color,
+		font_disabled_color = text_color,
+		font_focus_color = text_color,
+		font_hover_color = text_color,
+		font_hover_pressed_color = text_color,
+		font_pressed_color = text_color,
+		
 		disabled = btn0,
-		focus = merge(btn0, focus)
-	})
-	
-	define_style("CheckBox", {
-		pressed = check_style,
-		normal = check_style,
-		hover = inherit(check_style, { bg_color = a(btn_color, -0.1) }),
-		hover_pressed = inherit(check_style, { bg_color = a(btn_color, -0.1) }),
-	})
-	
-	define_style("TextEdit", {
-		normal = text_ed,
-		focus = inherit(text_ed, { bg_color = a(btn_color, 0.1) })
-	})
-	
-	define_style("LineEdit", {
-		normal = text_ed,
-		read_only = inherit(text_ed, { bg_color = a(btn_color, -0.1) }),
-		focus = inherit(text_ed, { bg_color = a(btn_color, 0.1) })
-	})
-	
-	var all_scroll = {
-		grabber = scroll,
-		grabber_highlight = inherit(scroll, { bg_color = a(btn_color, 0.1) }),
-		grabber_pressed = inherit(scroll, { bg_color = a(btn_color, 0.2) })
+		normal = btn1,
+		hover = btn2,
+		pressed = btn3,
+		focus = focus,
 	}
 	
-	define_style("HScrollBar", all_scroll)
-	define_style("VScrollBar", all_scroll)
+	var checkbox_style = {
+		normal = btn1,
+		hover = btn2,
+		pressed = btn3,
+		hover_pressed = btn4,
+	}
 	
-	define_style("ItemList", {
-		cursor = merge(btn, focus),
-		cursor_unfocused = btn1,
-		focus = merge(check_style, focus),
-		hovered = btn2,
-		hovered_selected = btn3,
-		hovered_selected_focus = merge(btn3, focus),
-		panel = panel,
-		selected = scroll,
-		selected_focus = merge(scroll, focus)
-	})
+	var text_edit_style = {
+		font_color = text_color,
+		caret_color = text_color,
+		font_placeholder_color = a(text_color, -0.7),
+		
+		normal = btn1,
+		focus = focus
+	}
+	
+	var scroll_style = {
+		grabber = btn1,
+		grabber_highlight = btn2,
+		grabber_pressed = btn3,
+		scroll = inherit(btn0, { border_width_ = border_width(8, 8, 8, 8) }),
+		scroll_focus = inherit(btn1, { border_width_ = border_width(8, 8, 8, 8) })
+	}
+	
+	var itemlist_style = {
+		font_hovered_color = text_color,
+		font_hovered_selected_color = text_color,
+		font_outline_color = Color(0, 0, 0, 1),
+		font_selected_color = text_color
+	}
+	
+	#define_style("PanelContainer", { panel = panel })
+	#define_style("Panel", { panel = panel })
+	#define_style("Label", { font_color = text_color })
+	#define_style("Button", button_style)
+	#define_style("CheckBox", checkbox_style)
+	#define_style("TextEdit", text_edit_style)
+	#define_style("LineEdit", text_edit_style)
+	#define_style("HScrollBar", scroll_style)
+	#define_style("VScrollBar", scroll_style)
+	#define_style("ItemList", itemlist_style)

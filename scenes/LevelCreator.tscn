@@ -12,102 +12,103 @@ custom_minimum_size = Vector2(1920, 1080)
 offset_right = 1930.0
 offset_bottom = 1081.0
 
-[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Menu"]
-layout_mode = 0
-offset_left = 423.0
-offset_top = 15.0
-offset_right = 1900.0
-offset_bottom = 1061.0
+[node name="HBox" type="HBoxContainer" parent="CanvasLayer/Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Menu/Scroll"]
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/Menu/HBox"]
 layout_mode = 2
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 15
-theme_override_constants/margin_bottom = 15
-
-[node name="Container" type="HBoxContainer" parent="CanvasLayer/Menu/Scroll/MarginContainer"]
-layout_mode = 2
-
-[node name="VSeparator" type="VSeparator" parent="CanvasLayer/Menu"]
-layout_mode = 0
-offset_left = 381.0
-offset_top = 1.0
-offset_right = 440.0
-offset_bottom = 1093.0
-
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Menu"]
-layout_mode = 0
-offset_left = 6.0
-offset_top = 5.0
-offset_right = 404.0
-offset_bottom = 1076.0
 size_flags_vertical = 3
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Menu/MarginContainer"]
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Menu/HBox/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
-[node name="Exit" type="Button" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+[node name="Top" type="GridContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+layout_mode = 2
+columns = 2
+
+[node name="ExitButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/Top"]
 layout_mode = 2
 size_flags_horizontal = 0
 text = " ⇽ Back"
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/Top"]
 layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
 theme_override_font_sizes/font_size = 30
-text = "Level editor"
+text = "Редактор задач"
 
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+[node name="FileFoldable" type="FoldableContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+layout_mode = 2
+title = "Файл"
+
+[node name="FileContainer" type="VBoxContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable"]
+layout_mode = 2
+
+[node name="LoadButton2" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+layout_mode = 2
+text = "Создать"
+
+[node name="LoadButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+layout_mode = 2
+text = "Загрузить"
+
+[node name="SaveButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+layout_mode = 2
+text = "Сохранить"
+
+[node name="SaveAsButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+layout_mode = 2
+text = "Сохранить как..."
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/h_separation = 15
 theme_override_constants/v_separation = 15
 columns = 2
 
-[node name="Label6" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="Label1" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
-text = "Filename"
+text = "Имя"
 
-[node name="FilenameInput" type="LineEdit" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="NameInput" type="LineEdit" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-placeholder_text = "sample_name"
+placeholder_text = "Задача N"
 
-[node name="Label1" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="Label3" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
-text = "Name"
+text = "Количество входов"
 
-[node name="NameInput" type="LineEdit" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-placeholder_text = "Sample Name"
-
-[node name="Label3" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "Number of inputs"
-
-[node name="InputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="InputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
 value = 3.0
 
-[node name="Label2" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="Label2" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
-text = "Number of outputs"
+text = "Количество выходов"
 
-[node name="OutputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="OutputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
 value = 1.0
 
-[node name="GatesInput" type="ItemList" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="GatesInput" type="ItemList" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 select_mode = 2
 max_text_lines = 3
 
-[node name="GroupInput" type="ItemList" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="GroupInput" type="ItemList" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 max_text_lines = 3
@@ -119,25 +120,40 @@ item_3/text = "Comparators & Coders"
 item_4/text = "Sequential"
 item_5/text = "Custom"
 
-[node name="SaveButton" type="Button" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
+[node name="Label7" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
 layout_mode = 2
-text = "Save"
+text = "Описание задачи"
 
-[node name="LoadButton" type="Button" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer"]
-layout_mode = 2
-text = "Load"
-
-[node name="Label7" type="Label" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Help Message"
-
-[node name="HelpInput" type="TextEdit" parent="CanvasLayer/Menu/MarginContainer/VBoxContainer"]
+[node name="HelpInput" type="TextEdit" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-placeholder_text = "Solve this problem"
+placeholder_text = "Сюда можно добавить описание задачи на человеческом языке, с которым будет работать приятнее, чем с таблицей истинности.
 
-[connection signal="pressed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
-[connection signal="value_changed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/InputsSpinBox" to="." method="_on_inputs_spin_box_value_changed"]
-[connection signal="value_changed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/OutputsSpinBox" to="." method="_on_outputs_spin_box_value_changed"]
-[connection signal="pressed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Menu/MarginContainer/VBoxContainer/GridContainer/LoadButton" to="." method="_on_load_button_pressed"]
+Здесь же можно оставить \"подсказки\" и теоретические сведения. Например:
+	Если задуматься, XOR (Исключающее ИЛИ) -- это сложение по модулю 2."
+wrap_mode = 1
+
+[node name="VSeparator" type="VSeparator" parent="CanvasLayer/Menu/HBox"]
+layout_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Menu/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Menu/HBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="Container" type="HBoxContainer" parent="CanvasLayer/Menu/HBox/Scroll/MarginContainer"]
+layout_mode = 2
+
+[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/Top/ExitButton" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer/LoadButton" to="." method="_on_load_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="value_changed" from="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer/InputsSpinBox" to="." method="_on_inputs_spin_box_value_changed"]
+[connection signal="value_changed" from="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer/OutputsSpinBox" to="." method="_on_outputs_spin_box_value_changed"]

@@ -1,0 +1,19 @@
+{
+  "allowed_gates": [
+	"OR",
+	"NOR",
+    "NOT"
+  ],
+  "help": "ljlkgj';rwq\n'gwe\ng\ng\negregkfds\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggfdfdgfd",
+  "n_inputs": 2,
+  "n_outputs": 1,
+  "name": "Equals",
+  "truth_table": [
+	[
+	  true,
+	  false,
+	  false,
+	  true
+	]
+  ]
+}

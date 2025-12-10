@@ -28,7 +28,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 40
-text = "Level Statistics"
+text = "Статистика"
 horizontal_alignment = 1
 
 [node name="BackButton" type="Button" parent="."]
@@ -75,7 +75,7 @@ custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 24
-text = "Level"
+text = "Задача"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -84,7 +84,7 @@ custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 24
-text = "Status"
+text = "Статус"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -93,7 +93,7 @@ custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 24
-text = "Time"
+text = "Время"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -102,7 +102,7 @@ custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 24
-text = "Attempts"
+text = "Попыток"
 horizontal_alignment = 1
 vertical_alignment = 1
 
