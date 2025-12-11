@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://mkkt8bj3uxfa" path="res://scripts/levels/Level29.gd" id="1_jmm8n"]
 [ext_resource type="Texture2D" uid="uid://b5odrr6bcw7vl" path="res://assets/wide_spacing_waves_4k.png" id="2_jmm8n"]
-[ext_resource type="PackedScene" uid="uid://d00vka43qsb8" path="res://scenes/components/InputBlockSingle.tscn" id="3_ti6ox"]
-[ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/components/OutputBlock.tscn" id="4_4vfv8"]
+[ext_resource type="PackedScene" uid="uid://d00vka43qsb8" path="res://scenes/blocks/InputBlock.tscn" id="3_ti6ox"]
+[ext_resource type="PackedScene" uid="uid://da7tx15dde8gi" path="res://scenes/blocks/OutputBlock.tscn" id="4_4vfv8"]
 [ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="5_p82e1"]
 [ext_resource type="PackedScene" uid="uid://cyypr7btvjlgb" path="res://scenes/ui/TestResultsPanelBitCounter.tscn" id="6_i28ae"]
 

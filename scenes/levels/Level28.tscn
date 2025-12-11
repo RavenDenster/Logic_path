@@ -1,11 +1,11 @@
 [gd_scene load_steps=8 format=3 uid="uid://level28"]
 
-[ext_resource type="Script" uid="uid://level28_script" path="res://scripts/levels/Level28.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://output_block_q" path="res://scenes/components/OutputBlockQ.tscn" id="2"]
-[ext_resource type="PackedScene" uid="uid://top_panel" path="res://scenes/ui/TopPanel.tscn" id="3"]
-[ext_resource type="Texture2D" uid="uid://background" path="res://assets/wide_spacing_waves_4k.png" id="4"]
-[ext_resource type="PackedScene" uid="uid://input_block" path="res://scenes/components/InputBlockSingle.tscn" id="5"]
-[ext_resource type="PackedScene" uid="uid://ttrigger_panel" path="res://scenes/ui/BottonPanelTTrigger.tscn" id="6"]
+[ext_resource type="Script" uid="uid://qqill66ly5fy" path="res://scripts/levels/Level28.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/components/OutputBlockQ.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://bl3sa4s2sswx" path="res://scenes/ui/TopPanel.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://b5odrr6bcw7vl" path="res://assets/wide_spacing_waves_4k.png" id="4"]
+[ext_resource type="PackedScene" uid="uid://d00vka43qsb8" path="res://scenes/blocks/InputBlock.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://dxmj4fuvoci2m" path="res://scenes/ui/BottonPanelTTrigger.tscn" id="6"]
 
 [node name="Level28" type="Node2D"]
 script = ExtResource("1")

@@ -23,6 +23,9 @@ func val(col: Color, v):
 
 func define_theme():
 	define_default_font_size(default_font_size)
+	var font = FontFile.new()
+	font.load_dynamic_font("res://assets/fonts/mono.ttf")
+	define_default_font(font)
 	
 	var panel = stylebox_flat({
 		bg_color = background_color

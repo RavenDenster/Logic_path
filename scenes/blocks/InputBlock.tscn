@@ -1,0 +1,57 @@
+[gd_scene load_steps=5 format=3 uid="uid://d00vka43qsb8"]
+
+[ext_resource type="Script" uid="uid://btf5ljb8narlq" path="res://scripts/InputBlock.gd" id="1_cgse8"]
+[ext_resource type="Texture2D" uid="uid://dy2sdihpopb5f" path="res://assets/input1.png" id="2_kjwgg"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_k2afy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qy78u"]
+
+[node name="InputBlock" type="Node2D"]
+script = ExtResource("1_cgse8")
+
+[node name="Body" type="Area2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+z_index = 2
+position = Vector2(-9.536743e-07, -9.536743e-07)
+scale = Vector2(0.32617188, 0.32617188)
+texture = ExtResource("2_kjwgg")
+
+[node name="Collision" type="CollisionShape2D" parent="Body"]
+scale = Vector2(4.2, 4.2)
+shape = SubResource("CircleShape2D_qy78u")
+
+[node name="Output" type="Area2D" parent="."]
+z_index = 2
+
+[node name="Sprite" type="Sprite2D" parent="Output"]
+position = Vector2(45, -2)
+texture = ExtResource("3_k2afy")
+
+[node name="Collision" type="CollisionShape2D" parent="Output"]
+position = Vector2(43, 0)
+scale = Vector2(2, 2)
+shape = SubResource("CircleShape2D_qy78u")
+
+[node name="Name" type="Label" parent="."]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -202.0
+offset_top = -17.0
+offset_right = -58.0
+offset_bottom = 15.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 8
+theme_override_font_sizes/font_size = 24
+text = "A"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[connection signal="input_event" from="Body" to="." method="_on_body_input_event"]
+[connection signal="mouse_entered" from="Body" to="." method="_on_body_mouse_entered"]
+[connection signal="mouse_exited" from="Body" to="." method="_on_body_mouse_exited"]
+[connection signal="mouse_entered" from="Output" to="." method="_on_output_mouse_entered"]

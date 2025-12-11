@@ -1,4 +1,10 @@
-# OutputBlockWithFeedback.gd
+[gd_scene load_steps=5 format=3 uid="uid://cdvrtu7vygrrx"]
+
+[ext_resource type="Texture2D" uid="uid://bw1is0ojr11x2" path="res://assets/q.png" id="2_flwif"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_jdj8r"]
+
+[sub_resource type="GDScript" id="GDScript_amgv6"]
+script/source = "# OutputBlockWithFeedback.gd
 extends Node2D
 class_name OutputBlockWithFeedback
 
@@ -7,7 +13,7 @@ var output_value = 0
 var expected = []
 var test_results_panel: Node
 var area: Area2D
-var output_type: String = "Q"  # Для D-защелки
+var output_type: String = \"Q\"  # Для D-защелки
 
 # Используем @onready для безопасного получения узлов
 @onready var input_port = $InputPort
@@ -15,7 +21,7 @@ var output_type: String = "Q"  # Для D-защелки
 @onready var sprite = $Sprite2D  # Теперь получаем спрайт через @onready
 
 func _ready():
-	print("OutputBlockWithFeedback ready! Has set_input: ", has_method("set_input"))
+	print(\"OutputBlockWithFeedback ready! Has set_input: \", has_method(\"set_input\"))
 	
 	# Добавляем Area2D только для обнаружения наведения
 	area = Area2D.new()
@@ -42,7 +48,7 @@ func _ready():
 	area.mouse_exited.connect(_on_area_mouse_exited)
 
 func set_input(port_name, value):
-	print("OutputBlockWithFeedback set_input called with value: ", value)
+	print(\"OutputBlockWithFeedback set_input called with value: \", value)
 	received_value = value
 	# Немедленно обновляем выходное значение для обратной связи
 	output_value = value
@@ -59,11 +65,11 @@ func reset_inputs():
 
 func set_default_style():
 	if sprite:
-		sprite.texture = load("res://assets/q.png")
+		sprite.texture = load(\"res://assets/q.png\")
 
 func set_correct_style():
 	if sprite:
-		sprite.texture = load("res://assets/output_cur_q.png")
+		sprite.texture = load(\"res://assets/output_cur_q.png\")
 
 func _on_area_mouse_entered():
 	_highlight_desired_output()
@@ -75,11 +81,11 @@ func _highlight_desired_output():
 	if not test_results_panel:
 		test_results_panel = _find_dlatch_test_results_panel()
 		if not test_results_panel:
-			print("OutputBlockWithFeedback: TestResultsPanel not found")
+			print(\"OutputBlockWithFeedback: TestResultsPanel not found\")
 			return
 	
 	# Сбрасываем все подсветки через метод панели, если он есть
-	if test_results_panel.has_method("reset_all_highlights"):
+	if test_results_panel.has_method(\"reset_all_highlights\"):
 		test_results_panel.reset_all_highlights()
 	else:
 		# Если метода нет, сбрасываем вручную
@@ -89,11 +95,11 @@ func _highlight_desired_output():
 	var labels_to_highlight = []
 	
 	match output_type:
-		"Q":
+		\"Q\":
 			# Для D-защелки подсвечиваем и Desired Q и Current Q
-			labels_to_highlight = ["Desired Q", "Current Q"]
+			labels_to_highlight = [\"Desired Q\", \"Current Q\"]
 		_:
-			labels_to_highlight = ["Desired Output"]
+			labels_to_highlight = [\"Desired Output\"]
 	
 	var grid = _find_dlatch_grid_container()
 	if grid:
@@ -104,24 +110,24 @@ func _highlight_desired_output():
 				if child is Label and child.text.strip_edges() == label_text:
 					child.modulate = Color.YELLOW
 					found = true
-					print("OutputBlockWithFeedback: Highlighted label: '", label_text, "'")
+					print(\"OutputBlockWithFeedback: Highlighted label: '\", label_text, \"'\")
 			if found:
 				break
 		
 		if not found:
-			print("OutputBlockWithFeedback: None of these labels found: ", labels_to_highlight)
+			print(\"OutputBlockWithFeedback: None of these labels found: \", labels_to_highlight)
 	else:
-		print("OutputBlockWithFeedback: GridContainer not found in test panel")
+		print(\"OutputBlockWithFeedback: GridContainer not found in test panel\")
 
 func _find_dlatch_test_results_panel():
 	# Ищем панель для D-защелки
-	var panel = get_tree().get_root().find_child("TestResultsPanelDLatch", true, false)
+	var panel = get_tree().get_root().find_child(\"TestResultsPanelDLatch\", true, false)
 	if panel:
 		return panel
 	
 	# Также можно попробовать найти по группам
-	for node in get_tree().get_nodes_in_group("test_panel"):
-		if "DLatch" in node.name:
+	for node in get_tree().get_nodes_in_group(\"test_panel\"):
+		if \"DLatch\" in node.name:
 			return node
 	
 	return null
@@ -132,10 +138,10 @@ func _find_dlatch_grid_container():
 	
 	# Пробуем разные пути к GridContainer
 	var paths_to_try = [
-		"Background/GridContainer",
-		"GridContainer",
-		"Container/GridContainer",
-		"VBoxContainer/GridContainer"
+		\"Background/GridContainer\",
+		\"GridContainer\",
+		\"Container/GridContainer\",
+		\"VBoxContainer/GridContainer\"
 	]
 	
 	for path in paths_to_try:
@@ -147,7 +153,7 @@ func _find_dlatch_grid_container():
 
 func _reset_all_highlights():
 	if test_results_panel:
-		if test_results_panel.has_method("reset_all_highlights"):
+		if test_results_panel.has_method(\"reset_all_highlights\"):
 			test_results_panel.reset_all_highlights()
 		else:
 			var grid = _find_dlatch_grid_container()
@@ -157,3 +163,42 @@ func _reset_all_highlights():
 						child.modulate = Color.WHITE
 
 # Также обновим InputBlockSingle.gd для более надежного поиска
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wn027"]
+
+[node name="OutputBlockWithFeedback" type="Node2D"]
+script = SubResource("GDScript_amgv6")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 2
+texture = ExtResource("2_flwif")
+
+[node name="InputPort" type="Area2D" parent="."]
+z_index = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InputPort"]
+position = Vector2(-43, 1.0000001)
+rotation = -0.47822022
+scale = Vector2(1.1, 1.1)
+shape = SubResource("CircleShape2D_wn027")
+
+[node name="Sprite2D" type="Sprite2D" parent="InputPort"]
+position = Vector2(-41, -1.1920929e-07)
+scale = Vector2(0.9268293, 0.9268293)
+texture = ExtResource("3_jdj8r")
+
+[node name="Output" type="Area2D" parent="."]
+z_index = 2
+position = Vector2(-5, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Output"]
+position = Vector2(47.999992, 1.0000004)
+rotation = -0.47822022
+scale = Vector2(1.2, 1.2)
+shape = SubResource("CircleShape2D_wn027")
+
+[node name="Sprite2D" type="Sprite2D" parent="Output"]
+position = Vector2(48.999996, -1.0000001)
+scale = Vector2(0.9268293, 0.9268293)
+texture = ExtResource("3_jdj8r")

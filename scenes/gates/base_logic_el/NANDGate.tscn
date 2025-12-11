@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://crg0xq3vlvpgb"]
 
-[ext_resource type="Script" uid="uid://lgev8dm7aji1" path="res://scripts/gates/base_logic_el/NANDGate.gd" id="1_2s2xv"]
+[ext_resource type="Script" uid="uid://lgev8dm7aji1" path="res://scripts/gates/NANDGate.gd" id="1_2s2xv"]
 [ext_resource type="Texture2D" uid="uid://cuq3teit7pnum" path="res://assets/nand.png" id="2_16xlw"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_1xbim"]
 

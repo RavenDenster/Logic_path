@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://d4i8wsvix1hqk"]
 
-[ext_resource type="Script" uid="uid://jcthp6nuqtf5" path="res://scripts/gates/base_logic_el/NORGate.gd" id="1_usffl"]
+[ext_resource type="Script" uid="uid://jcthp6nuqtf5" path="res://scripts/gates/NORGate.gd" id="1_usffl"]
 [ext_resource type="Texture2D" uid="uid://beskfqh3wivhc" path="res://assets/nor.png" id="2_vg1he"]
 [ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="3_jskns"]
 

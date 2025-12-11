@@ -2,10 +2,17 @@
   "allowed_gates": [
     "AND"
   ],
-  "help": "Solve this task with an AND Gate\n\nIt's not so hard))",
+  "help": "Нуууу описание для задачи вот тут",
+  "input_names": [
+	"A",
+    "B"
+  ],
   "n_inputs": 2,
   "n_outputs": 1,
-  "name": "AND Gate",
+  "name": "Логическое \"И\"",
+  "output_names": [
+    "A ^ B"
+  ],
   "truth_table": [
 	[
 	  false,

@@ -62,6 +62,7 @@ func _create_level_buttons() -> void:
 		lab1.text = j.name
 		lab2.text = "Inputs:%d | Outputs:%d | %s" % [j.n_inputs, j.n_outputs, gates_text]
 		btn.add_theme_font_size_override("font_size", 40)
+		btn.pressed.connect(_on_btn_pressed.bind(file))
 		btn.text = "▶"
 		btn.set_custom_minimum_size(Vector2(80, 80))
 		
@@ -71,6 +72,10 @@ func _create_level_buttons() -> void:
 		grid.add_child(vbox)
 		
 	level_list_container.add_child(grid)
+
+func _on_btn_pressed(filename: String):
+	LevelInfo.load_level_data(filename)
+	get_tree().change_scene_to_file("res://scenes/Level.tscn")
 
 func _ready():
 	screen_size = get_viewport().get_visible_rect().size
