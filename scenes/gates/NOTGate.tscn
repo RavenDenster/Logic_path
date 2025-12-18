@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://b1goyk7f4ov3q"]
+
+[ext_resource type="Script" uid="uid://c8g1f5psob8ew" path="res://scripts/gates/NOTGate.gd" id="1_3q1i3"]
+[ext_resource type="Texture2D" uid="uid://l5mslc5drxrv" path="res://assets/not.png" id="2_mqw4n"]
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="3_mqw4n"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="4_2b2au"]
+
+[node name="NotGate" type="Node2D"]
+script = ExtResource("1_3q1i3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_mqw4n")
+
+[node name="Output" parent="." instance=ExtResource("3_mqw4n")]
+position = Vector2(38, -3)
+
+[node name="In1" parent="." instance=ExtResource("4_2b2au")]
+position = Vector2(-48, 0)

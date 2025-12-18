@@ -1,19 +1,16 @@
 {
   "allowed_gates": [
     "AND",
-    "OR",
-    "NAND",
-    "NOR",
-    "NOT"
+    "XOR"
   ],
-  "help": "Реши задачу епта\n\nбро\n\n",
+  "help": ")))",
   "input_names": [
     "A",
     "B"
   ],
   "n_inputs": 2,
   "n_outputs": 2,
-  "name": "Сумматор",
+  "name": "Полусумматор",
   "output_names": [
     "Sum",
     "Carry"

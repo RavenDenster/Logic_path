@@ -19,7 +19,7 @@ static func display_message(text: String):
 func _ready() -> void:
 	instance = self
 	_create_ui_elements()
-	get_tree().root.add_child.call_deferred(message_node)
+	get_tree().root.add_child.call_deferred(canvas_layer)
 
 func _create_ui_elements() -> void:
 	message_node = Control.new()
@@ -49,6 +49,10 @@ func _create_ui_elements() -> void:
 	message_node.add_child(background)
 	background.add_child(label)
 	message_node.add_child(timer)
+	
+	canvas_layer = CanvasLayer.new()
+	canvas_layer.add_child(message_node)
+	canvas_layer.layer = 300
 	
 	message_node.modulate.a = 0.0
 	message_node.visible = false

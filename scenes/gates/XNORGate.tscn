@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://cjx01svb5q1s6"]
+
+[ext_resource type="Script" uid="uid://cffbsvexvs353" path="res://scripts/gates/XNORGate.gd" id="1_7x3ea"]
+[ext_resource type="Texture2D" uid="uid://bwu4304a2xw43" path="res://assets/nxor.png" id="2_niio2"]
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="3_niio2"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="4_qsb3e"]
+
+[node name="XnorGate" type="Node2D"]
+script = ExtResource("1_7x3ea")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_niio2")
+
+[node name="Output" parent="." instance=ExtResource("3_niio2")]
+position = Vector2(38, -3)
+
+[node name="In1" parent="." instance=ExtResource("4_qsb3e")]
+position = Vector2(-41, -26)
+
+[node name="In2" parent="." instance=ExtResource("4_qsb3e")]
+position = Vector2(-42, 22)

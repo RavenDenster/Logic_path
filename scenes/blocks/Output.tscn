@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://ujccaxjgm017"]
+
+[ext_resource type="Script" uid="uid://dy0l0sawechtt" path="res://scripts/Output.gd" id="1_8xkwl"]
+[ext_resource type="Texture2D" uid="uid://dc46a6uh4xfef" path="res://assets/point.png" id="2_bu1te"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vkcc2"]
+
+[node name="Output" type="Area2D"]
+script = ExtResource("1_8xkwl")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 1.0000005)
+rotation = -0.47822028
+scale = Vector2(2.5, 2.5)
+shape = SubResource("CircleShape2D_vkcc2")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+z_index = 2
+position = Vector2(5.722046e-06, 2.3841858e-07)
+scale = Vector2(0.9268293, 0.9268293)
+texture = ExtResource("2_bu1te")
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

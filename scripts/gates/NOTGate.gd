@@ -1,18 +1,13 @@
 extends Node2D
 
-var input: int = 0
+@onready var in1 = $In1
+@onready var output = $Output
+
+@export var outputs: Array[Node2D]
+@export var inputs: Array[Node2D]
 
 func _ready():
-	print("NOTGate ready! Has set_input: ", has_method("set_input"))
-
-func set_input(_port: int, val: int):  # Игнорируем port
-	print("NOTGate set_input called with value: ", val)
-	input = val
-
-func get_output(_port_name: String) -> int:
-	var result = int(not input)
-	return result
-
-func reset_inputs():
-	print("NOTGate reset_inputs")
-	input = 0
+	output.eval_func = func(call_idx: int):
+		return not in1.get_value(call_idx)
+	inputs = [ in1 ]
+	outputs = [ output ]

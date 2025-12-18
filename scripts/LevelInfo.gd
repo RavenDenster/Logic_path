@@ -1,7 +1,7 @@
 extends Node
 class_name LevelInfo
 
-enum GateType { AND, OR, NAND, NOR, NOT }
+enum GateType { AND, OR, NAND, NOR, NOT, XOR, IMPL, XNOR }
 
 static var data: Dictionary
 static var path: String
@@ -13,6 +13,15 @@ static var STYLE_ON        = _create_circle_stylebox(COL_ON)
 static var STYLE_OFF_HOVER = _create_circle_stylebox(COL_OFF.darkened(0.25))
 static var STYLE_ON_HOVER  = _create_circle_stylebox(COL_ON.darkened(0.25))
 	
+const AND_GATE: PackedScene = preload("res://scenes/gates/ANDGate.tscn")
+const OR_GATE: PackedScene = preload("res://scenes/gates/ORGate.tscn")
+const NAND_GATE: PackedScene = preload("res://scenes/gates/NANDGate.tscn")
+const NOR_GATE: PackedScene = preload("res://scenes/gates/NORGate.tscn")
+const NOT_GATE: PackedScene = preload("res://scenes/gates/NOTGate.tscn")
+const XOR_GATE: PackedScene = preload("res://scenes/gates/XORGate.tscn")
+const IMPL_GATE: PackedScene = preload("res://scenes/gates/ImplicationGate.tscn")
+const XNOR_GATE: PackedScene = preload("res://scenes/gates/XNORGate.tscn")
+
 
 static func load_level_data(level_path: String):
 	var file = FileAccess.open(level_path, FileAccess.READ)
@@ -181,3 +190,15 @@ static func set_truth_table_values(truth_table, expected: bool, values: Array):
 				dot.button_pressed = val
 			elif dot is Panel:
 				dot.add_theme_stylebox_override("panel", STYLE_ON if int(val) == 1 else STYLE_OFF)
+
+static func create_gate(type: GateType) -> Node2D:
+	match type:
+		GateType.AND: return AND_GATE.instantiate()
+		GateType.OR: return OR_GATE.instantiate()
+		GateType.NAND: return NAND_GATE.instantiate()
+		GateType.NOR: return NOR_GATE.instantiate()
+		GateType.NOT: return NOT_GATE.instantiate()
+		GateType.XOR: return XOR_GATE.instantiate()
+		GateType.IMPL: return IMPL_GATE.instantiate()
+		GateType.XNOR: return XNOR_GATE.instantiate()
+	return null

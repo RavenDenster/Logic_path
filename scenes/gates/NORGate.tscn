@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://d4i8wsvix1hqk"]
+
+[ext_resource type="Script" uid="uid://jcthp6nuqtf5" path="res://scripts/gates/NORGate.gd" id="1_usffl"]
+[ext_resource type="Texture2D" uid="uid://beskfqh3wivhc" path="res://assets/nor.png" id="2_vg1he"]
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="3_vg1he"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="4_jskns"]
+
+[node name="NorGate" type="Node2D"]
+script = ExtResource("1_usffl")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_vg1he")
+
+[node name="Output" parent="." instance=ExtResource("3_vg1he")]
+position = Vector2(38, -3)
+
+[node name="In1" parent="." instance=ExtResource("4_jskns")]
+position = Vector2(-43, -30)
+
+[node name="In2" parent="." instance=ExtResource("4_jskns")]
+position = Vector2(-43, 24)

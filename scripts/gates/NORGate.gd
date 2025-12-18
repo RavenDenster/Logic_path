@@ -1,32 +1,14 @@
-# NORGate.gd
 extends Node2D
 
-var input1: int = 0
-var input2: int = 0
+@onready var in1 = $In1
+@onready var in2 = $In2
+@onready var output = $Output
+
+@export var outputs: Array[Node2D]
+@export var inputs: Array[Node2D]
 
 func _ready():
-	print("NORGate ready! Has set_input: ", has_method("set_input"))
-
-func set_input(port: int, val: int):
-	print("NORGate set_input port ", port, " to: ", val)
-	if port == 1:
-		input1 = val
-	elif port == 2:
-		input2 = val
-
-func get_input(port: int) -> int:
-	if port == 1:
-		return input1
-	elif port == 2:
-		return input2
-	return 0
-
-func get_output(_port_name: String) -> int:
-	var result = int(not (input1 or input2))
-	print("NORGate output: ", result)
-	return result
-
-func reset_inputs():
-	print("NORGate reset_inputs")
-	input1 = 0
-	input2 = 0
+	output.eval_func = func(call_idx: int):
+		return not (in1.get_value(call_idx) or in2.get_value(call_idx))
+	inputs = [ in1, in2 ]
+	outputs = [ output ]
