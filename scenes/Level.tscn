@@ -63,5 +63,7 @@ theme_override_constants/margin_bottom = 10
 
 [node name="TableContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/PanelContainer2/MarginContainer/ExitButton" to="." method="_on_exit_button_pressed"]

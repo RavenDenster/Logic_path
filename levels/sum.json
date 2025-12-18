@@ -1,0 +1,35 @@
+{
+  "allowed_gates": [
+    "AND",
+    "OR",
+    "NAND",
+    "NOR",
+    "NOT"
+  ],
+  "help": "Реши задачу епта\n\nбро\n\n",
+  "input_names": [
+    "A",
+    "B"
+  ],
+  "n_inputs": 2,
+  "n_outputs": 2,
+  "name": "Сумматор",
+  "output_names": [
+    "Sum",
+    "Carry"
+  ],
+  "truth_table": [
+    [
+      false,
+      true,
+      true,
+      false
+    ],
+    [
+      false,
+      false,
+      false,
+      true
+    ]
+  ]
+}

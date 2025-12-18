@@ -3,9 +3,9 @@ extends ProgrammaticTheme
 
 var default_font_size = 16
 
-var background_color = Color(0.934, 0.934, 0.934, 1.0)
-var btn_color = Color(0.0, 0.76, 0.882, 1.0)
-var text_color = Color(0.227, 0.227, 0.227, 1.0)
+var background_color = Color(0.194, 0.194, 0.194, 1.0)
+var btn_color = Color(0.553, 0.347, 0.133, 1.0)
+var text_color = Color(0.137, 0.137, 0.137, 1.0)
 
 func setup_light_theme():
 	set_save_path("res://assets/theme.tres")
@@ -95,13 +95,13 @@ func define_theme():
 		font_selected_color = text_color
 	}
 	
-	#define_style("PanelContainer", { panel = panel })
-	#define_style("Panel", { panel = panel })
-	#define_style("Label", { font_color = text_color })
-	#define_style("Button", button_style)
-	#define_style("CheckBox", checkbox_style)
-	#define_style("TextEdit", text_edit_style)
-	#define_style("LineEdit", text_edit_style)
-	#define_style("HScrollBar", scroll_style)
-	#define_style("VScrollBar", scroll_style)
-	#define_style("ItemList", itemlist_style)
+	# define_style("PanelContainer", { panel = panel })
+	# define_style("Panel", { panel = panel })
+	# define_style("Label", { font_color = text_color })
+	# define_style("Button", button_style)
+	# define_style("CheckBox", checkbox_style)
+	# define_style("TextEdit", text_edit_style)
+	# define_style("LineEdit", text_edit_style)
+	# define_style("HScrollBar", scroll_style)
+	# define_style("VScrollBar", scroll_style)
+	# define_style("ItemList", itemlist_style)
