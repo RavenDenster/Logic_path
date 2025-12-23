@@ -33,6 +33,7 @@ const WIRE_SCENE = preload("res://scenes/blocks/Wire.tscn")
 
 signal wire_started
 signal wire_ended
+signal gate_deleted
 
 func create_wire(start_pos: Vector2):
 	if cur_wire:
@@ -165,6 +166,10 @@ var tut_data: Dictionary = {
 	
 	move_gate_msg = false,
 	move_gate_done = false,
+	
+	delete_gate_msg = false,
+	delete_gate_done = false,
+	
 	start_pos = Vector2(-1, -1)
 }
 
@@ -280,12 +285,22 @@ func _tutorial_move_gate():
 		if (tut_data.start_pos - gates[0].global_position).length() > 100:
 			tut_data.move_gate_done = true
 
+func _tutorial_delete_gate():
+	if not gates[0].is_hovered:
+		tut_data.start_pos = Vector2.ZERO
+		MessageDisplay.display_message("Наведитесь мышью на логическое И")
+		await gates[0].hovered
+	else:
+		MessageDisplay.display_message("Нажмите правой кнопкой мыши на него")
+		await gate_deleted
+		tut_data.delete_gate_done = true
+
 func _tutorial_scenario():
 	await _tutorial_welcome()
 	
 	while not tut_data.done:
 		if not tut_data.inout_msg: await _tutorial_inout()
-		elif gates.size() == 0:
+		elif not tut_data.delete_gate_done and gates.size() == 0:
 				if not radial_menu.visible: await _tutorial_addgate_press()
 				else: await _tutorial_addgate_release()
 		elif not tut_data.connect_msg: await _tutorial_connect_msg()
@@ -324,6 +339,14 @@ func _tutorial_scenario():
 			tut_data.move_gate_msg = true
 		elif not tut_data.move_gate_done:
 			await _tutorial_move_gate()
+		elif not tut_data.delete_gate_msg:
+			MessageDisplay.display_message("Также, если вы создали лишний логический элемент, то его можно удалить")
+			await MessageDisplay.done
+			MessageDisplay.display_message("Для этого нужно на него нажать правой кнопкой мыши")
+			await MessageDisplay.done
+			tut_data.delete_gate_msg = true
+		elif not tut_data.delete_gate_done:
+			await _tutorial_delete_gate()
 		else:
 			MessageDisplay.display_message("Обучение пройдено. Можно покинуть эту задачу")
 			tut_data.done = true
@@ -448,6 +471,7 @@ func _remove_gate(gate: Gate):
 			input.wire_ref.queue_free()
 	
 	gates.erase(gate)
+	gate_deleted.emit()
 	gate.queue_free()
 	recalculate_truth_table()
 

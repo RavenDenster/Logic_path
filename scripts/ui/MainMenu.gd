@@ -5,6 +5,10 @@ extends Control
 var f_press_count = 0
 var cheat_active = false
 
+func _ready():
+	if OS.get_name() == "Web":
+		$Panel/WebWindow.visible = true
+
 func _input(event):
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_F:	
@@ -50,3 +54,6 @@ func _on_statistics_button_pressed():
 
 func _on_random_level_pressed() -> void:
 	random_level_window.popup_centered()
+
+func _on_web_window_close_requested() -> void:
+	$Panel/WebWindow.visible = false

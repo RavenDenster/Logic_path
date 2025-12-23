@@ -67,7 +67,38 @@ text = "Выйти"
 [node name="RandomLevelWindow" parent="." instance=ExtResource("2_6jbdy")]
 visible = false
 
+[node name="WebWindow" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Предупреждение"
+initial_position = 1
+size = Vector2i(300, 250)
+visible = false
+min_size = Vector2i(300, 250)
+max_size = Vector2i(300, 250)
+
+[node name="Panel" type="PanelContainer" parent="WebWindow"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="WebWindow/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="Label" type="Label" parent="WebWindow/Panel/MarginContainer"]
+layout_mode = 2
+text = "В Web-версии временно недоступно создание собственных уровней. Для этого используйте десктопную версию.
+
+Это окно закрывается на крестик справа-сверху."
+autowrap_mode = 3
+
 [connection signal="pressed" from="Center/VBox/OpenMapButton" to="." method="_on_open_map_button_pressed"]
 [connection signal="pressed" from="Center/VBox/LevelEditor" to="." method="_on_level_editor_pressed"]
 [connection signal="pressed" from="Center/VBox/RandomLevel" to="." method="_on_random_level_pressed"]
 [connection signal="pressed" from="Center/VBox/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="close_requested" from="WebWindow" to="." method="_on_web_window_close_requested"]

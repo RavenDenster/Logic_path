@@ -253,10 +253,10 @@ func _on_post_button_pressed() -> void:
 				ok = false;
 				err_msg += base + CLASS_DESC[c] + "\n"
 	
-	if not ok:
-		MessageDisplay.display_message(err_msg)
-	else:
-		MessageDisplay.display_message("ОК! Задача решаема")
+	# if not ok:
+	# 	MessageDisplay.display_message(err_msg)
+	# else:
+	# 	MessageDisplay.display_message("ОК! Задача решаема")
 
 func _on_gates_input_item_clicked(_index: int, _at_position: Vector2, _mouse_button_index: int) -> void:
 	absent_post_classes.clear()
