@@ -8,11 +8,18 @@
 [node name="NotGate" type="Node2D"]
 script = ExtResource("1_3q1i3")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-6.7103267, -0.2499994)
+scale = Vector2(0.2810345, 0.2810345)
 texture = ExtResource("2_mqw4n")
 
 [node name="Output" parent="." instance=ExtResource("3_mqw4n")]
-position = Vector2(38, -3)
+position = Vector2(57, -1)
 
 [node name="In1" parent="." instance=ExtResource("4_2b2au")]
-position = Vector2(-48, 0)
+position = Vector2(-66, -1)
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Polygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(-38, -38, -37, 36, 29, -1)

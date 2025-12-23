@@ -1,6 +1,60 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmxjcgqrqwdxo"]
+[gd_scene load_steps=2 format=3 uid="uid://wjx5b637wbec"]
 
-[ext_resource type="Script" uid="uid://dgjx5dn7ohifc" path="res://scripts/ui/Statistics.gd" id="1"]
+[sub_resource type="GDScript" id="GDScript_popec"]
+script/source = "extends Control
+
+@onready var rows_container = $TableContainer/VBoxContainer/RowsContainer/RowsVBox
+@onready var back_button = $BackButton
+
+var level_template = preload(\"res://scenes/ui/LevelStatRow.tscn\")
+
+func _ready():
+	back_button.pressed.connect(_on_back_button_pressed)
+	load_statistics()
+	back_button.grab_focus()
+
+func _on_back_button_pressed():
+	get_tree().change_scene_to_file(\"res://scenes/ui/MainMenu.tscn\")
+
+func load_statistics():
+	for child in rows_container.get_children():
+		child.queue_free()
+	
+	var all_stats = SaveSystem.game_data.level_stats
+	for level_num in range(1, total_levels + 1):
+		var level_str = str(level_num)
+		var stats = all_stats.get(level_str, {})
+		
+		var row = level_template.instantiate()
+		rows_container.add_child(row)
+		
+		# Заполняем данные
+		var level_name = \"Level %d\" % level_num
+		var completed = stats.get(\"completed\", false)
+		var attempts = stats.get(\"attempts\", 0)
+		var best_time = stats.get(\"best_time\", 0)
+		
+		row.set_data(level_num, level_name, completed, best_time, attempts)
+	
+	# Добавляем отступ снизу
+	var spacer = Control.new()
+	spacer.custom_minimum_size = Vector2(0, 20)
+	rows_container.add_child(spacer)
+
+func show_error_message(message: String):
+	var error_label = Label.new()
+	error_label.text = message
+	error_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	error_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	error_label.add_theme_color_override(\"font_color\", Color.RED)
+	rows_container.add_child(error_label)
+
+func _input(event):
+	# Добавляем обработку клавиши Escape для возврата в меню
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_ESCAPE:
+			_on_back_button_pressed()
+"
 
 [node name="Statistics" type="Control"]
 layout_mode = 3
@@ -9,7 +63,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1")
+script = SubResource("GDScript_popec")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1

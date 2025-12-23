@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3 uid="uid://cp1ass4cge50r"]
+
+[ext_resource type="Script" uid="uid://cl5f80lqxek8e" path="res://scripts/RandomLevelWindow.gd" id="1_s2gt3"]
+
+[node name="RandomLevelWindow" type="Window"]
+oversampling_override = 1.0
+title = "Слаучайная задача"
+position = Vector2i(514, 201)
+size = Vector2i(600, 408)
+script = ExtResource("1_s2gt3")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Grid" type="GridContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Label2" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = "Количество входов: "
+
+[node name="Inputs" type="SpinBox" parent="Margin/VBox/Grid"]
+layout_mode = 2
+value = 3.0
+
+[node name="Label3" type="Label" parent="Margin/VBox/Grid"]
+layout_mode = 2
+text = "Количество выходов: "
+
+[node name="Outputs" type="SpinBox" parent="Margin/VBox/Grid"]
+layout_mode = 2
+value = 1.0
+
+[node name="Label" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+text = "Разрешенные логические элементы:"
+
+[node name="Gates" type="ItemList" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+select_mode = 2
+
+[node name="CreateButton" type="Button" parent="Margin/VBox"]
+layout_mode = 2
+text = "Создать"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="pressed" from="Margin/VBox/CreateButton" to="." method="_on_create_button_pressed"]

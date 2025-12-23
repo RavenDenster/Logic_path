@@ -3,8 +3,8 @@ extends ProgrammaticTheme
 
 var default_font_size = 16
 
-var background_color = Color(0.194, 0.194, 0.194, 1.0)
-var btn_color = Color(0.553, 0.347, 0.133, 1.0)
+var background_color = Color(0.716, 0.716, 0.716, 1.0)
+var btn_color = Color(0.856, 0.57, 0.287, 1.0)
 var text_color = Color(0.137, 0.137, 0.137, 1.0)
 
 func setup_light_theme():
@@ -31,10 +31,11 @@ func define_theme():
 		bg_color = background_color
 	})
 
+	var btn_margin = content_margins(10, 5, 10, 5)
 	var btn0 = stylebox_flat({
-		bg_color = sat(btn_color, -0.8),
+		bg_color = val(sat(btn_color, -0.6), -0.2),
 		corner_ = corner_radius(16, 16, 16, 16),
-		content_margin_ = content_margins(10, 5, 10, 5),
+		content_margin_ = btn_margin,
 		border_width = 0
 	})
 	
@@ -81,7 +82,7 @@ func define_theme():
 	}
 	
 	var scroll_style = {
-		grabber = btn1,
+		grabber = btn0,
 		grabber_highlight = btn2,
 		grabber_pressed = btn3,
 		scroll = inherit(btn0, { border_width_ = border_width(8, 8, 8, 8) }),
@@ -91,17 +92,55 @@ func define_theme():
 	var itemlist_style = {
 		font_hovered_color = text_color,
 		font_hovered_selected_color = text_color,
-		font_outline_color = Color(0, 0, 0, 1),
-		font_selected_color = text_color
+		font_selected_color = text_color,
+		font_color = a(text_color, -0.5),
+		
+		panel = inherit(panel, { bg_color = val(background_color, -0.05) })
 	}
 	
-	# define_style("PanelContainer", { panel = panel })
-	# define_style("Panel", { panel = panel })
-	# define_style("Label", { font_color = text_color })
-	# define_style("Button", button_style)
-	# define_style("CheckBox", checkbox_style)
-	# define_style("TextEdit", text_edit_style)
-	# define_style("LineEdit", text_edit_style)
-	# define_style("HScrollBar", scroll_style)
-	# define_style("VScrollBar", scroll_style)
-	# define_style("ItemList", itemlist_style)
+	var fold_style = {
+		font_color = text_color,
+		collapsed_font_color = text_color,
+		hover_font_color = text_color,
+		
+		panel = panel,
+		title_collapsed_hover_panel = inherit(btn2, { content_margins_ = content_margins(5, 15, 5, 15), corner_ = corner_radius(0, 0, 0, 0) }),
+		title_collapsed_panel  = inherit(btn1, { content_margins_ = content_margins(5, 15, 5, 15), bg_color = background_color, corner_ = corner_radius(0, 0, 0, 0) }),
+		title_hover_panel  = inherit(btn2, { content_margins_ = content_margins(5, 15, 5, 15), corner_ = corner_radius(0, 0, 0, 0) }),
+		title_panel  = inherit(btn1, { content_margins_ = content_margins(5, 15, 5, 15), bg_color = background_color, corner_ = corner_radius(0, 0, 0, 0) })
+	}
+	
+	var tab_style = {
+		font_hovered_color = text_color,
+		font_selected_color = text_color,
+		font_unselected_color = text_color,
+		
+		tab_focus = focus,
+		panel = panel,
+		tab_disabled = btn0,
+		tab_hovered = btn2,
+		tab_selected = btn3,
+		tab_unselected = btn1
+	}
+	
+	var win_style = {
+	}
+	
+	var popup_panel_style = {
+		panel = panel,
+	}
+	
+	define_style("PanelContainer", { panel = panel })
+	define_style("Panel", { panel = panel })
+	define_style("Label", { font_color = text_color })
+	define_style("Button", button_style)
+	define_style("CheckBox", checkbox_style)
+	define_style("TextEdit", text_edit_style)
+	define_style("LineEdit", text_edit_style)
+	define_style("HScrollBar", scroll_style)
+	define_style("VScrollBar", scroll_style)
+	define_style("ItemList", itemlist_style)
+	define_style("FoldableContainer", fold_style)
+	define_style("TabContainer", tab_style)
+	define_style("Window", win_style)
+	define_style("PopupPanel", popup_panel_style)

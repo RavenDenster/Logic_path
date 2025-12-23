@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 @onready var name_input = find_child("NameInput")
 @onready var help_input = find_child("HelpInput")
@@ -12,9 +12,12 @@ var truth_table
 @onready var save_file_dlg = find_child("SaveFileDialog")
 @onready var load_file_dlg = find_child("LoadFileDialog")
 var cur_path: String
+var absent_post_classes: Array[LevelInfo.Post]
 
 @onready var help_tabs = find_child("HelpTabs")
 @onready var help_preview = find_child("HelpPreview")
+@onready var priority = find_child("Priority")
+@onready var tutorial_check: CheckBox = find_child("Tutorial")
 
 func reset() -> void:
 	if truth_table:
@@ -42,6 +45,9 @@ func load_level(filename):
 	help_input.text = level_data.help
 	inputs_spin.value = level_data.n_inputs
 	outputs_spin.value = level_data.n_outputs
+	
+	if level_data.has("tutorial"): tutorial_check.button_pressed = level_data.tutorial
+	if level_data.has("priority"): priority.value = level_data.priority
 	
 	truth_table.queue_free()
 	truth_table = LevelInfo.create_truth_table(
@@ -86,6 +92,9 @@ func save_level(filename) -> void:
 		"n_inputs": int(inputs_spin.value),
 		"n_outputs": int(outputs_spin.value),
 		"allowed_gates": gates,
+		
+		"priority": int(priority.value),
+		"tutorial": tutorial_check.button_pressed
 	}
 	
 	var file = FileAccess.open(filename, FileAccess.WRITE)
@@ -212,3 +221,50 @@ func _on_new_button_pressed() -> void:
 func _on_help_tabs_tab_changed(tab: int) -> void:
 	if tab == 1:
 		help_preview.markdown_text = help_input.text
+
+func _on_post_button_pressed() -> void:
+	var table = LevelInfo.get_truth_table_values(truth_table)
+	var extra_labels = truth_table.get_meta("extra_output_labels")
+	var output_names = truth_table.get_meta("output_names")
+	
+	var ok: bool = true
+	var err_msg: String = "Ошибка:\n"
+	
+	var base = "    Все выбранные логические элементы "
+	const CLASS_DESC = {
+		LevelInfo.Post.T0: "сохраняют 0 0 (T0)",
+		LevelInfo.Post.T1: "сохраняют 1 (T1)",
+		LevelInfo.Post.S: "самодвойственны (S)",
+		LevelInfo.Post.M: "мажоритарны (M)",
+		LevelInfo.Post.L: "линейны (L)"
+	}
+	
+	for i in range(outputs_spin.value):
+		err_msg += output_names[i].text + ":\n"
+		
+		var f = table[i]
+		var classes = LevelInfo.get_post_classes(f, inputs_spin.value)
+		var classes_str = classes.map(func(c): return LevelInfo.Post.keys()[c])
+		extra_labels[i].text = ", ".join(classes_str)
+		
+		for j in range(LevelInfo.Post.keys().size()):
+			var c = j as LevelInfo.Post
+			if not classes.has(c) and not absent_post_classes.has(c):
+				ok = false;
+				err_msg += base + CLASS_DESC[c] + "\n"
+	
+	if not ok:
+		MessageDisplay.display_message(err_msg)
+	else:
+		MessageDisplay.display_message("ОК! Задача решаема")
+
+func _on_gates_input_item_clicked(_index: int, _at_position: Vector2, _mouse_button_index: int) -> void:
+	absent_post_classes.clear()
+	for index in gates_input.get_selected_items():
+		var classes = LevelInfo.GATE_POST_INV[index as LevelInfo.GateType]
+		for c in classes:
+			if not absent_post_classes.has(c):
+				absent_post_classes.append(c)
+	
+	var classes_str = absent_post_classes.map(func(c): return LevelInfo.Post.keys()[c])
+	$Menu/HBox/Margin/VBox/PostLabel.text = ", ".join(classes_str)

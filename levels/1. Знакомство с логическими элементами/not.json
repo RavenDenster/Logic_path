@@ -1,0 +1,23 @@
+{
+  "allowed_gates": [
+    "NOT"
+  ],
+  "help": "Нууу описание для логического отрицания",
+  "input_names": [
+    "Вход 0"
+  ],
+  "n_inputs": 1,
+  "n_outputs": 1,
+  "name": "Логическое отрицание",
+  "output_names": [
+    "Выход 0"
+  ],
+  "priority": 13,
+  "truth_table": [
+    [
+      true,
+      false
+    ]
+  ],
+  "tutorial": true
+}

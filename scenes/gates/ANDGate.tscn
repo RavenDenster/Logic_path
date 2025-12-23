@@ -8,14 +8,21 @@
 [node name="AndGate" type="Node2D"]
 script = ExtResource("1_58k3n")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-0.6329266, 3.7500005)
+scale = Vector2(0.32120255, 0.32120252)
 texture = ExtResource("1_wunn6")
 
 [node name="Output" parent="." instance=ExtResource("3_f7hbi")]
-position = Vector2(46, -1)
+position = Vector2(72, 2)
 
 [node name="In1" parent="." instance=ExtResource("4_teaqn")]
-position = Vector2(-38, -27)
+position = Vector2(-69, -22)
 
 [node name="In2" parent="." instance=ExtResource("4_teaqn")]
-position = Vector2(-38, 24)
+position = Vector2(-69, 25)
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Polygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(-40, 42, 6, 41, 24, 34, 38, 15, 39, -5, 32, -24, 15, -38, -6, -40, -40, -40)

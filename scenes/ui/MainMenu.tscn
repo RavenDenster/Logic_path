@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://qy26f64v8x2j"]
+[gd_scene load_steps=3 format=3 uid="uid://qy26f64v8x2j"]
 
 [ext_resource type="Script" uid="uid://c5wp21k2vtjnv" path="res://scripts/ui/MainMenu.gd" id="1_6jbdy"]
+[ext_resource type="PackedScene" uid="uid://cp1ass4cge50r" path="res://scenes/ui/RandomLevelWindow.tscn" id="2_6jbdy"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -19,7 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,55 +29,45 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBox" type="VBoxContainer" parent="Center"]
 custom_minimum_size = Vector2(400, 550)
 layout_mode = 2
 alignment = 1
 
-[node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="Center/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "LOGIC PATH"
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
+[node name="Spacer" type="Control" parent="Center/VBox"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="TutorialButton" type="Button" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Обучение"
-
-[node name="OpenMapButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="OpenMapButton" type="Button" parent="Center/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Список задач"
 
-[node name="StatisticsButton" type="Button" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Статистика"
-
-[node name="LevelEditor" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="LevelEditor" type="Button" parent="Center/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Создать задачу"
 
-[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="RandomLevel" type="Button" parent="Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Случайная задача"
+
+[node name="QuitButton" type="Button" parent="Center/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Выйти"
 
-[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
-title = "Please Confirm"
-position = Vector2i(560, 316)
-size = Vector2i(400, 100)
-dialog_text = "Are you sure you want to reset all progress? This cannot be undone."
+[node name="RandomLevelWindow" parent="." instance=ExtResource("2_6jbdy")]
+visible = false
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/TutorialButton" to="." method="_on_tutorial_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/OpenMapButton" to="." method="_on_open_map_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/StatisticsButton" to="." method="_on_statistics_button_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/LevelEditor" to="." method="_on_level_editor_pressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
-[connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
+[connection signal="pressed" from="Center/VBox/OpenMapButton" to="." method="_on_open_map_button_pressed"]
+[connection signal="pressed" from="Center/VBox/LevelEditor" to="." method="_on_level_editor_pressed"]
+[connection signal="pressed" from="Center/VBox/RandomLevel" to="." method="_on_random_level_pressed"]
+[connection signal="pressed" from="Center/VBox/QuitButton" to="." method="_on_quit_button_pressed"]

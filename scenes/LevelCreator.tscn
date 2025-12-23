@@ -33,20 +33,26 @@ script = ExtResource("7_xuw5t")
 resource_local_to_scene = true
 script = ExtResource("8_xo8qi")
 
-[node name="LevelCreator" type="Node2D"]
+[node name="LevelCreator" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_holjt")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = -1
-
-[node name="Menu" type="Panel" parent="CanvasLayer"]
-custom_minimum_size = Vector2(1920, 1080)
-offset_right = 1930.0
-offset_bottom = 1081.0
+[node name="Menu" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBox" type="HBoxContainer" parent="CanvasLayer/Menu"]
+[node name="HBox" type="HBoxContainer" parent="Menu"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,7 +60,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Margin" type="MarginContainer" parent="CanvasLayer/Menu/HBox"]
+[node name="Margin" type="MarginContainer" parent="Menu/HBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 15
@@ -62,100 +68,135 @@ theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="VBox" type="VBoxContainer" parent="CanvasLayer/Menu/HBox/Margin"]
+[node name="VBox" type="VBoxContainer" parent="Menu/HBox/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Top" type="GridContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+[node name="Top" type="GridContainer" parent="Menu/HBox/Margin/VBox"]
 layout_mode = 2
 columns = 2
 
-[node name="ExitButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/Top"]
+[node name="ExitButton" type="Button" parent="Menu/HBox/Margin/VBox/Top"]
 layout_mode = 2
 size_flags_horizontal = 0
-text = "⇽ Назад"
+text = "< Назад"
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/Top"]
+[node name="TitleLabel" type="Label" parent="Menu/HBox/Margin/VBox/Top"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
 theme_override_font_sizes/font_size = 30
 text = "Редактор задач"
 
-[node name="FileFoldable" type="FoldableContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+[node name="FileFoldable" type="FoldableContainer" parent="Menu/HBox/Margin/VBox"]
 layout_mode = 2
 title = "Файл"
 
-[node name="FileContainer" type="VBoxContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable"]
+[node name="FileContainer" type="VBoxContainer" parent="Menu/HBox/Margin/VBox/FileFoldable"]
 layout_mode = 2
 
-[node name="NewButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+[node name="NewButton" type="Button" parent="Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
 layout_mode = 2
 text = "Создать новый"
 
-[node name="LoadButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+[node name="LoadButton" type="Button" parent="Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
 layout_mode = 2
 text = "Загрузить"
 
-[node name="SaveButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+[node name="SaveButton" type="Button" parent="Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
 layout_mode = 2
 text = "Сохранить"
 
-[node name="SaveAsButton" type="Button" parent="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
+[node name="SaveAsButton" type="Button" parent="Menu/HBox/Margin/VBox/FileFoldable/FileContainer"]
 layout_mode = 2
 text = "Сохранить как..."
 
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+[node name="GridContainer" type="GridContainer" parent="Menu/HBox/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/h_separation = 15
 theme_override_constants/v_separation = 15
 columns = 2
 
-[node name="Label1" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
+[node name="Label1" type="Label" parent="Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
 text = "Имя"
 
-[node name="NameInput" type="LineEdit" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
+[node name="NameInput" type="LineEdit" parent="Menu/HBox/Margin/VBox/GridContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 placeholder_text = "Сумматор"
 
-[node name="Label3" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
+[node name="Label3" type="Label" parent="Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
 text = "Количество входов"
 
-[node name="InputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
+[node name="InputsSpinBox" type="SpinBox" parent="Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
 value = 3.0
 
-[node name="Label2" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
+[node name="Label2" type="Label" parent="Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
 text = "Количество выходов"
 
-[node name="OutputsSpinBox" type="SpinBox" parent="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer"]
+[node name="OutputsSpinBox" type="SpinBox" parent="Menu/HBox/Margin/VBox/GridContainer"]
 layout_mode = 2
 value = 1.0
 
-[node name="Label8" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+[node name="Label8" type="Label" parent="Menu/HBox/Margin/VBox"]
 layout_mode = 2
 text = "Разрешенные логические элементы:"
 
-[node name="GatesInput" type="ItemList" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+[node name="HBox" type="HBoxContainer" parent="Menu/HBox/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="GatesInput" type="ItemList" parent="Menu/HBox/Margin/VBox/HBox"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
+size_flags_horizontal = 3
 select_mode = 2
 max_text_lines = 3
 
-[node name="Label7" type="Label" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+[node name="VBox" type="VBoxContainer" parent="Menu/HBox/Margin/VBox/HBox"]
+layout_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="Menu/HBox/Margin/VBox/HBox/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/HBox/Margin/VBox/HBox/VBox/HBox"]
+layout_mode = 2
+tooltip_text = "Задания сортируются в порядке приоритета. От большего к меньшему."
+mouse_filter = 1
+text = "Приоритет: "
+
+[node name="Priority" type="SpinBox" parent="Menu/HBox/Margin/VBox/HBox/VBox/HBox"]
+layout_mode = 2
+tooltip_text = "Задания сортируются в порядке приоритета. От большего к меньшему."
+
+[node name="Tutorial" type="CheckBox" parent="Menu/HBox/Margin/VBox/HBox/VBox"]
+layout_mode = 2
+tooltip_text = "Включать ли обучение при запуске этой задачи?"
+text = "Обучение"
+
+[node name="PostLabel" type="Label" parent="Menu/HBox/Margin/VBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="PostButton" type="Button" parent="Menu/HBox/Margin/VBox"]
+layout_mode = 2
+text = "Принадлежность к классам Поста"
+
+[node name="Label7" type="Label" parent="Menu/HBox/Margin/VBox"]
 layout_mode = 2
 text = "Описание задачи"
 
-[node name="HelpTabs" type="TabContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox"]
+[node name="HelpTabs" type="TabContainer" parent="Menu/HBox/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="HelpInput" type="TextEdit" parent="CanvasLayer/Menu/HBox/Margin/VBox/HelpTabs"]
+[node name="HelpInput" type="TextEdit" parent="Menu/HBox/Margin/VBox/HelpTabs"]
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "Сюда можно добавить описание задачи на человеческом языке, с которым будет работать приятнее, чем с таблицей истинности.
@@ -165,12 +206,12 @@ wrap_mode = 1
 indent_wrapped_lines = true
 metadata/_tab_index = 0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Menu/HBox/Margin/VBox/HelpTabs"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Menu/HBox/Margin/VBox/HelpTabs"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="HelpPreview" type="RichTextLabel" parent="CanvasLayer/Menu/HBox/Margin/VBox/HelpTabs/ScrollContainer"]
+[node name="HelpPreview" type="RichTextLabel" parent="Menu/HBox/Margin/VBox/HelpTabs/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -183,14 +224,14 @@ h4 = SubResource("Resource_52c0c")
 h5 = SubResource("Resource_8256g")
 h6 = SubResource("Resource_k5auo")
 
-[node name="VSeparator" type="VSeparator" parent="CanvasLayer/Menu/HBox"]
+[node name="VSeparator" type="VSeparator" parent="Menu/HBox"]
 layout_mode = 2
 
-[node name="Scroll" type="ScrollContainer" parent="CanvasLayer/Menu/HBox"]
+[node name="Scroll" type="ScrollContainer" parent="Menu/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Menu/HBox/Scroll"]
+[node name="MarginContainer" type="MarginContainer" parent="Menu/HBox/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -199,7 +240,7 @@ theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="Container" type="HBoxContainer" parent="CanvasLayer/Menu/HBox/Scroll/MarginContainer"]
+[node name="Container" type="CenterContainer" parent="Menu/HBox/Scroll/MarginContainer"]
 layout_mode = 2
 
 [node name="SaveFileDialog" type="FileDialog" parent="."]
@@ -215,13 +256,15 @@ file_mode = 0
 root_subfolder = "res://levels"
 filters = PackedStringArray("*.json")
 
-[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/Top/ExitButton" to="." method="_on_exit_pressed"]
-[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer/NewButton" to="." method="_on_new_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer/LoadButton" to="." method="_on_load_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/Menu/HBox/Margin/VBox/FileFoldable/FileContainer/SaveAsButton" to="." method="_on_save_as_button_pressed"]
-[connection signal="value_changed" from="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer/InputsSpinBox" to="." method="_on_inputs_spin_box_value_changed"]
-[connection signal="value_changed" from="CanvasLayer/Menu/HBox/Margin/VBox/GridContainer/OutputsSpinBox" to="." method="_on_outputs_spin_box_value_changed"]
-[connection signal="tab_changed" from="CanvasLayer/Menu/HBox/Margin/VBox/HelpTabs" to="." method="_on_help_tabs_tab_changed"]
+[connection signal="pressed" from="Menu/HBox/Margin/VBox/Top/ExitButton" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="Menu/HBox/Margin/VBox/FileFoldable/FileContainer/NewButton" to="." method="_on_new_button_pressed"]
+[connection signal="pressed" from="Menu/HBox/Margin/VBox/FileFoldable/FileContainer/LoadButton" to="." method="_on_load_button_pressed"]
+[connection signal="pressed" from="Menu/HBox/Margin/VBox/FileFoldable/FileContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="Menu/HBox/Margin/VBox/FileFoldable/FileContainer/SaveAsButton" to="." method="_on_save_as_button_pressed"]
+[connection signal="value_changed" from="Menu/HBox/Margin/VBox/GridContainer/InputsSpinBox" to="." method="_on_inputs_spin_box_value_changed"]
+[connection signal="value_changed" from="Menu/HBox/Margin/VBox/GridContainer/OutputsSpinBox" to="." method="_on_outputs_spin_box_value_changed"]
+[connection signal="item_clicked" from="Menu/HBox/Margin/VBox/HBox/GatesInput" to="." method="_on_gates_input_item_clicked"]
+[connection signal="pressed" from="Menu/HBox/Margin/VBox/PostButton" to="." method="_on_post_button_pressed"]
+[connection signal="tab_changed" from="Menu/HBox/Margin/VBox/HelpTabs" to="." method="_on_help_tabs_tab_changed"]
 [connection signal="file_selected" from="SaveFileDialog" to="." method="_on_save_file_dialog_file_selected"]
 [connection signal="file_selected" from="LoadFileDialog" to="." method="_on_load_file_dialog_file_selected"]

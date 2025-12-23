@@ -2,6 +2,29 @@ extends Node
 class_name LevelInfo
 
 enum GateType { AND, OR, NAND, NOR, NOT, XOR, IMPL, XNOR }
+enum Post { T0, T1, S, M, L }
+
+static var GATE_POST = {
+	GateType.AND: [ Post.T0, Post.T1, Post.M ],
+	GateType.OR: [ Post.T0, Post.T1, Post.M ],
+	GateType.NAND: [ ],
+	GateType.NOR: [ ],
+	GateType.NOT: [ Post.S, Post.L ],
+	GateType.XOR: [ Post.T0, Post.L ],
+	GateType.IMPL: [ Post.T1 ],
+	GateType.XNOR: [ Post.T1, Post.L ]
+}
+
+static var GATE_POST_INV = {
+	GateType.AND: [ Post.S, Post.L, ],
+	GateType.OR: [ Post.S, Post.L, ],
+	GateType.NAND: [ Post.T0, Post.T1, Post.S, Post.M, Post.L ],
+	GateType.NOR: [ Post.T0, Post.T1, Post.S, Post.M, Post.L ],
+	GateType.NOT: [ Post.T0, Post.T1, Post.M ],
+	GateType.XOR: [ Post.T1, Post.S, Post.M ],
+	GateType.IMPL: [ Post.T0, Post.S, Post.M, Post.L ],
+	GateType.XNOR: [ Post.T0, Post.S, Post.M ]
+}
 
 static var data: Dictionary
 static var path: String
@@ -22,6 +45,74 @@ const XOR_GATE: PackedScene = preload("res://scenes/gates/XORGate.tscn")
 const IMPL_GATE: PackedScene = preload("res://scenes/gates/ImplicationGate.tscn")
 const XNOR_GATE: PackedScene = preload("res://scenes/gates/XNORGate.tscn")
 
+static func get_zhegalkin_coefficients(f: Array):
+	var res = []
+	var coeff = f.duplicate()
+	while len(coeff) > 0:
+		res.append(coeff[0])
+		for i in range(coeff.size() - 1):
+			coeff[i] = int(coeff[i]) ^ int(coeff[i + 1])
+		coeff.pop_back()
+	return res
+
+static func is_power_of_two(n: int):
+	return n > 0 and (n & (n - 1)) == 0
+
+static func idx_to_bits(idx: int, n_bits: int):
+	var res: Array[bool] = []
+	for i in range(n_bits):
+		res.append(bool(idx & 1))
+		idx >>= 1
+	return res
+
+static func bits_to_idx(bits: Array[bool]):
+	var res: int = 0
+	for bit in bits:
+		res = (res << 1) + int(bit)
+	return res
+
+static func get_post_classes(f: Array, n_inputs: int):
+	var res = []
+	if not bool(f[0]):
+		res.append(Post.T0)
+	if bool(f.back()):
+		res.append(Post.T1)
+	
+	var S: bool = true
+	for i in range(f.size() >> 1):
+		if f[i] == f[f.size() - 1 - i]:
+			S = false
+			break
+	if S: res.append(Post.S)
+	
+	var zhegalkin = get_zhegalkin_coefficients(f)
+	var L: bool = true
+	for i in range(1, zhegalkin.size()):
+		if not is_power_of_two(i) and zhegalkin[i]:
+			L = false
+			break
+	if L: res.append(Post.L)
+	
+	var M: bool = true
+	for i in range(f.size()):
+		var cur_val = f[i]
+		var bits = idx_to_bits(i, n_inputs)
+		
+		for j in range(bits.size()):
+			if not bits[j]:
+				bits[j] = true
+				var i2 = bits_to_idx(bits)
+				bits[j] = false
+				
+				var next_val = f[i2]
+				if int(cur_val) > int(next_val):
+					M = false
+					break
+		if not M:
+			break
+	if M: res.append(Post.M)
+	
+	return res
 
 static func load_level_data(level_path: String):
 	var file = FileAccess.open(level_path, FileAccess.READ)
@@ -29,6 +120,9 @@ static func load_level_data(level_path: String):
 	file.close()
 	data = json_data
 	path = level_path
+	
+	if not data.has("tutorial"):
+		data["tutorial"] = false
 
 static func _create_row_line_edit(text: String) -> Control:
 	var edit = LineEdit.new()
@@ -75,7 +169,7 @@ static func create_truth_table(
 	) -> GridContainer:
 	var grid = GridContainer.new()
 	var n_columns = pow(2, n_inputs)
-	grid.columns = n_columns + 2
+	grid.columns = n_columns + 3
 	
 	if input_labels == null:
 		input_labels = []
@@ -93,6 +187,7 @@ static func create_truth_table(
 	print(output_labels)
 	
 	var input_names = []
+	var extra_input_labels = []
 	for i in range(n_inputs):
 		var label = _create_row_line_edit(input_labels[i]) if editable_labels \
 					else _create_row_label(input_labels[i])
@@ -104,13 +199,18 @@ static func create_truth_table(
 			var bit = (col >> (n_inputs - 1 - i)) & 1
 			var dot = _create_const_dot(bit)
 			grid.add_child(dot)
+		
+		var extra_label = Label.new()
+		grid.add_child(extra_label)
+		extra_input_labels.append(extra_label)
 	
-	for i in range(n_columns + 2):
+	for i in range(n_columns + 3):
 		grid.add_child(HSeparator.new())
 	
 	var output_buttons = []
 	var output_names = []
 	var result_buttons = []
+	var extra_output_labels = []
 	for i in range(n_outputs):
 		var label
 		if result_rows:
@@ -132,6 +232,10 @@ static func create_truth_table(
 			grid.add_child(dot)
 		output_buttons.append(row_buttons)
 		
+		var extra_label = Label.new()
+		grid.add_child(extra_label)
+		extra_output_labels.append(extra_label)
+		
 		if not result_rows: continue
 		
 		var res_label = _create_row_label("Получаемый " + output_labels[i])
@@ -144,6 +248,8 @@ static func create_truth_table(
 			row_res_buttons.append(dot)
 			grid.add_child(dot)
 		result_buttons.append(row_res_buttons)
+		
+		grid.add_child(Label.new())
 	
 	grid.set_meta("output_buttons", output_buttons)
 	if editable_labels:
@@ -153,6 +259,8 @@ static func create_truth_table(
 		grid.set_meta("result_buttons", result_buttons)
 	grid.set_meta("n_inputs", n_inputs)
 	grid.set_meta("n_outputs", n_outputs)
+	grid.set_meta("extra_input_labels", extra_input_labels)
+	grid.set_meta("extra_output_labels", extra_output_labels)
 	return grid
 
 static func _create_circle_stylebox(color: Color) -> StyleBoxFlat:
@@ -191,7 +299,7 @@ static func set_truth_table_values(truth_table, expected: bool, values: Array):
 			elif dot is Panel:
 				dot.add_theme_stylebox_override("panel", STYLE_ON if int(val) == 1 else STYLE_OFF)
 
-static func create_gate(type: GateType) -> Node2D:
+static func create_gate(type: GateType) -> Gate:
 	match type:
 		GateType.AND: return AND_GATE.instantiate()
 		GateType.OR: return OR_GATE.instantiate()

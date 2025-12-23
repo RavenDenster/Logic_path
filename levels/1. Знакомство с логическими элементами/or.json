@@ -1,0 +1,26 @@
+{
+  "allowed_gates": [
+    "OR"
+  ],
+  "help": "втффффффф",
+  "input_names": [
+    "A",
+    "B"
+  ],
+  "n_inputs": 2,
+  "n_outputs": 1,
+  "name": "Логическое \"ИЛИ\"",
+  "output_names": [
+    "A v B"
+  ],
+  "priority": 14,
+  "truth_table": [
+    [
+      false,
+      true,
+      true,
+      true
+    ]
+  ],
+  "tutorial": true
+}

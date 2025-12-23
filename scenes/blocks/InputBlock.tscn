@@ -6,16 +6,11 @@
 
 [node name="InputBlock" type="Node2D"]
 script = ExtResource("1_cgse8")
+removable = false
 
-[node name="Body" type="Area2D" parent="."]
+[node name="Area" type="Area2D" parent="."]
 
-[node name="Sprite" type="Sprite2D" parent="Body"]
-z_index = 2
-position = Vector2(-9.536743e-07, -9.536743e-07)
-scale = Vector2(0.32617188, 0.32617188)
-texture = ExtResource("2_kjwgg")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Body"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area"]
 polygon = PackedVector2Array(-41, -7, -33, -26, -15, -39, 8, -41, 27, -32, 40, -14, 31, -9, 29, -2, 31, 6, 40, 11, 35, 22, 24, 34, 10, 40, -6, 41, -21, 36, -35, 22, -41, 9)
 
 [node name="Name" type="Label" parent="."]
@@ -36,9 +31,11 @@ text = "A"
 horizontal_alignment = 2
 vertical_alignment = 1
 
+[node name="Sprite" type="Sprite2D" parent="."]
+z_index = 2
+position = Vector2(-9.536743e-07, -9.536743e-07)
+scale = Vector2(0.32617188, 0.32617188)
+texture = ExtResource("2_kjwgg")
+
 [node name="Output" parent="." instance=ExtResource("3_84jdj")]
 position = Vector2(42, -3)
-
-[connection signal="input_event" from="Body" to="." method="_on_body_input_event"]
-[connection signal="mouse_entered" from="Body" to="." method="_on_body_mouse_entered"]
-[connection signal="mouse_exited" from="Body" to="." method="_on_body_mouse_exited"]

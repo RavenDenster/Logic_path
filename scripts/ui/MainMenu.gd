@@ -1,6 +1,7 @@
 extends Control
 
-@onready var confirmation_dialog = get_node("ConfirmationDialog")
+@onready var random_level_window = $RandomLevelWindow
+
 var f_press_count = 0
 var cheat_active = false
 
@@ -27,13 +28,6 @@ func unlock_all_levels(save_system):
 func _on_open_map_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/ui/LevelMap.tscn")
 
-func _on_new_game_pressed():
-	print("New Game pressed - showing confirmation")
-	if confirmation_dialog:
-		confirmation_dialog.popup_centered()
-	else:
-		reset_game_progress()
-
 func _on_quit_button_pressed():
 	print("QUIT pressed - exiting")
 	get_tree().quit()
@@ -51,11 +45,8 @@ func reset_game_progress():
 func _on_level_editor_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/LevelCreator.tscn")
 
-func _on_confirmation_dialog_confirmed() -> void:
-	reset_game_progress()
-
-func _on_tutorial_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/ui/Tutorial.tscn")
-
 func _on_statistics_button_pressed():
 	get_tree().change_scene_to_file("res://scenes/ui/Statistics.tscn")
+
+func _on_random_level_pressed() -> void:
+	random_level_window.popup_centered()
