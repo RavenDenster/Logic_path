@@ -9,8 +9,8 @@ extends Control
 @onready var tab_container = find_child("Container")
 var truth_table
 
-@onready var save_file_dlg = find_child("SaveFileDialog")
-@onready var load_file_dlg = find_child("LoadFileDialog")
+@onready var save_file_dlg: FileDialog = find_child("SaveFileDialog")
+@onready var load_file_dlg: FileDialog = find_child("LoadFileDialog")
 var cur_path: String
 var absent_post_classes: Array[LevelInfo.Post]
 
@@ -189,6 +189,9 @@ func _ready() -> void:
 	help_tabs.set_tab_title(0, "Редактировать")
 	help_tabs.set_tab_title(1, "Предпросмотр")
 	reset()
+	
+	load_file_dlg.root_subfolder = SaveSystemGlobal.res()
+	save_file_dlg.root_subfolder = SaveSystemGlobal.res()
 
 func _on_exit_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")

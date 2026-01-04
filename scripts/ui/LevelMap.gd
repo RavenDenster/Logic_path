@@ -40,7 +40,7 @@ func _folder_to_control(path: String, basename: String) -> Control:
 	
 	var dirs: Array[String] = []
 	var level_files: Array[String] = []
-	var dir = DirAccess.open(path)
+	var dir = DirAccess.open(SaveSystemGlobal.res() + path)
 	
 	if not dir:
 		return fold
@@ -56,7 +56,7 @@ func _folder_to_control(path: String, basename: String) -> Control:
 	
 	var js = []
 	for file in level_files:
-		var j = load_json_file(path + "/" + file)
+		var j = load_json_file(SaveSystemGlobal.res() + path + "/" + file)
 		if not j.has("priority"):
 			j.priority = 0
 		j["file"] = file
@@ -70,11 +70,11 @@ func _folder_to_control(path: String, basename: String) -> Control:
 		var lab1 = Label.new()
 		var lab2 = Label.new()
 		
-		var stats_text = SaveSystemGlobal.format_stats_text(path + "/" + j.file)
+		var stats_text = SaveSystemGlobal.format_stats_text(SaveSystemGlobal.res() + path + "/" + j.file)
 		var gates_text = ", ".join(j.allowed_gates)
 		lab1.add_theme_font_size_override("font_size", 30)
 		lab1.text = j.name
-		lab2.text = "Входов:%d | Выходов:%d | %s | %s" \
+		lab2.text = "Входов:%d | Выходов:%d | %s%s" \
 			% [j.n_inputs, j.n_outputs, gates_text, stats_text]
 		btn.add_theme_font_size_override("font_size", 40)
 		btn.pressed.connect(_on_btn_pressed.bind(path + "/" + j.file))
@@ -99,7 +99,7 @@ func _folder_to_control(path: String, basename: String) -> Control:
 	return fold
 
 func _create_level_buttons() -> void:
-	var ctl = _folder_to_control("res://levels/", "")
+	var ctl = _folder_to_control("levels/", "")
 	level_list_container.add_child(ctl)
 	
 func _on_btn_pressed(filename: String):

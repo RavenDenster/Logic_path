@@ -49,15 +49,15 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Список задач"
 
-[node name="LevelEditor" type="Button" parent="Center/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Создать задачу"
-
 [node name="RandomLevel" type="Button" parent="Center/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Случайная задача"
+
+[node name="LevelEditor" type="Button" parent="Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Создать задачу"
 
 [node name="QuitButton" type="Button" parent="Center/VBox"]
 layout_mode = 2
@@ -91,14 +91,23 @@ theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
 [node name="Label" type="Label" parent="WebWindow/Panel/MarginContainer"]
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 text = "В Web-версии временно недоступно создание собственных уровней. Для этого используйте десктопную версию.
 
 Это окно закрывается на крестик справа-сверху."
 autowrap_mode = 3
 
+[node name="PlatformLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 11.0
+offset_right = 52.0
+offset_bottom = 33.0
+text = "Platform and some other info"
+
 [connection signal="pressed" from="Center/VBox/OpenMapButton" to="." method="_on_open_map_button_pressed"]
-[connection signal="pressed" from="Center/VBox/LevelEditor" to="." method="_on_level_editor_pressed"]
 [connection signal="pressed" from="Center/VBox/RandomLevel" to="." method="_on_random_level_pressed"]
+[connection signal="pressed" from="Center/VBox/LevelEditor" to="." method="_on_level_editor_pressed"]
 [connection signal="pressed" from="Center/VBox/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="close_requested" from="WebWindow" to="." method="_on_web_window_close_requested"]

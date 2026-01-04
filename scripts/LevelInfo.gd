@@ -1,7 +1,7 @@
 extends Node
 class_name LevelInfo
 
-enum GateType { AND, OR, NAND, NOR, NOT, XOR, IMPL, XNOR }
+enum GateType { AND, OR, NAND, NOR, NOT, XOR, XNOR }
 enum Post { T0, T1, S, M, L }
 
 static var GATE_POST = {
@@ -11,7 +11,6 @@ static var GATE_POST = {
 	GateType.NOR: [ ],
 	GateType.NOT: [ Post.S, Post.L ],
 	GateType.XOR: [ Post.T0, Post.L ],
-	GateType.IMPL: [ Post.T1 ],
 	GateType.XNOR: [ Post.T1, Post.L ]
 }
 
@@ -22,7 +21,6 @@ static var GATE_POST_INV = {
 	GateType.NOR: [ Post.T0, Post.T1, Post.S, Post.M, Post.L ],
 	GateType.NOT: [ Post.T0, Post.T1, Post.M ],
 	GateType.XOR: [ Post.T1, Post.S, Post.M ],
-	GateType.IMPL: [ Post.T0, Post.S, Post.M, Post.L ],
 	GateType.XNOR: [ Post.T0, Post.S, Post.M ]
 }
 
@@ -42,7 +40,6 @@ const NAND_GATE: PackedScene = preload("res://scenes/gates/NANDGate.tscn")
 const NOR_GATE: PackedScene = preload("res://scenes/gates/NORGate.tscn")
 const NOT_GATE: PackedScene = preload("res://scenes/gates/NOTGate.tscn")
 const XOR_GATE: PackedScene = preload("res://scenes/gates/XORGate.tscn")
-const IMPL_GATE: PackedScene = preload("res://scenes/gates/ImplicationGate.tscn")
 const XNOR_GATE: PackedScene = preload("res://scenes/gates/XNORGate.tscn")
 
 static func get_zhegalkin_coefficients(f: Array):
@@ -115,7 +112,7 @@ static func get_post_classes(f: Array, n_inputs: int):
 	return res
 
 static func load_level_data(level_path: String):
-	var file = FileAccess.open(level_path, FileAccess.READ)
+	var file = FileAccess.open(SaveSystemGlobal.res() + level_path, FileAccess.READ)
 	var json_data = JSON.parse_string(file.get_as_text())
 	file.close()
 	data = json_data
@@ -307,6 +304,5 @@ static func create_gate(type: GateType) -> Gate:
 		GateType.NOR: return NOR_GATE.instantiate()
 		GateType.NOT: return NOT_GATE.instantiate()
 		GateType.XOR: return XOR_GATE.instantiate()
-		GateType.IMPL: return IMPL_GATE.instantiate()
 		GateType.XNOR: return XNOR_GATE.instantiate()
 	return null

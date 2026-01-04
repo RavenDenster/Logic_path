@@ -361,7 +361,7 @@ func _ready() -> void:
 		
 	var stats_text = SaveSystemGlobal.format_stats_text(LevelInfo.path)
 	SaveSystemGlobal.record_level_start()
-	level_name.text = LevelInfo.data.name + " | " + stats_text
+	level_name.text = LevelInfo.data.name + stats_text
 	description.markdown_text = LevelInfo.data.help
 	
 	create_inputs()
@@ -408,7 +408,7 @@ func recalculate_truth_table() -> void:
 	if n_is_good == n_outputs:
 		SaveSystemGlobal.record_level_completion()
 		var stats_text = SaveSystemGlobal.format_stats_text(LevelInfo.path)
-		level_name.text = LevelInfo.data.name + " | " + stats_text
+		level_name.text = LevelInfo.data.name + stats_text
 		
 		var tween = create_tween()
 		tween.tween_property(level_panel, "modulate", Color(0.95, 1.05, 0.95), 0.2).set_trans(Tween.TRANS_SINE)

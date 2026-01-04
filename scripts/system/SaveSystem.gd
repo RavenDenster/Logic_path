@@ -6,6 +6,8 @@ const SAVE_FILE_PATH = "user://logic_gates_save.json"
 	"level_stats": {}
 }
 
+@export var displayed_warning: bool = false
+
 var temp_level_stats: Dictionary
 
 func _ready():
@@ -96,17 +98,22 @@ func record_level_completion():
 		record_level_start()
 	
 	record_level_completion_for(game_data["level_stats"][LevelInfo.path])
-	
 
+func res() -> String:
+	if OS.has_feature("standalone"):
+		return OS.get_executable_path().get_base_dir() + "/"
+	else:
+		return "res://" 
+		
 func format_stats_text_for(stats: Dictionary):
 	var t = int(stats.time)
 	var mins = int(t / 60)
 	var secs = int(t) % 60
 	
 	if stats.completed:
-		return "Решена | %02d:%02d" % [mins, secs]
+		return " | Решена | %02d:%02d" % [mins, secs]
 	else:
-		return "Не решена"
+		return ""
 
 func format_stats_text(filename):
 	if filename == "":
@@ -115,4 +122,4 @@ func format_stats_text(filename):
 	if SaveSystemGlobal.game_data.level_stats.has(filename):
 		return format_stats_text_for(SaveSystemGlobal.game_data.level_stats[filename])
 	else:
-		return "Не решена"
+		return ""

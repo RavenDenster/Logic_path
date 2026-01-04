@@ -3,8 +3,8 @@ extends ProgrammaticTheme
 
 var default_font_size = 16
 
-var background_color = Color(0.716, 0.716, 0.716, 1.0)
-var btn_color = Color(0.856, 0.57, 0.287, 1.0)
+var background_color = Color(1.0, 1.0, 1.0, 1.0)
+var btn_color = Color(1.0, 0.557, 0.17, 1.0)
 var text_color = Color(0.137, 0.137, 0.137, 1.0)
 
 func setup_light_theme():

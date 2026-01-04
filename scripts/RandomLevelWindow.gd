@@ -60,7 +60,6 @@ var callable: Dictionary[LevelInfo.GateType, Callable] = {
 	LevelInfo.GateType.NOR: func(a, b): return not(a.call() or b.call()),
 	LevelInfo.GateType.XOR: func(a, b): return a.call() != b.call(),
 	LevelInfo.GateType.XNOR: func(a, b): return a.call() == b.call(),
-	LevelInfo.GateType.IMPL: func(a, b): return (not a.call()) or  b.call(),
 	LevelInfo.GateType.NOT: func(a): return not a.call(), 
 }
 
@@ -173,4 +172,5 @@ func _on_create_button_pressed() -> void:
 	LevelInfo.data["output_names"] = output_names
 	LevelInfo.data["name"] = "Задача"
 	LevelInfo.data["truth_table"] = truth_table
+	LevelInfo.data["tutorial"] = false
 	get_tree().change_scene_to_file("res://scenes/Level.tscn")
