@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://w0hwhr5kgsmb"]
+
+[sub_resource type="GDScript" id="GDScript_ber8y"]
+script/source = "extends PanelContainer
+class_name LevelButton
+
+@onready var container = get_node(\"Container\")
+@onready var name_lab = get_node(\"Container/NameLabel\")
+@onready var desc_lab = get_node(\"Container/DescLabel\")
+
+func _ready():
+	pass
+	#container.mouse_entered.connect(on_mouse_entered)
+	#container.mouse_exited.connect(on_mouse_exited)
+	container.gui_input.connect(on_mouse_clicked)
+
+func fill(lvl_name: String, n_inputs: int, n_outputs: int, allowed_gates: Array):
+	var gates_text = \", \".join(allowed_gates)
+	name_lab.text = lvl_name
+	desc_lab.text = \"Inputs:%d | Outputs:%d | %s\" % [n_inputs, n_outputs, gates_text]
+
+func on_mouse_entered():
+	print(\"mouse entered\")
+	#print(name_lab.text)
+
+func on_mouse_exited():
+	print(\"mouse exited\")
+	#print(name_lab.text)
+
+func on_mouse_clicked(event: InputEvent):
+	if event is InputEventMouse and event.is_action_pressed(\"mouse_left\"):
+		print(\"mouse clicked\")
+		#print(name_lab.text)
+"
+
+[node name="LevelButton" type="Node2D"]
+script = SubResource("GDScript_ber8y")
+
+[node name="Container" type="PanelContainer" parent="."]
+offset_right = 7.0
+offset_bottom = 6.0
+
+[node name="NameLabel" type="Label" parent="Container"]
+layout_mode = 2
+
+[node name="DescLabel" type="Label" parent="Container"]
+layout_mode = 2

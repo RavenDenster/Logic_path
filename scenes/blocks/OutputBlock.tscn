@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://da7tx15dde8gi"]
+
+[ext_resource type="Script" uid="uid://uswcwor0aug4" path="res://scripts/OutputBlock.gd" id="1_xidue"]
+[ext_resource type="Texture2D" uid="uid://d1urgh5672yc1" path="res://assets/output.png" id="2_uxds8"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="3_xidue"]
+
+[node name="OutputBlock" type="Node2D"]
+z_index = 2
+script = ExtResource("1_xidue")
+removable = false
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(1, 41, 17, 38, 29, 30, 38, 15, 41, 0, 37, -16, 26, -31, 11, -40, -5, -41, -22, -35, -34, -26, -38, -19, -25, -17, -16, -8, -14, 1, -21, 13, -31, 18, -37, 17, -32, 26, -19, 38)
+
+[node name="Name" type="Label" parent="."]
+offset_left = 58.0
+offset_top = -17.0
+offset_right = 216.0
+offset_bottom = 15.0
+theme_override_font_sizes/font_size = 24
+text = "Output name"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-1.1920929e-07, -4.7683716e-07)
+scale = Vector2(0.315, 0.315)
+texture = ExtResource("2_uxds8")
+
+[node name="In1" parent="." instance=ExtResource("3_xidue")]
+position = Vector2(-41, -1)

@@ -1,0 +1,188 @@
+[gd_scene load_steps=15 format=3 uid="uid://c2ocpkxsj885b"]
+
+[ext_resource type="Script" uid="uid://diiylwq45wh3a" path="res://scripts/Level.gd" id="1_uhqny"]
+[ext_resource type="Script" uid="uid://dbap0gqox0ty1" path="res://addons/markdownlabel/markdownlabel.gd" id="2_faw0r"]
+[ext_resource type="Script" uid="uid://dcx7crs23nf4" path="res://addons/markdownlabel/header_formats/h1_format.gd" id="3_2eouu"]
+[ext_resource type="Script" uid="uid://d0sin64i4v3op" path="res://addons/markdownlabel/header_formats/h2_format.gd" id="4_rccsh"]
+[ext_resource type="Script" uid="uid://dlok0dv1tq2bf" path="res://addons/markdownlabel/header_formats/h3_format.gd" id="5_ax7ne"]
+[ext_resource type="Script" uid="uid://bayuh2vafablg" path="res://addons/markdownlabel/header_formats/h4_format.gd" id="6_sv41r"]
+[ext_resource type="Script" uid="uid://dfr1w7u3jgni3" path="res://addons/markdownlabel/header_formats/h5_format.gd" id="7_m0xki"]
+[ext_resource type="Script" uid="uid://bsi6dexoofpe6" path="res://addons/markdownlabel/header_formats/h6_format.gd" id="8_xe3hh"]
+
+[sub_resource type="Resource" id="Resource_p6oy6"]
+resource_local_to_scene = true
+script = ExtResource("3_2eouu")
+
+[sub_resource type="Resource" id="Resource_opqd1"]
+resource_local_to_scene = true
+script = ExtResource("4_rccsh")
+
+[sub_resource type="Resource" id="Resource_xyj84"]
+resource_local_to_scene = true
+script = ExtResource("5_ax7ne")
+
+[sub_resource type="Resource" id="Resource_gips2"]
+resource_local_to_scene = true
+script = ExtResource("6_sv41r")
+
+[sub_resource type="Resource" id="Resource_wsd7d"]
+resource_local_to_scene = true
+script = ExtResource("7_m0xki")
+
+[sub_resource type="Resource" id="Resource_iw3v5"]
+resource_local_to_scene = true
+script = ExtResource("8_xe3hh")
+
+[node name="Level" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_uhqny")
+
+[node name="Panel" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Scroll" type="ScrollContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="LevelPanel" type="PanelContainer" parent="Panel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="Upper" type="PanelContainer" parent="Panel"]
+self_modulate = Color(0.75, 0.75, 0.75, 1)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="Margin" type="MarginContainer" parent="Panel/Upper"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="DescriptionButton" type="Button" parent="Panel/Upper/Margin"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+text = "Описание"
+
+[node name="LevelName" type="Label" parent="Panel/Upper/Margin"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_override_font_sizes/font_size = 30
+text = "Level name"
+
+[node name="ExitButton" type="Button" parent="Panel/Upper/Margin"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "< Назад"
+
+[node name="Lower" type="PanelContainer" parent="Panel"]
+self_modulate = Color(0.75, 0.75, 0.75, 1)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 8
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel/Lower"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TableContainer" type="VBoxContainer" parent="Panel/Lower/Margin"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Popup" type="Window" parent="Panel"]
+transparent_bg = true
+oversampling_override = 1.0
+title = "Описание"
+initial_position = 1
+size = Vector2i(600, 600)
+transparent = true
+max_size = Vector2i(600, 600)
+
+[node name="Panel" type="Panel" parent="Panel/Popup"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Box" type="MarginContainer" parent="Panel/Popup/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = 4.0
+offset_right = 2.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Popup/Panel/Box"]
+layout_mode = 2
+
+[node name="Description" type="RichTextLabel" parent="Panel/Popup/Panel/Box/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.080783345, 0.080783345, 0.080783345, 1)
+bbcode_enabled = true
+text = "desc"
+script = ExtResource("2_faw0r")
+markdown_text = "desc"
+h1 = SubResource("Resource_p6oy6")
+h2 = SubResource("Resource_opqd1")
+h3 = SubResource("Resource_xyj84")
+h4 = SubResource("Resource_gips2")
+h5 = SubResource("Resource_wsd7d")
+h6 = SubResource("Resource_iw3v5")
+
+[connection signal="gui_input" from="Panel/Scroll" to="." method="_on_panel_container_gui_input"]
+[connection signal="pressed" from="Panel/Upper/Margin/DescriptionButton" to="." method="_on_description_button_pressed"]
+[connection signal="pressed" from="Panel/Upper/Margin/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="close_requested" from="Panel/Popup" to="." method="_on_popup_close_requested"]

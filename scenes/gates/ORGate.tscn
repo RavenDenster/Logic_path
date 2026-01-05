@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://cy73phja0xl0s"]
+
+[ext_resource type="Script" uid="uid://00kc1nk52qsd" path="res://scripts/gates/ORGate.gd" id="1_teh13"]
+[ext_resource type="Texture2D" uid="uid://dg18c6psrdt2q" path="res://assets/or.png" id="2_43abd"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="3_43abd"]
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="4_gc13j"]
+
+[node name="OrGate" type="Node2D"]
+script = ExtResource("1_teh13")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-8.4569645, -4.5000024)
+scale = Vector2(0.30794695, 0.30794704)
+texture = ExtResource("2_43abd")
+
+[node name="In1" parent="." instance=ExtResource("3_43abd")]
+position = Vector2(-73, -27)
+
+[node name="In2" parent="." instance=ExtResource("3_43abd")]
+position = Vector2(-73, 19)
+
+[node name="Output" parent="." instance=ExtResource("4_gc13j")]
+position = Vector2(57, -5)
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Polygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(-44, -45, -31, -18, -29, 5, -39, 37, -9, 34, 15, 17, 26, -3, 17, -18, -6, -38)

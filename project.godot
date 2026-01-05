@@ -17,12 +17,18 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-SaveSystem="*res://scripts/system/SaveSystem.gd"
+MessageDisplay="*res://scripts/MessageDisplaySingleton.gd"
+LevelInfoGlobal="*res://scripts/LevelInfo.gd"
+SaveSystemGlobal="*res://scripts/system/SaveSystem.gd"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+
+[gui]
+
+theme/custom="uid://djhqrreawofcm"
 
 [rendering]
 

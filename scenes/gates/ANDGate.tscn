@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://beonsb8kx2thq"]
+
+[ext_resource type="Script" uid="uid://b2sea1hgxjxju" path="res://scripts/gates/ANDGate.gd" id="1_58k3n"]
+[ext_resource type="Texture2D" uid="uid://dxwjbidwotfn7" path="res://assets/and.png" id="1_wunn6"]
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="3_f7hbi"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="4_teaqn"]
+
+[node name="AndGate" type="Node2D"]
+script = ExtResource("1_58k3n")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-0.6329266, 3.7500005)
+scale = Vector2(0.32120255, 0.32120252)
+texture = ExtResource("1_wunn6")
+
+[node name="Output" parent="." instance=ExtResource("3_f7hbi")]
+position = Vector2(72, 2)
+
+[node name="In1" parent="." instance=ExtResource("4_teaqn")]
+position = Vector2(-69, -22)
+
+[node name="In2" parent="." instance=ExtResource("4_teaqn")]
+position = Vector2(-69, 25)
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Polygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(-40, 42, 6, 41, 24, 34, 38, 15, 39, -5, 32, -24, 15, -38, -6, -40, -40, -40)

@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://300qbfk6xsr1"]
+
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="3_qep3t"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="4_i7mtn"]
+
+[sub_resource type="GDScript" id="GDScript_8n6ut"]
+script/source = "extends Gate
+
+@onready var in1 = $In1
+@onready var in2 = $In2
+@onready var output = $Output
+
+func _ready():
+	super._ready()
+	output.eval_func = func(call_idx: int):
+		return not in1.get_value(call_idx) or in2.get_value(call_idx)
+	inputs = [ in1, in2 ]
+	outputs = [ output ]
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6hc7x"]
+load_path = "res://.godot/imported/implication.png-b65df7f173263c19ebd66855bf23154e.ctex"
+
+[node name="ImplicationGate" type="Node2D"]
+script = SubResource("GDScript_8n6ut")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = SubResource("CompressedTexture2D_6hc7x")
+
+[node name="Output" parent="." instance=ExtResource("3_qep3t")]
+position = Vector2(46, -1)
+
+[node name="In1" parent="." instance=ExtResource("4_i7mtn")]
+position = Vector2(-44, -28)
+
+[node name="In2" parent="." instance=ExtResource("4_i7mtn")]
+position = Vector2(-45, 25)
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Polygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(-40, 42, 6, 41, 24, 34, 38, 15, 39, -5, 32, -24, 15, -38, -6, -40, -40, -40)

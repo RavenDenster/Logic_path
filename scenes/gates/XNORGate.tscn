@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://cjx01svb5q1s6"]
+
+[ext_resource type="Script" uid="uid://cffbsvexvs353" path="res://scripts/gates/XNORGate.gd" id="1_7x3ea"]
+[ext_resource type="Texture2D" uid="uid://cu2by8cn2hr34" path="res://assets/xnor.png" id="2_niio2"]
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="3_niio2"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="4_qsb3e"]
+
+[node name="XnorGate" type="Node2D"]
+script = ExtResource("1_7x3ea")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-9.442152, -2.9499996)
+scale = Vector2(0.30686277, 0.30686274)
+texture = ExtResource("2_niio2")
+
+[node name="Output" parent="." instance=ExtResource("3_niio2")]
+position = Vector2(62, -4)
+
+[node name="In1" parent="." instance=ExtResource("4_qsb3e")]
+position = Vector2(-74, -26)
+
+[node name="In2" parent="." instance=ExtResource("4_qsb3e")]
+position = Vector2(-74, 20)
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Polygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(-44, -45, -31, -18, -29, 5, -39, 37, -9, 34, 15, 17, 26, -3, 17, -18, -6, -38)

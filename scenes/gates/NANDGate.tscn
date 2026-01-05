@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://crg0xq3vlvpgb"]
+
+[ext_resource type="Script" uid="uid://lgev8dm7aji1" path="res://scripts/gates/NANDGate.gd" id="1_2s2xv"]
+[ext_resource type="Texture2D" uid="uid://cuq3teit7pnum" path="res://assets/nand.png" id="2_16xlw"]
+[ext_resource type="PackedScene" uid="uid://fws3iqx6pr6p" path="res://scenes/blocks/Input.tscn" id="3_16xlw"]
+[ext_resource type="PackedScene" uid="uid://ujccaxjgm017" path="res://scenes/blocks/Output.tscn" id="4_1xbim"]
+
+[node name="NandGate" type="Node2D"]
+script = ExtResource("1_2s2xv")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+z_as_relative = false
+position = Vector2(0.6986327, 0.49999952)
+scale = Vector2(0.3184932, 0.3184932)
+texture = ExtResource("2_16xlw")
+
+[node name="In1" parent="." instance=ExtResource("3_16xlw")]
+position = Vector2(-70, -24)
+
+[node name="In2" parent="." instance=ExtResource("3_16xlw")]
+position = Vector2(-70, 23)
+
+[node name="Output" parent="." instance=ExtResource("4_1xbim")]
+position = Vector2(73, -1)
+
+[node name="Area" type="Area2D" parent="."]
+
+[node name="Polygon2D" type="CollisionPolygon2D" parent="Area"]
+polygon = PackedVector2Array(-40, 42, 6, 41, 24, 34, 38, 15, 39, -5, 32, -24, 15, -38, -6, -40, -40, -40)

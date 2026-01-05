@@ -1,0 +1,80 @@
+{
+  "allowed_gates": [
+    "AND",
+    "OR",
+    "XOR"
+  ],
+  "help": "# Сумматор\nСумматор -- это несколько подключенных один к другому полусумматоров. Их количество определяется тем, насколько большие числа хочется иметь возможность складывать.\n\nВ этой задаче сумматор двухбитный, т.е. у чисел A и B два разряда. У числа C = A+B имеется дополнительно третий разряд на случай переноса из второго.\n\nA1, B1 -- младший разряд.\nA2, B2 -- старший разряд.",
+  "input_names": [
+    "A1",
+    "B1",
+    "A2",
+    "B2"
+  ],
+  "n_inputs": 4,
+  "n_outputs": 3,
+  "name": "Двухбитный сумматор",
+  "output_names": [
+    "C1",
+    "C2",
+    "C3"
+  ],
+  "priority": 8,
+  "truth_table": [
+    [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false
+    ],
+    [
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      true
+    ],
+    [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true
+    ]
+  ],
+  "tutorial": false
+}

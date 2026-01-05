@@ -1,0 +1,308 @@
+extends Node
+class_name LevelInfo
+
+enum GateType { AND, OR, NAND, NOR, NOT, XOR, XNOR }
+enum Post { T0, T1, S, M, L }
+
+static var GATE_POST = {
+	GateType.AND: [ Post.T0, Post.T1, Post.M ],
+	GateType.OR: [ Post.T0, Post.T1, Post.M ],
+	GateType.NAND: [ ],
+	GateType.NOR: [ ],
+	GateType.NOT: [ Post.S, Post.L ],
+	GateType.XOR: [ Post.T0, Post.L ],
+	GateType.XNOR: [ Post.T1, Post.L ]
+}
+
+static var GATE_POST_INV = {
+	GateType.AND: [ Post.S, Post.L, ],
+	GateType.OR: [ Post.S, Post.L, ],
+	GateType.NAND: [ Post.T0, Post.T1, Post.S, Post.M, Post.L ],
+	GateType.NOR: [ Post.T0, Post.T1, Post.S, Post.M, Post.L ],
+	GateType.NOT: [ Post.T0, Post.T1, Post.M ],
+	GateType.XOR: [ Post.T1, Post.S, Post.M ],
+	GateType.XNOR: [ Post.T0, Post.S, Post.M ]
+}
+
+static var data: Dictionary
+static var path: String
+
+static var COL_OFF = Color(0.73, 0.377, 0.383, 1.0)
+static var COL_ON  = Color(0.533, 0.705, 0.439, 1.0)
+static var STYLE_OFF       = _create_circle_stylebox(COL_OFF)
+static var STYLE_ON        = _create_circle_stylebox(COL_ON)
+static var STYLE_OFF_HOVER = _create_circle_stylebox(COL_OFF.darkened(0.25))
+static var STYLE_ON_HOVER  = _create_circle_stylebox(COL_ON.darkened(0.25))
+	
+const AND_GATE: PackedScene = preload("res://scenes/gates/ANDGate.tscn")
+const OR_GATE: PackedScene = preload("res://scenes/gates/ORGate.tscn")
+const NAND_GATE: PackedScene = preload("res://scenes/gates/NANDGate.tscn")
+const NOR_GATE: PackedScene = preload("res://scenes/gates/NORGate.tscn")
+const NOT_GATE: PackedScene = preload("res://scenes/gates/NOTGate.tscn")
+const XOR_GATE: PackedScene = preload("res://scenes/gates/XORGate.tscn")
+const XNOR_GATE: PackedScene = preload("res://scenes/gates/XNORGate.tscn")
+
+static func get_zhegalkin_coefficients(f: Array):
+	var res = []
+	var coeff = f.duplicate()
+	while len(coeff) > 0:
+		res.append(coeff[0])
+		for i in range(coeff.size() - 1):
+			coeff[i] = int(coeff[i]) ^ int(coeff[i + 1])
+		coeff.pop_back()
+	return res
+
+static func is_power_of_two(n: int):
+	return n > 0 and (n & (n - 1)) == 0
+
+static func idx_to_bits(idx: int, n_bits: int):
+	var res: Array[bool] = []
+	for i in range(n_bits):
+		res.append(bool(idx & 1))
+		idx >>= 1
+	return res
+
+static func bits_to_idx(bits: Array[bool]):
+	var res: int = 0
+	for bit in bits:
+		res = (res << 1) + int(bit)
+	return res
+
+static func get_post_classes(f: Array, n_inputs: int):
+	var res = []
+	if not bool(f[0]):
+		res.append(Post.T0)
+	if bool(f.back()):
+		res.append(Post.T1)
+	
+	var S: bool = true
+	for i in range(f.size() >> 1):
+		if f[i] == f[f.size() - 1 - i]:
+			S = false
+			break
+	if S: res.append(Post.S)
+	
+	var zhegalkin = get_zhegalkin_coefficients(f)
+	var L: bool = true
+	for i in range(1, zhegalkin.size()):
+		if not is_power_of_two(i) and zhegalkin[i]:
+			L = false
+			break
+	if L: res.append(Post.L)
+	
+	var M: bool = true
+	for i in range(f.size()):
+		var cur_val = f[i]
+		var bits = idx_to_bits(i, n_inputs)
+		
+		for j in range(bits.size()):
+			if not bits[j]:
+				bits[j] = true
+				var i2 = bits_to_idx(bits)
+				bits[j] = false
+				
+				var next_val = f[i2]
+				if int(cur_val) > int(next_val):
+					M = false
+					break
+		if not M:
+			break
+	if M: res.append(Post.M)
+	
+	return res
+
+static func load_level_data(level_path: String):
+	var file = FileAccess.open(SaveSystemGlobal.res() + level_path, FileAccess.READ)
+	var json_data = JSON.parse_string(file.get_as_text())
+	file.close()
+	data = json_data
+	path = level_path
+	
+	if not data.has("tutorial"):
+		data["tutorial"] = false
+
+static func _create_row_line_edit(text: String) -> Control:
+	var edit = LineEdit.new()
+	edit.text = text
+	edit.expand_to_text_length = true
+	edit.custom_minimum_size.x = 50
+	edit.flat = true
+	return edit
+
+static func _create_row_label(text: String) -> Control:
+	var label = Label.new()
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.custom_minimum_size.x = 50
+	return label
+
+static func _create_const_dot(val: int) -> Control:
+	var dot = Panel.new()
+	dot.custom_minimum_size = Vector2(24, 24)
+	if val == 1: dot.add_theme_stylebox_override("panel", STYLE_ON)
+	else: dot.add_theme_stylebox_override("panel", STYLE_OFF)
+	return dot
+
+static func _create_dot() -> Control:
+	var button = Button.new()
+	button.text = ""
+	button.custom_minimum_size = Vector2(24, 24)
+	button.toggle_mode = true
+	button.add_theme_stylebox_override("normal", STYLE_OFF)
+	button.add_theme_stylebox_override("hover", STYLE_OFF_HOVER)
+	button.add_theme_stylebox_override("pressed", STYLE_ON)
+	button.add_theme_stylebox_override("hover_pressed", STYLE_ON_HOVER)
+	return button
+
+static func create_truth_table(
+			n_inputs: int,
+			n_outputs: int,
+			editable_outputs: bool,
+			editable_labels: bool,
+			result_rows: bool,
+			input_labels = null,
+			output_labels = null,
+	) -> GridContainer:
+	var grid = GridContainer.new()
+	var n_columns = pow(2, n_inputs)
+	grid.columns = n_columns + 3
+	
+	if input_labels == null:
+		input_labels = []
+		for i in range(n_inputs):
+			input_labels.append("Вход %d" % [i + 1])
+	
+	if output_labels == null:
+		output_labels = []
+		for i in range(n_outputs):
+			output_labels.append("Выход %d" % [i + 1])
+	
+	print("input_labels")
+	print(input_labels)
+	print("output_labels")
+	print(output_labels)
+	
+	var input_names = []
+	var extra_input_labels = []
+	for i in range(n_inputs):
+		var label = _create_row_line_edit(input_labels[i]) if editable_labels \
+					else _create_row_label(input_labels[i])
+		input_names.append(label)
+		grid.add_child(label)
+		grid.add_child(VSeparator.new())
+		
+		for col in range(n_columns):
+			var bit = (col >> (n_inputs - 1 - i)) & 1
+			var dot = _create_const_dot(bit)
+			grid.add_child(dot)
+		
+		var extra_label = Label.new()
+		grid.add_child(extra_label)
+		extra_input_labels.append(extra_label)
+	
+	for i in range(n_columns + 3):
+		grid.add_child(HSeparator.new())
+	
+	var output_buttons = []
+	var output_names = []
+	var result_buttons = []
+	var extra_output_labels = []
+	for i in range(n_outputs):
+		var label
+		if result_rows:
+			label = _create_row_line_edit("Ожидаемый " + output_labels[i]) if editable_labels \
+						else _create_row_label("Ожидаемый " + output_labels[i])
+		else:
+			label = _create_row_line_edit(output_labels[i]) if editable_labels \
+						else _create_row_label(output_labels[i])
+
+		if editable_labels: output_names.append(label)
+		grid.add_child(label)
+		grid.add_child(VSeparator.new())
+		
+		var row_buttons = []
+		for col in range(n_columns):
+			var dot = _create_dot() if editable_outputs \
+						else _create_const_dot(0)
+			row_buttons.append(dot)
+			grid.add_child(dot)
+		output_buttons.append(row_buttons)
+		
+		var extra_label = Label.new()
+		grid.add_child(extra_label)
+		extra_output_labels.append(extra_label)
+		
+		if not result_rows: continue
+		
+		var res_label = _create_row_label("Получаемый " + output_labels[i])
+		grid.add_child(res_label)
+		grid.add_child(VSeparator.new())
+		
+		var row_res_buttons = []
+		for col in range(n_columns):
+			var dot = _create_const_dot(0)
+			row_res_buttons.append(dot)
+			grid.add_child(dot)
+		result_buttons.append(row_res_buttons)
+		
+		grid.add_child(Label.new())
+	
+	grid.set_meta("output_buttons", output_buttons)
+	if editable_labels:
+		grid.set_meta("input_names", input_names)
+		grid.set_meta("output_names", output_names)
+	if result_rows:
+		grid.set_meta("result_buttons", result_buttons)
+	grid.set_meta("n_inputs", n_inputs)
+	grid.set_meta("n_outputs", n_outputs)
+	grid.set_meta("extra_input_labels", extra_input_labels)
+	grid.set_meta("extra_output_labels", extra_output_labels)
+	return grid
+
+static func _create_circle_stylebox(color: Color) -> StyleBoxFlat:
+	var style = StyleBoxFlat.new()
+	style.bg_color = color
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.border_color = Color.BLACK
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_left = 12
+	style.corner_radius_bottom_right = 12
+	return style
+
+static func get_truth_table_values(truth_table):
+	var output_buttons = truth_table.get_meta("output_buttons")
+	var res = []
+	for row in output_buttons:
+		var res_row = []
+		for btn in row:
+			res_row.append(btn.button_pressed)
+		res.append(res_row)
+	return res
+
+static func set_truth_table_values(truth_table, expected: bool, values: Array):
+	var output_buttons = truth_table.get_meta("result_buttons" if expected else "output_buttons") 
+	for i in range(values.size()):
+		var row = values[i]
+		for j in range(row.size()):
+			var dot = output_buttons[i][j]
+			var val = values[i][j]
+			if dot is Button:
+				dot.button_pressed = val
+			elif dot is Panel:
+				dot.add_theme_stylebox_override("panel", STYLE_ON if int(val) == 1 else STYLE_OFF)
+
+static func create_gate(type: GateType) -> Gate:
+	match type:
+		GateType.AND: return AND_GATE.instantiate()
+		GateType.OR: return OR_GATE.instantiate()
+		GateType.NAND: return NAND_GATE.instantiate()
+		GateType.NOR: return NOR_GATE.instantiate()
+		GateType.NOT: return NOT_GATE.instantiate()
+		GateType.XOR: return XOR_GATE.instantiate()
+		GateType.XNOR: return XNOR_GATE.instantiate()
+	return null
