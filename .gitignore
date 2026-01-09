@@ -1,10 +1,5 @@
 # Godot 4+ specific ignores
 .godot/
-/android/
-/game_veb
 
-web/
-linux/
-windows/
-windows.zip
-linux.zip
+build/
+godot4
