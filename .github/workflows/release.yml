@@ -1,3 +1,5 @@
+# https://github.com/mrjsj/godot-cicd-template/blob/main/.github/workflows/cicd.yml
+
 name: Manual Release
 
 on:
@@ -7,32 +9,108 @@ on:
         description: 'Release version'
         required: true
         default: 'beta-DDMMYY'
-
-jobs:
-  build-and-release:
-    runs-on: ubuntu-latest
     
+jobs:
+  build-game:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: checkout
         uses: actions/checkout@v4
 
-      - name: Make release script executable
-        run: chmod +x utils/release.sh
-      
-      - name: Run release script
-        run: ./utils/release.sh
-        
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
+      - name: find latest godot patch for project version
+        run: |
+          # Read the version number from the project.godot file
+          version_prefix=$(grep -oP 'config/features=PackedStringArray\("\K[^\"]+' ./src/project.godot)
+
+          echo found minor version: ${version_prefix}
+          # Initialize the patch number and the last valid version variable
+          patch_number=1
+          last_valid_version=""
+
+          # Loop to increment the patch number and check the website response
+          while true; do
+              # Construct the version string
+              version="${version_prefix}.${patch_number}"
+              
+              # Make the website request
+              echo "Trying to download version $version ..."
+              response=$(curl -o /dev/null -s -w "%{http_code}\n" "https://godotengine.org/download/archive/${version}-stable")
+              # response=$(curl -o /dev/null -s -w "%{http_code}\n" "https://downloads.tuxfamily.org/godotengine/${version}")
+
+              # Check the response code
+              if [ "$response" = "404" ]; then
+                  # If 404 is received, break the loop
+                  echo "Version $version not found."
+                  break
+              else
+                  # If the response is not 404, store the version and increment the patch number
+                  echo "Version $version found... Trying next version..."
+                  last_valid_version=$version
+                  ((patch_number++))
+              fi
+          done
+
+          # Output the last valid version to environment.
+          # Godot's patchless versions aren't suffixed with .0, hence the following.
+
+          if [[ "$last_valid_version" = "*.0" ]]; then
+            echo Writing "GODOT_VERSION=$version_prefix" to env
+            echo "GODOT_VERSION=$version_prefix" >> $GITHUB_ENV
+          else
+            echo Writing "GODOT_VERSION=$last_valid_version" to env
+            echo "GODOT_VERSION=$last_valid_version" >> $GITHUB_ENV
+          fi
+
+      - name: debug print GODOT_VERSION
+        run: |
+          echo Godot version: ${{ env.GODOT_VERSION }}
+
+      - name: list files
+        run: |
+          ls -R
+
+      - name: build game
+        id: build
+        # Use latest version (see releases for all versions)
+        uses: firebelley/godot-export@v5.2.1
         with:
-          tag_name: ${{ github.event.inputs.version }}
-          name: Release ${{ github.event.inputs.version }}
-          files: |
-            build/linux.tar.xz
-            build/windows.7z
-            build/web.7z
-          draft: false
-          prerelease: ${{ github.event.inputs.prerelease }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Defining all the required inputs
+          godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot-builds/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          # godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          # godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          relative_project_path: ./src
+          use_preset_export_path: true
+          archive_output: ${{ startsWith(github.ref, 'refs/tags/') }}
+
+      - name: show build directory
+        run: |
+          echo Build: ${{ steps.build.outputs.build_directory }}
+          FOLDER_PATH="${{ steps.build.outputs.build_directory }}"
+          if [ -d "$FOLDER_PATH" ]; then
+            ls -R "$FOLDER_PATH"
+          else
+            ls -R .
+          fi
+
+      - name: show archive directory
+        run: |
+          echo Archive: ${{ steps.build.outputs.archive_directory }}
+          FOLDER_PATH="${{ steps.build.outputs.archive_directory }}"
+          if [ -d "$FOLDER_PATH" ]; then
+            ls -R "$FOLDER_PATH"
+          else
+            ls -R .
+          fi
+          
+      - name: create release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: false
+          tag: ${{ github.event.inputs.version }}
+          artifacts: |
+            ${{ steps.build.outputs.archive_directory }}/**/*.zip
+            ${{ steps.build.outputs.build_directory }}/**/*.exe
+            ${{ steps.build.outputs.build_directory }}/**/*.x86_64
+            ./webserver/webserver.py
