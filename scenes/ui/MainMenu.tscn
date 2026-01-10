@@ -65,6 +65,7 @@ theme_override_font_sizes/font_size = 32
 text = "Выйти"
 
 [node name="RandomLevelWindow" parent="." instance=ExtResource("2_6jbdy")]
+title = "Случайная задача"
 visible = false
 
 [node name="WebWindow" type="Window" parent="."]

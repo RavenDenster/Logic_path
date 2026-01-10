@@ -3,15 +3,12 @@ class_name Wire
 
 @export var input_node: Output = null
 @export var output_node: InputNode = null
-@export var tween = null
-@export var tween2 = null
+var tween: Tween = null
 
 var start_point: Vector2
 var end_point: Vector2
-
-var arrow_progress = 0.0
-var arrow_speed = 0.4
-var outline_line: Line2D
+var old_points
+var is_animated: bool = false
 
 func initialize(start_pos: Vector2, input: Node):
 	start_point = start_pos
@@ -44,13 +41,23 @@ func update_line():
 	for pt in wire_points:
 		add_point(pt)
 
-func _change_end_point(val):
-	end_point = val
-	update_line()
+func intp(t, a, b):
+	return (1-t)*a + t*b
 
-func _change_start_point(val):
-	start_point = val
-	update_line()
+func ease_in_out(x: float):
+	return 4 * x * x * x if x < 0.5 else 1 - pow(-2 * x + 2, 3) / 2
+
+func _delete_to_start_tween_func(k):
+	k = ease_in_out(k)*3
+	points[3] = intp(clamp(k, 0, 1), old_points[3], points[2])
+	points[2] = intp(clamp(k - 1.0, 0, 1), old_points[2], points[1])
+	points[1] = intp(clamp(k - 2.0, 0, 1), old_points[1], points[0])
+
+func _delete_to_end_tween_func(k):
+	k = ease_in_out(k)*3
+	points[0] = intp(clamp(k, 0, 1), old_points[0], points[1])
+	points[1] = intp(clamp(k - 1.0, 0, 1), old_points[1], points[2])
+	points[2] = intp(clamp(k - 2.0, 0, 1), old_points[2], points[3])
 
 func untie():
 	if input_node:
@@ -60,33 +67,36 @@ func untie():
 		output_node.wire_ref = null
 		
 func delete_to_start_animation():
-	reset_position_changed_connection()
-	tween = create_tween()
-	tween2 = create_tween()
-	tween.tween_method(_change_end_point, end_point, start_point, 0.2)
-	tween2.tween_property(self, "modulate:a", 0, 0.2)
+	if not is_animated:
+		is_animated = true
+		reset_position_changed_connection()
+		old_points = points.duplicate()
+		tween = create_tween()
+		tween.tween_method(_delete_to_start_tween_func, 0.0, 1.0, 0.5)
 	await tween.finished
-	await tween2.finished
-
+	is_animated = false
+	
 func delete_to_end_animation():
-	reset_position_changed_connection()
-	tween = create_tween()
-	tween2 = create_tween()
-	tween.tween_method(_change_start_point, start_point, end_point, 0.2)
-	tween2.tween_property(self, "modulate:a", 0, 0.2)
+	if not is_animated:
+		is_animated = true
+		reset_position_changed_connection()
+		old_points = points.duplicate()
+		tween = create_tween()
+		tween.tween_method(_delete_to_end_tween_func, 0.0, 1.0, 0.5)
 	await tween.finished
-	await tween2.finished
-
+	is_animated = false
+	
 func stop_animation():
+	if not is_animated: return
 	tween.kill()
-	tween2.kill()
 	start_point = input_node.global_position
 	end_point = output_node.global_position
-	modulate.a = 1
 	position_changed_connect()
 	update_line()
+	is_animated = false
 
 func update_end_point(mouse_pos: Vector2):
+	if is_animated: return
 	end_point = mouse_pos
 	update_line()
 

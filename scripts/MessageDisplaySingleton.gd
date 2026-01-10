@@ -54,8 +54,8 @@ func _ready() -> void:
 func _background_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		_on_message_timeout()
-		
-func display_message(text: String) -> void:
+
+func msgbox(text: String) -> void:
 	if not get_tree().root.get_children().has(canvas_layer):
 		get_tree().root.add_child(canvas_layer)
 	
@@ -88,7 +88,7 @@ func display_message(text: String) -> void:
 	add_child(sound)
 	sound.play()
 	
-	timer.start(2 + len(text) * 0.05)
+	timer.start(2 + len(text) * 0.07)
 
 func _on_message_timeout() -> void:
 	if not is_instance_valid(message_node):

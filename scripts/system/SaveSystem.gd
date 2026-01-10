@@ -18,7 +18,7 @@ func save_game():
 	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
 	if not file:
 		var error = FileAccess.get_open_error()
-		MessageDisplay.display_message("Failed to save game! Error: " + error)
+		MessageDisplay.msgbox("Failed to save game! Error: " + error)
 		return
 	
 	var json_string = JSON.stringify(game_data)
@@ -32,7 +32,7 @@ func load_game():
 	
 	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.READ)
 	if not file:
-		MessageDisplay.display_message("Не удалось открыть файл с сохранением")
+		MessageDisplay.msgbox("Не удалось открыть файл с сохранением")
 		reset_progress()
 		return
 	
@@ -42,7 +42,7 @@ func load_game():
 	if parse_result == OK:
 		game_data = json.data
 	else:
-		MessageDisplay.display_message("JSON Parse Error: " + json.get_error_message())
+		MessageDisplay.msgbox("JSON Parse Error: " + json.get_error_message())
 		reset_progress()
 	file.close()
 

@@ -1,6 +1,6 @@
 extends Control
 
-@onready var level_list_container = find_child("LevelListContainer")
+@onready var level_list_container: VBoxContainer = find_child("LevelListContainer")
 var first: bool
 
 func load_json_file(path: String) -> Variant:
@@ -18,8 +18,11 @@ func load_json_file(path: String) -> Variant:
 	print(json)
 	return json.get_data()
 
+func _process(_delta):
+	$Margin/VBox/Scroll.scroll_vertical = clamp($Margin/VBox/Scroll.scroll_vertical, 0, level_list_container.get_child(0).size.y)
+
 func _folder_to_control(path: String, basename: String) -> Control:
-	var fold = Container.new() if basename.is_empty() else FoldableContainer.new()
+	var fold: Container = VBoxContainer.new() if basename.is_empty() else FoldableContainer.new()
 	var margin = MarginContainer.new()
 	var g_vbox = VBoxContainer.new()
 	var grid = GridContainer.new()

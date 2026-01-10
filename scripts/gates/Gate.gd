@@ -17,6 +17,11 @@ var sprite
 @export var is_dragged: bool = false
 var offset = Vector2(0, 0)
 
+static var msdf_font = FontFile.new()
+static func _static_init() -> void:
+	msdf_font.load_dynamic_font("res://assets/fonts/mono.ttf")
+	msdf_font.multichannel_signed_distance_field = true
+
 func _hover():
 	is_hovered = true
 	hovered.emit()

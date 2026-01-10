@@ -3,8 +3,8 @@ extends ProgrammaticTheme
 
 var default_font_size = 16
 
-var background_color = Color(1.0, 1.0, 1.0, 1.0)
-var btn_color = Color(1.0, 0.557, 0.17, 1.0)
+var background_color = Color(0.994, 0.951, 0.878, 1.0)
+var btn_color = Color(1.0, 0.43, 0.05, 1.0)
 var text_color = Color(0.137, 0.137, 0.137, 1.0)
 
 func setup_light_theme():
@@ -39,10 +39,15 @@ func define_theme():
 		border_width = 0
 	})
 	
-	var btn1 = inherit(btn0, { bg_color = sat(btn_color, -0.6) })
-	var btn2 = inherit(btn0, { bg_color = sat(btn_color, -0.4) })
-	var btn3 = inherit(btn0, { bg_color = sat(btn_color, -0.2) })
-	var btn4 = inherit(btn0, { bg_color = sat(btn_color, -0.0) })
+	var btn1col = sat(btn_color, -0.6)
+	var btn2col = sat(btn_color, -0.4)
+	var btn3col = sat(btn_color, -0.2)
+	var btn4col = sat(btn_color, -0.0)
+	
+	var btn1 = inherit(btn0, { bg_color = btn1col })
+	var btn2 = inherit(btn0, { bg_color = btn2col })
+	var btn3 = inherit(btn0, { bg_color = btn3col })
+	var btn4 = inherit(btn0, { bg_color = btn4col })
 	var focus = stylebox_flat({
 		bg_color = Color(0, 0, 0, 0),
 		border_color = sat(val(btn_color, -0.5), -0.5),
@@ -95,7 +100,14 @@ func define_theme():
 		font_selected_color = text_color,
 		font_color = a(text_color, -0.5),
 		
-		panel = inherit(panel, { bg_color = val(background_color, -0.05) })
+		panel = inherit(panel, { bg_color = val(background_color, -0.05) }),
+		selected = stylebox_flat({ bg_color = btn3col }),
+		selected_focus = stylebox_flat({ bg_color = btn3col }),
+		
+		hovered_selected = stylebox_flat({ bg_color = btn4col }),
+		hovered_selected_focus = stylebox_flat({ bg_color = btn4col }),
+		
+		hovered = stylebox_flat({ bg_color = btn2col }),
 	}
 	
 	var fold_style = {

@@ -16,6 +16,8 @@ func _set_is_good(val: bool):
 
 func _ready() -> void:
 	inputs = [ $In1 ]
+	if OS.get_name() != "Web":
+		name_label.add_theme_font_override("font", msdf_font)
 
 func set_label(text: String):
 	name_label.text = text

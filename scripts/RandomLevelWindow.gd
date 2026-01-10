@@ -86,19 +86,12 @@ func get_rand_gate() -> LevelInfo.GateType:
 		return allowed_gates[randi_range(0, allowed_gates.size() - 1)]
 	return unused_gates.pop_back()
 
-func random_function(cost: int, depth: int = 0) -> Callable:
-	var depth_str = ""
-	for i in range(depth * 2):
-		depth_str += " "
-	
+func random_function(cost: int) -> Callable:
 	if cost == 0:
 		var i = get_rand_variable()
-		print(depth_str, "VAR ", i)
 		return _get_value.bind(i)
 	
 	var gate = get_rand_gate()
-	
-	print(depth_str, LevelInfo.GateType.keys()[gate])
 	
 	var left = cost - 1
 	var costs = []
@@ -112,7 +105,7 @@ func random_function(cost: int, depth: int = 0) -> Callable:
 	
 	var args = []
 	for c in costs:
-		args.append(random_function(c, depth + 1))
+		args.append(random_function(c))
 	
 	return callable[gate].bindv(args)
 
@@ -128,7 +121,7 @@ func _on_create_button_pressed() -> void:
 		gate_names.append(gates.get_item_text(index))
 	
 	if gate_names.size() == 0:
-		MessageDisplay.display_message("Выберите хотя бы один логический элемент")
+		MessageDisplay.msgbox("Выберите хотя бы один логический элемент")
 		return
 	
 	var input_names = []

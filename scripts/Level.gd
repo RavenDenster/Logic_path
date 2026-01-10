@@ -1,14 +1,18 @@
 extends Control
 
-@onready var level_panel = $Panel/Scroll/LevelPanel
-@onready var table_panel = $Panel/Lower/Margin/TableContainer
-@onready var level_name: Label = $Panel/Upper/Margin/LevelName
-@onready var root = $Panel
-@onready var popup = $Panel/Popup
-@onready var popup_panel = $Panel/Popup/Panel
-@onready var description = $Panel/Popup/Panel/Box/Scroll/Description
-@onready var desc_button = $Panel/Upper/Margin/DescriptionButton
-@onready var exit_button = $Panel/Upper/Margin/ExitButton
+@onready var canvas = $Canvas
+@onready var exit_button = $Canvas/VBox/Upper/Margin/ExitButton
+@onready var level_name: Label = $Canvas/VBox/Upper/Margin/LevelName
+@onready var desc_button = $Canvas/VBox/Upper/Margin/DescriptionButton
+@onready var table_panel = $Canvas/VBox/VSplit/Lower/Scroll/Margin/TableContainer
+
+@onready var popup = $Popup
+@onready var popup_panel = $Popup/Panel
+@onready var description = $Popup/Panel/Box/Scroll/Description
+
+@onready var camera = $Camera
+var camera_dragging: bool = false
+var camera_zoom_velocity: float = 0.0
 
 const RADIAL_MENU_SIZE: Vector2 = Vector2(300, 300)
 
@@ -23,7 +27,6 @@ var call_idx: int = 0
 var have_recursion: bool = false
 var start_node: Node = null
 var cur_wire: Wire = null
-@onready var wire_tween: Tween
 
 var wires: Array[Node]
 
@@ -41,7 +44,7 @@ func create_wire(start_pos: Vector2):
 		cur_wire.queue_free()
 		
 	var wire = WIRE_SCENE.instantiate()
-	level_panel.add_child(wire)
+	add_child(wire)
 	wire.initialize(start_pos, start_node)
 	cur_wire = wire
 
@@ -52,7 +55,7 @@ func _on_wire_started(start: Node, _position: Vector2):
 		
 func _on_wire_ended(end: Node, _position: Vector2):
 	if not cur_wire: return
-	if cur_wire.finalize(end.global_position, end):
+	if cur_wire.finalize(end.position, end):
 		var tmp_wire = cur_wire
 		cur_wire = null
 		tmp_wire.stop_animation()
@@ -70,43 +73,47 @@ func _on_select_wire(wire: Node2D):
 	cur_wire = wire
 	wire_started.emit()
 
-func _process(_delta):
-	if cur_wire: cur_wire.update_end_point(get_global_mouse_position())
+func _process(delta):
+	var mouse = get_global_mouse_position()
+	if cur_wire: cur_wire.update_end_point(mouse)
+	
+	if abs(camera_zoom_velocity) > 1e-5:
+		var mouse_world1 = get_local_mouse_position()
+		camera.zoom.x += camera.zoom.x * camera_zoom_velocity * delta
+		camera.zoom.x = clamp(camera.zoom.x, 0.1, 4.0)
+		camera.zoom.y = camera.zoom.x
+		
+		var mouse_world2 = get_local_mouse_position()
+		camera.offset -= mouse_world2 - mouse_world1
+	camera_zoom_velocity *= 0.8
 
 func _on_recursion() -> void:
-	MessageDisplay.display_message("Обнаружена рекурсия!")
+	MessageDisplay.msgbox("Обнаружена рекурсия!")
 	have_recursion = true
 
-func create_inputs():
-	const Y_PER_INPUT = 100
-	
-	var start_x = 200
-	var start_y = root.size.y/2 - LevelInfo.data.n_inputs*Y_PER_INPUT/2
+func create_inputs_and_outputs():
+	const Y_PER_NODE = 100
+	var view_size: Vector2 = get_viewport().size
+
+	var inputs_x = -view_size.x/2 + 200
+	var outputs_x = view_size.x/2 - 200
+	var start_y_inputs = -float(LevelInfo.data.n_inputs)/2 * Y_PER_NODE 
+	var start_y_outputs = -float(LevelInfo.data.n_outputs)/2 * Y_PER_NODE 
 	
 	for i in range(LevelInfo.data.n_inputs):
 		var input = INPUT_SCENE.instantiate()
-		level_panel.add_child(input)
+		add_child(input)
 		input.set_label(LevelInfo.data.input_names[i])
-		input.position = Vector2(
-			start_x, start_y + i*Y_PER_INPUT
-		)
+		input.position = Vector2(inputs_x, start_y_inputs + i*Y_PER_NODE)
 		input.outputs[0].wire_started.connect(_on_wire_started)
 		input.outputs[0].recursion_detected.connect(_on_recursion)
 		inputs.append(input)
 
-func create_outputs():
-	const Y_PER_OUTPUT = 100
-	
-	var start_x = root.size.x - 300
-	var start_y = root.size.y/2 - LevelInfo.data.n_outputs*Y_PER_OUTPUT/2
-	
 	for i in range(LevelInfo.data.n_outputs):
 		var out = OUTPUT_SCENE.instantiate()
-		level_panel.add_child(out)
+		add_child(out)
 		out.set_label(LevelInfo.data.output_names[i])
-		out.position = Vector2(
-			start_x, start_y + i*Y_PER_OUTPUT
-		)
+		out.position = Vector2(outputs_x, start_y_outputs + i*Y_PER_NODE)
 		out.inputs[0].wire_ended.connect(_on_wire_ended)
 		out.inputs[0].select_wire.connect(_on_select_wire)
 		outputs.append(out)
@@ -124,10 +131,6 @@ func create_truth_table():
 	truth_table = table
 
 func create_radial_menu() -> void:
-	var cv = CanvasLayer.new()
-	root.add_child(cv)
-	cv.layer = 100
-	
 	radial_theme1.color = ThemeDB.get_project_theme().get_stylebox("normal", "Button").bg_color
 	radial_theme1.radius_factor_inner = 0.3
 	radial_theme2.color = ThemeDB.get_project_theme().get_stylebox("hover", "Button").bg_color
@@ -152,7 +155,7 @@ func create_radial_menu() -> void:
 	
 	radial_menu.size = RADIAL_MENU_SIZE
 	radial_menu.visible = false
-	cv.add_child(radial_menu)
+	canvas.add_child(radial_menu)
 
 var tut_data: Dictionary = {
 	radial_visible = false,
@@ -174,46 +177,46 @@ var tut_data: Dictionary = {
 }
 
 func _tutorial_welcome():
-	root.mouse_filter = MouseFilter.MOUSE_FILTER_STOP
+	mouse_filter = MouseFilter.MOUSE_FILTER_STOP
 	popup.visible = false
 	
-	MessageDisplay.display_message("Добро пожаловать. Эта задача является обучающей.")
+	MessageDisplay.msgbox("Добро пожаловать. Эта задача является обучающей.")
 	await MessageDisplay.done
 	
-	MessageDisplay.display_message("Следуйте инструкциям, появляющимся в этом углу экрана.")
+	MessageDisplay.msgbox("Следуйте инструкциям, появляющимся в этом углу экрана.")
 	await MessageDisplay.done
 	
-	MessageDisplay.display_message("Удачи!")
+	MessageDisplay.msgbox("Удачи!")
 	await MessageDisplay.done
 	
 	popup.visible = true
-	MessageDisplay.display_message(
+	MessageDisplay.msgbox(
 		"Окно посередине содержит описание задачи. \n\
 		Оно закрывается нажатием на крестик.\n\
 		Ознакомьтесь с описанием и для продолжения закройте его."
 	)
 	
 	await popup.close_requested
-	root.mouse_filter = MouseFilter.MOUSE_FILTER_PASS
+	mouse_filter = MouseFilter.MOUSE_FILTER_PASS
 
 func _tutorial_addgate_press():
-	MessageDisplay.display_message("Чтобы открыть список логических элементов зажмите правую кнопку мыши.")
+	MessageDisplay.msgbox("Чтобы открыть список логических элементов зажмите правую кнопку мыши.")
 	await radial_menu.visibility_changed
 
 func _tutorial_addgate_release():
-	MessageDisplay.display_message(
+	MessageDisplay.msgbox(
 		"Теперь наведите мышью на логический элемент, который хотите создать, \n\
 		и отпустите правую кнопку."
 	)
 	await radial_menu.visibility_changed
 
 func _tutorial_connect_msg():
-	MessageDisplay.display_message("Отлично! Теперь нужно соединить входы со входами, а выходы с выходами")
+	MessageDisplay.msgbox("Отлично! Теперь нужно соединить входы со входами, а выходы с выходами")
 	await MessageDisplay.done
 	tut_data.connect_msg = true
 
 func _tutorial_inout():
-	MessageDisplay.display_message(
+	MessageDisplay.msgbox(
 		"Слева находятся входы, справа находятся выходы. \n\
 		Между ними можно размещать логические элементы."
 	)
@@ -229,15 +232,16 @@ const HIGHLIGHT_MIN = Color(0, 0, 0)
 
 func _tutorial_remove_wire(end, end_name, mistake):
 	if mistake:
-		MessageDisplay.display_message("%s. В него подключено что-то не то. Возьмитесь за него и оттяните провод в сторону" % [end_name])
+		MessageDisplay.msgbox("%s. В него подключено что-то не то. Возьмитесь за него и оттяните провод в сторону" % [end_name])
 	else:
-		MessageDisplay.display_message("%s. В него подключен провод. Возьмитесь за %s и оттяните провод в сторону" % [end_name, end_name])
+		MessageDisplay.msgbox("%s. В него подключен провод. Возьмитесь за %s и оттяните провод в сторону" % [end_name, end_name])
+	
 	var tween = create_tween().set_loops()
 	tween.tween_property(end, "modulate", HIGHLIGHT_MIN, 1).from(HIGHLIGHT_MAX)			
 	await wire_started
 	tween.kill()
 	end.modulate = Color(1, 1, 1)
-	MessageDisplay.display_message("Оттяните провод в сторону")
+	MessageDisplay.msgbox("Оттяните провод в сторону")
 	await wire_ended
 
 func _tutorial_do_con(start, end, start_name, end_name):
@@ -245,16 +249,16 @@ func _tutorial_do_con(start, end, start_name, end_name):
 		if not cur_wire:
 			var tween = create_tween().set_loops()
 			tween.tween_property(start, "modulate", HIGHLIGHT_MIN, 1).from(HIGHLIGHT_MAX)			
-			MessageDisplay.display_message("Нажмите на %s и удерживайте кнопку мыши нажатой " % [start_name])
+			MessageDisplay.msgbox("Нажмите на %s и удерживайте кнопку мыши нажатой " % [start_name])
 			await wire_started
 			tween.kill()
 			start.modulate = Color(1, 1, 1)	
 			return
 		if cur_wire.input_node != start:
-			MessageDisplay.display_message("Выбран не тот выход")
+			MessageDisplay.msgbox("Выбран не тот выход")
 			await wire_ended
 			return
-		MessageDisplay.display_message("Теперь с помощью движения мыши вы можете протянуть провод.\nПереместите мышь на " + end_name)
+		MessageDisplay.msgbox("Теперь с помощью движения мыши вы можете протянуть провод.\nПереместите мышь на " + end_name)
 		var tween2 = create_tween().set_loops()
 		tween2.tween_property(end, "modulate", HIGHLIGHT_MIN, 1).from(HIGHLIGHT_MAX)
 		await wire_ended
@@ -270,16 +274,16 @@ func _tutorial_do_con(start, end, start_name, end_name):
 func _tutorial_move_gate():
 	if not gates[0].is_hovered:
 		tut_data.start_pos = Vector2.ZERO
-		MessageDisplay.display_message("Наведитесь мышью на логическое И")
+		MessageDisplay.msgbox("Наведитесь мышью на логическое И")
 		await gates[0].hovered
 	elif not gates[0].is_dragged:
 		tut_data.start_pos = Vector2.ZERO
-		MessageDisplay.display_message("Зажмите кнопку мыши")
+		MessageDisplay.msgbox("Зажмите кнопку мыши")
 		await gates[0].dragged
 	else:
 		if tut_data.start_pos == Vector2.ZERO:
 			tut_data.start_pos = gates[0].global_position
-			MessageDisplay.display_message("Переместите мышь куда-нибудь в сторону")
+			MessageDisplay.msgbox("Переместите мышь куда-нибудь в сторону")
 		
 		await get_tree().create_timer(0.25).timeout
 		if (tut_data.start_pos - gates[0].global_position).length() > 100:
@@ -288,10 +292,10 @@ func _tutorial_move_gate():
 func _tutorial_delete_gate():
 	if not gates[0].is_hovered:
 		tut_data.start_pos = Vector2.ZERO
-		MessageDisplay.display_message("Наведитесь мышью на логическое И")
+		MessageDisplay.msgbox("Наведитесь мышью на логическое И")
 		await gates[0].hovered
 	else:
-		MessageDisplay.display_message("Нажмите правой кнопкой мыши на него")
+		MessageDisplay.msgbox("Нажмите правой кнопкой мыши на него")
 		await gate_deleted
 		tut_data.delete_gate_done = true
 
@@ -321,11 +325,11 @@ func _tutorial_scenario():
 					"выход логического И", "выход A^B"
 				)
 			else:
-				MessageDisplay.display_message("Уровень пройден! Но обучение еще не занончилось")
+				MessageDisplay.msgbox("Уровень пройден! Но обучение еще не занончилось")
 				await MessageDisplay.done
 				tut_data.level_done = true
 		elif not tut_data.remove_wire_msg:
-			MessageDisplay.display_message("Лишние провода можно удалять. Для этого нужно взяться за конец провода и оттянуть его в сторону")
+			MessageDisplay.msgbox("Лишние провода можно удалять. Для этого нужно взяться за конец провода и оттянуть его в сторону")
 			await MessageDisplay.done
 			tut_data.remove_wire_msg = true
 		elif not tut_data.remove_wire_done:
@@ -334,26 +338,26 @@ func _tutorial_scenario():
 			else:
 				tut_data.remove_wire_done = true
 		elif not tut_data.move_gate_msg:
-			MessageDisplay.display_message("Логические элементы можно перемещать.")
+			MessageDisplay.msgbox("Логические элементы можно перемещать.")
 			await MessageDisplay.done
 			tut_data.move_gate_msg = true
 		elif not tut_data.move_gate_done:
 			await _tutorial_move_gate()
 		elif not tut_data.delete_gate_msg:
-			MessageDisplay.display_message("Также, если вы создали лишний логический элемент, то его можно удалить")
+			MessageDisplay.msgbox("Также, если вы создали лишний логический элемент, то его можно удалить")
 			await MessageDisplay.done
-			MessageDisplay.display_message("Для этого нужно на него нажать правой кнопкой мыши")
+			MessageDisplay.msgbox("Для этого нужно на него нажать правой кнопкой мыши")
 			await MessageDisplay.done
 			tut_data.delete_gate_msg = true
 		elif not tut_data.delete_gate_done:
 			await _tutorial_delete_gate()
 		else:
-			MessageDisplay.display_message("Обучение пройдено. Можно покинуть эту задачу")
+			MessageDisplay.msgbox("Обучение пройдено. Можно покинуть эту задачу")
 			tut_data.done = true
 	
 func _ready() -> void:
 	if LevelInfo.path == "":
-		$Panel/Upper/Margin/DescriptionButton.visible = false
+		$Canvas/VBox/Upper/Margin/DescriptionButton.visible = false
 		popup.visible = false
 	
 	if LevelInfo.data.tutorial:
@@ -364,8 +368,7 @@ func _ready() -> void:
 	level_name.text = LevelInfo.data.name + stats_text
 	description.markdown_text = LevelInfo.data.help
 	
-	create_inputs()
-	create_outputs()
+	create_inputs_and_outputs()
 	create_truth_table()
 	create_radial_menu()
 	recalculate_truth_table()
@@ -411,13 +414,13 @@ func recalculate_truth_table() -> void:
 		level_name.text = LevelInfo.data.name + stats_text
 		
 		var tween = create_tween()
-		tween.tween_property(level_panel, "modulate", Color(0.95, 1.05, 0.95), 0.2).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(self, "modulate", Color(0.95, 1.05, 0.95), 0.2).set_trans(Tween.TRANS_SINE)
 		
 		var tween2 = create_tween().set_loops()
 		tween2.tween_property(exit_button, "modulate", Color(1, 1, 1), 1).from(Color(2, 2, 2)).set_trans(Tween.TRANS_SINE)
 	else:
 		var tween = create_tween()
-		tween.tween_property(level_panel, "modulate", Color.WHITE, 0.2).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(self, "modulate", Color.WHITE, 0.2).set_trans(Tween.TRANS_SINE)
 		
 func delete_cur_wire():
 	if not cur_wire: return
@@ -430,14 +433,14 @@ func delete_cur_wire():
 	wire_ended.emit()
 	recalculate_truth_table()
 
-func create_gate(idx: int) -> void:
+func create_gate(idx: int, pos: Vector2) -> void:
 	if idx >= len(LevelInfo.data.allowed_gates): return
 	
 	var gate_id = LevelInfo.GateType.get(LevelInfo.data.allowed_gates[idx])
 	var gate = LevelInfo.create_gate(gate_id)
-	gate.position = radial_menu.position + RADIAL_MENU_SIZE/2
+	gate.position = pos
 	
-	level_panel.add_child(gate)
+	add_child(gate)
 	for input in gate.inputs:
 		input.wire_ended.connect(_on_wire_ended)
 		input.select_wire.connect(_on_select_wire)
@@ -458,8 +461,9 @@ func _remove_gate(gate: Gate):
 			if input.connected_to and input.connected_to.connected_to:
 				input.connected_to.connected_to.erase(input)
 	
-	var tween = create_tween()
+	var tween: Tween = create_tween()
 	tween.tween_property(gate, "scale", Vector2.ZERO, 0.2)
+	tween.tween_interval(0.3)
 	await tween.finished
 	
 	for out in gate.outputs:
@@ -475,7 +479,7 @@ func _remove_gate(gate: Gate):
 	gate.queue_free()
 	recalculate_truth_table()
 
-func _check_hit():
+func _does_hit_gate() -> Node2D:
 	var space = get_world_2d().direct_space_state
 	var query = PhysicsPointQueryParameters2D.new()
 	query.position = get_global_mouse_position()
@@ -484,42 +488,62 @@ func _check_hit():
 	var result = space.intersect_point(query)
 	
 	if result.size() == 0:
-		var mouse = get_global_mouse_position()
-		var tween = create_tween()
-		var tween2 = create_tween()
-		tween.tween_property(radial_menu, "size", RADIAL_MENU_SIZE, 0.05).from(Vector2(0, 0)).set_ease(Tween.EASE_IN_OUT)
-		tween2.tween_property(radial_menu, "position", mouse - RADIAL_MENU_SIZE/2, 0.05).from(mouse).set_ease(Tween.EASE_IN_OUT)
-		radial_menu.visible = true
-		for i in range(radial_menu.get_children().size()):
-			radial_menu.set_theme_at(i, radial_theme1)
-	else:
-		var gate = result[0].collider.get_parent()
-		if gate.removable:
-			_remove_gate(gate)
+		return null
+	return result[0].collider.get_parent()
+
+func _spawn_radial_menu():
+	var mouse = get_viewport().get_mouse_position()
+	var tween = create_tween()
+	tween.tween_property(radial_menu, "size", RADIAL_MENU_SIZE, 0.05).from(Vector2(0, 0)).set_ease(Tween.EASE_IN_OUT)
+	tween.parallel().tween_property(radial_menu, "position", mouse - RADIAL_MENU_SIZE/2, 0.05).from(mouse).set_ease(Tween.EASE_IN_OUT)
+	radial_menu.visible = true
+	for i in range(radial_menu.get_children().size()):
+		radial_menu.set_theme_at(i, radial_theme1)
 
 func _on_panel_container_gui_input(event: InputEvent) -> void:
-	var pos = get_global_mouse_position()
+	var pos = get_viewport().get_mouse_position()
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			_check_hit()
-			
+		if event.pressed:
+			match event.button_index:
+				MOUSE_BUTTON_RIGHT:
+					var gate = _does_hit_gate()
+					if gate and gate is Gate:
+						if gate.removable:
+							_remove_gate(gate)
+					else:
+						_spawn_radial_menu()
+				MOUSE_BUTTON_LEFT:
+					if not _does_hit_gate():
+						camera_dragging = true
+				MOUSE_BUTTON_WHEEL_DOWN:
+					camera_zoom_velocity -= 1
+				MOUSE_BUTTON_WHEEL_UP:
+					camera_zoom_velocity += 1
+						
 		elif event.is_released():
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				camera_dragging = false
+				
 			if radial_menu.visible:
 				if radial_menu.is_inside_circle(pos):
 					var idx = radial_menu.get_index_from_global_position(pos)
-					create_gate(idx)
+					var gate_pos = get_viewport().get_canvas_transform().affine_inverse() * (radial_menu.position + RADIAL_MENU_SIZE/2)
+					create_gate(idx, gate_pos)
 					
 				var tween = create_tween()
-				var tween2 = create_tween()
 				tween.tween_property(radial_menu, "size", Vector2.ZERO, 0.05).set_ease(Tween.EASE_IN_OUT)
-				tween2.tween_property(radial_menu, "position", RADIAL_MENU_SIZE/2, 0.05).as_relative().set_ease(Tween.EASE_IN_OUT)
+				tween.parallel().tween_property(radial_menu, "position", RADIAL_MENU_SIZE/2, 0.05).as_relative().set_ease(Tween.EASE_IN_OUT)
 				await tween.finished
-				await tween2.finished
 				radial_menu.visible = false
 			elif cur_wire:
 				delete_cur_wire()
 			
 	elif event is InputEventMouseMotion:
+		if camera_dragging:
+			camera.offset -= event.relative
+			camera.offset.x = clamp(camera.offset.x, -3000.0, 3000.0)
+			camera.offset.y = clamp(camera.offset.y, -3000.0, 3000.0)
+		
 		for i in range(radial_menu.get_children().size()):
 				radial_menu.set_theme_at(i, radial_theme1)
 		if radial_menu.is_inside_circle(pos):
@@ -530,24 +554,14 @@ func _on_panel_container_gui_input(event: InputEvent) -> void:
 
 func _on_popup_close_requested() -> void:
 	var tween = create_tween()
-	var tween2 = create_tween()
-	var tween3 = create_tween()
 	tween.tween_property(popup, "size", Vector2i(100, 100), 0.2).set_ease(Tween.EASE_OUT)
-	tween2.tween_property(popup, "position", Vector2i(desc_button.global_position + desc_button.size/2 - Vector2(50, 50)), 0.2).set_ease(Tween.EASE_OUT)
-	tween3.tween_property(popup_panel, "modulate:a", 0.0, 0.1)
-	await tween3.finished
+	tween.parallel().tween_property(popup, "position", Vector2i(desc_button.global_position + desc_button.size/2 - Vector2(50, 50)), 0.2).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(popup_panel, "modulate:a", 0.0, 0.1)
+	tween.tween_callback(func(): popup.visible = false)
+	tween.tween_property(desc_button, "modulate", Color(1.25, 1.25, 1.25), 0.1).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(desc_button, "modulate", Color(1, 1, 1), 0.1).set_ease(Tween.EASE_IN_OUT)
 	await tween.finished
-	await tween2.finished
-	popup.visible = false
 	
-	var tween4 = create_tween()
-	tween4.tween_property(desc_button, "modulate", Color(1.25, 1.25, 1.25), 0.1).set_ease(Tween.EASE_IN_OUT)
-	await tween4.finished
-	
-	var tween5 = create_tween()
-	tween5.tween_property(desc_button, "modulate", Color(1, 1, 1), 0.1).set_ease(Tween.EASE_IN_OUT)
-	await tween5.finished
-
 func _on_description_button_pressed() -> void:
 	popup.size = popup.max_size
 	popup_panel.modulate.a = 1.0

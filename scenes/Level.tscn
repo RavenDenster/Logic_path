@@ -43,93 +43,91 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_uhqny")
 
-[node name="Panel" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="Scroll" type="ScrollContainer" parent="Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_vertical = 3
-
-[node name="LevelPanel" type="PanelContainer" parent="Panel/Scroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+[node name="LevelPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = -25000.0
+offset_top = -25000.0
+offset_right = 25000.0
+offset_bottom = 25000.0
 mouse_filter = 1
 
-[node name="Upper" type="PanelContainer" parent="Panel"]
-self_modulate = Color(0.75, 0.75, 0.75, 1)
-layout_mode = 1
-anchors_preset = 10
+[node name="Canvas" type="CanvasLayer" parent="."]
+
+[node name="VBox" type="VBoxContainer" parent="Canvas"]
+anchors_preset = 15
 anchor_right = 1.0
-offset_bottom = 60.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="Upper" type="PanelContainer" parent="Canvas/VBox"]
+self_modulate = Color(0.75, 0.75, 0.75, 1)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 
-[node name="Margin" type="MarginContainer" parent="Panel/Upper"]
+[node name="Margin" type="MarginContainer" parent="Canvas/VBox/Upper"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="DescriptionButton" type="Button" parent="Panel/Upper/Margin"]
+[node name="DescriptionButton" type="Button" parent="Canvas/VBox/Upper/Margin"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
 text = "Описание"
 
-[node name="LevelName" type="Label" parent="Panel/Upper/Margin"]
+[node name="LevelName" type="Label" parent="Canvas/VBox/Upper/Margin"]
 layout_mode = 2
 size_flags_horizontal = 6
 theme_override_font_sizes/font_size = 30
 text = "Level name"
 
-[node name="ExitButton" type="Button" parent="Panel/Upper/Margin"]
+[node name="ExitButton" type="Button" parent="Canvas/VBox/Upper/Margin"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "< Назад"
 
-[node name="Lower" type="PanelContainer" parent="Panel"]
-self_modulate = Color(0.75, 0.75, 0.75, 1)
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -20.0
-grow_horizontal = 2
-grow_vertical = 0
-size_flags_vertical = 8
+[node name="VSplit" type="VSplitContainer" parent="Canvas/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+touch_dragger_enabled = true
+
+[node name="Container" type="BoxContainer" parent="Canvas/VBox/VSplit"]
+layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="Margin" type="MarginContainer" parent="Panel/Lower"]
+[node name="Lower" type="PanelContainer" parent="Canvas/VBox/VSplit"]
+self_modulate = Color(0.75, 0.75, 0.75, 1)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+mouse_filter = 2
 
-[node name="TableContainer" type="VBoxContainer" parent="Panel/Lower/Margin"]
+[node name="Scroll" type="ScrollContainer" parent="Canvas/VBox/VSplit/Lower"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Canvas/VBox/VSplit/Lower/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="TableContainer" type="VBoxContainer" parent="Canvas/VBox/VSplit/Lower/Scroll/Margin"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Popup" type="Window" parent="Panel"]
+[node name="Popup" type="Window" parent="."]
 transparent_bg = true
 oversampling_override = 1.0
 title = "Описание"
@@ -138,14 +136,14 @@ size = Vector2i(600, 600)
 transparent = true
 max_size = Vector2i(600, 600)
 
-[node name="Panel" type="Panel" parent="Panel/Popup"]
+[node name="Panel" type="Panel" parent="Popup"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Box" type="MarginContainer" parent="Panel/Popup/Panel"]
+[node name="Box" type="MarginContainer" parent="Popup/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -163,10 +161,10 @@ theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="Scroll" type="ScrollContainer" parent="Panel/Popup/Panel/Box"]
+[node name="Scroll" type="ScrollContainer" parent="Popup/Panel/Box"]
 layout_mode = 2
 
-[node name="Description" type="RichTextLabel" parent="Panel/Popup/Panel/Box/Scroll"]
+[node name="Description" type="RichTextLabel" parent="Popup/Panel/Box/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -182,7 +180,10 @@ h4 = SubResource("Resource_gips2")
 h5 = SubResource("Resource_wsd7d")
 h6 = SubResource("Resource_iw3v5")
 
-[connection signal="gui_input" from="Panel/Scroll" to="." method="_on_panel_container_gui_input"]
-[connection signal="pressed" from="Panel/Upper/Margin/DescriptionButton" to="." method="_on_description_button_pressed"]
-[connection signal="pressed" from="Panel/Upper/Margin/ExitButton" to="." method="_on_exit_button_pressed"]
-[connection signal="close_requested" from="Panel/Popup" to="." method="_on_popup_close_requested"]
+[node name="Camera" type="Camera2D" parent="."]
+limit_enabled = false
+
+[connection signal="gui_input" from="LevelPanel" to="." method="_on_panel_container_gui_input"]
+[connection signal="pressed" from="Canvas/VBox/Upper/Margin/DescriptionButton" to="." method="_on_description_button_pressed"]
+[connection signal="pressed" from="Canvas/VBox/Upper/Margin/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="close_requested" from="Popup" to="." method="_on_popup_close_requested"]

@@ -67,7 +67,7 @@ func load_level(filename):
 			if gates_input.get_item_text(i) == gate:
 				gates_input.select(i, false)
 	
-	MessageDisplay.display_message("Задача загружена")
+	MessageDisplay.msgbox("Задача загружена")
 
 func save_level(filename) -> void:
 	var gates = []
@@ -101,7 +101,7 @@ func save_level(filename) -> void:
 	file.store_string(JSON.stringify(level_data, "  "))
 	file.close()
 	
-	MessageDisplay.display_message("Задача сохранена")
+	MessageDisplay.msgbox("Задача сохранена")
 
 #############
 # CALLBACKS #
@@ -219,7 +219,7 @@ func _on_save_file_dialog_file_selected(path: String) -> void:
 func _on_new_button_pressed() -> void:
 	cur_path = ""
 	reset()
-	MessageDisplay.display_message("Новая задача создана")
+	MessageDisplay.msgbox("Новая задача создана")
 	
 func _on_help_tabs_tab_changed(tab: int) -> void:
 	if tab == 1:
@@ -257,9 +257,9 @@ func _on_post_button_pressed() -> void:
 				err_msg += base + CLASS_DESC[c] + "\n"
 	
 	# if not ok:
-	# 	MessageDisplay.display_message(err_msg)
+	# 	MessageDisplay.msgbox(err_msg)
 	# else:
-	# 	MessageDisplay.display_message("ОК! Задача решаема")
+	# 	MessageDisplay.msgbox("ОК! Задача решаема")
 
 func _on_gates_input_item_clicked(_index: int, _at_position: Vector2, _mouse_button_index: int) -> void:
 	absent_post_classes.clear()
